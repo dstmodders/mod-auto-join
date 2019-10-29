@@ -1,0 +1,8 @@
+### Intellij ###
+.idea/
+
+### Project specific ###
+description.txt
+images/auto_join_icons/
+modsettings.lua
+workshop/
