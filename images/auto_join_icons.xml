@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Atlas>
+    <Texture filename="auto_join_icons.tex" />
+    <Elements>
+        <Element name="circle.tex" u1="0.00390625" u2="0.496094" v1="0.0078125" v2="0.992188" />
+        <Element name="clock.tex" u1="0.503906" u2="0.996094" v1="0.0078125" v2="0.992188" />
+    </Elements>
+</Atlas>
