@@ -388,12 +388,14 @@ function AutoJoin:StartAutoJoinThread(server, password)
     end
 
     self.autojointhread = StartThread(function()
-        local defaultseconds, refreshseconds, seconds
+        local defaultrefreshseconds, defaultseconds
+        local refreshseconds, seconds
         local isservernotlisted
 
+        defaultrefreshseconds = 30
         defaultseconds = self.configwaitingtime
         isservernotlisted = false
-        refreshseconds = 30
+        refreshseconds = defaultrefreshseconds
         seconds = defaultseconds
 
         DebugThreadString("Thread started")
@@ -433,7 +435,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
                     and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
                     and not IsServerListed(server.guid)
                 then
-                    refreshseconds = 30
+                    refreshseconds = 30 + 1
                     isservernotlisted = false
                     DebugThreadString("Refreshing the server listing...")
                     TheNet:SearchServers()
@@ -442,8 +444,8 @@ function AutoJoin:StartAutoJoinThread(server, password)
 
             if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
                 self.autojoinbtn:SetText(seconds)
-                if seconds > 10 then
-                    self.autojoinbtn:SetTextSize(16)
+                if seconds > 9 then
+                    self.autojoinbtn:SetTextSize(14)
                 else
                     self.autojoinbtn:SetTextSize(18)
                 end
@@ -452,7 +454,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
                 self.autojoinbtn.icon:Hide()
             end
 
-            if seconds <= 1 then
+            if seconds < 1 then
                 seconds = defaultseconds + 1
                 Join()
             end
