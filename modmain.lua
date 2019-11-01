@@ -45,6 +45,10 @@ local function DebugString(...)
     DebugFn(...)
 end
 
+local function DebugConfigString(description, name)
+    DebugFn("[config]", description .. ":", GetModConfigData(name))
+end
+
 --
 -- Player-related
 --
@@ -157,4 +161,4 @@ AutoJoin:Init()
 -- config
 AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
 
-DebugString("[config] Waiting time:", AutoJoin.configwaitingtime)
+DebugConfigString("Waiting time:", "waiting_time")
