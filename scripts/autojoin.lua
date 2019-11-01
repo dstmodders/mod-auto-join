@@ -54,6 +54,7 @@ function AutoJoin:Init()
     self.autojointhread = nil
     self.isautojoining = nil
     self.isuidisabled = false
+    self.server = nil
 
     -- overrides
     self.oldjoinserver = JoinServer
@@ -266,7 +267,7 @@ function AutoJoin:MakeAutoJoinButton(parent, serverfn, successcb, cancelcb)
         end
 
         if successcb then
-            successcb()
+            successcb(self)
         end
     end
 
@@ -282,7 +283,7 @@ function AutoJoin:MakeAutoJoinButton(parent, serverfn, successcb, cancelcb)
         end
 
         if cancelcb then
-            cancelcb()
+            cancelcb(self)
         end
     end
 

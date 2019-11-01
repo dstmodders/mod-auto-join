@@ -78,8 +78,18 @@ local function ServerListingScreenPostInit(_self)
         end
     end
 
-    _self.autojoinbtn = AutoJoin:MakeJoinButton(_self.side_panel, OnJoinClick)
-    _self.autojoindefaultbtn = AutoJoin:MakeAutoJoinButton(_self.side_panel, serverfn)
+    local function OnAutoJoinSuccess(self)
+        self.server = serverfn()
+        _self.servers_scroll_list:RefreshView()
+    end
+
+    local function OnAutoJoinCancel(self)
+        self.server = nil
+        _self.servers_scroll_list:RefreshView()
+    end
+
+    _self.autojoinbtn = AutoJoin:MakeAutoJoinButton(_self.side_panel, serverfn, OnAutoJoinSuccess, OnAutoJoinCancel)
+    _self.autojoindefaultbtn = AutoJoin:MakeJoinButton(_self.side_panel, OnJoinClick)
     _self.join_button:Hide()
 
     --
@@ -87,6 +97,7 @@ local function ServerListingScreenPostInit(_self)
     --
 
     local OldUpdateServerData = _self.UpdateServerData
+    local OldSetRowColour = _self.SetRowColour
 
     local function NewUpdateServerData(self, selected_index_actual)
         OldUpdateServerData(self, selected_index_actual)
@@ -102,7 +113,21 @@ local function ServerListingScreenPostInit(_self)
         end
     end
 
+    local function NewSetRowColour(self, row_widget, colour)
+        OldSetRowColour(self, row_widget, colour)
+
+        local server = self.servers[row_widget.unfiltered_index]
+        local autojoinserver = AutoJoin.server
+
+        if server and autojoinserver then
+            if self.servers[row_widget.unfiltered_index].guid == AutoJoin.server.guid then
+                OldSetRowColour(self, row_widget, _G.UICOLOURS.GOLD)
+            end
+        end
+    end
+
     _self.UpdateServerData = NewUpdateServerData
+    _self.SetRowColour = NewSetRowColour
 
     DebugString("ServerListingScreen initialized")
 end
