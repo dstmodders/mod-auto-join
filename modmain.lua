@@ -88,55 +88,13 @@ local function ServerListingScreenPostInit(_self)
 
     local OldUpdateServerData = _self.UpdateServerData
 
-    local function CompareTable(a, b)
-        local getmetatable = _G.getmetatable
-
-        -- basic validation
-        if a == b then
-            return true
-        end
-
-        -- null check
-        if a == nil or b == nil then
-            return false
-        end
-
-        -- validate type
-        if type(a) ~= "table" then
-            return false
-        end
-
-        -- compare meta tables
-        local meta_table_a = getmetatable(a)
-        local meta_table_b = getmetatable(b)
-        if not CompareTable(meta_table_a, meta_table_b) then
-            return false
-        end
-
-        -- compare nested tables
-        for index, va in pairs(a) do
-            local vb = b[index]
-            if not CompareTable(va, vb) then
-                return false
-            end
-        end
-        for index, vb in pairs(b) do
-            local va = a[index]
-            if not CompareTable(va, vb) then
-                return false
-            end
-        end
-
-        return true
-    end
-
     local function NewUpdateServerData(self, selected_index_actual)
         OldUpdateServerData(self, selected_index_actual)
 
         local selectedserver = TheNet:GetServerListingFromActualIndex(selected_index_actual)
         local isnamehidden = selectedserver and ServerPreferences:IsNameAndDescriptionHidden(selectedserver) or false
         if selectedserver
-            and (CompareTable(selectedserver, self.selected_server) == false
+            and (AutoJoin:CompareTable(selectedserver, self.selected_server) == false
             or self.details_hidden_name ~= isnamehidden)
         then
             _self.autojoinbtn:Enable()

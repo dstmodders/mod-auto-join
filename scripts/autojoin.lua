@@ -2,8 +2,10 @@ local Image = require "widgets/image"
 local ImageButton = require "widgets/imagebutton"
 local InputDialogScreen = require "screens/redux/inputdialog"
 
+-- general
 local _DEBUG_FN
 
+-- threads
 local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
 
 local AutoJoin = Class(function(self)
@@ -38,21 +40,20 @@ end
 --
 
 function AutoJoin:Init()
-    -- general
-    self.autojoinbtn = nil
-    self.autojointhread = nil
-    self.isautojoining = nil
-    self.isuidisabled = false
-
     -- config
     self.configwaitingtime = 15
 
     -- server
     self.serverguid = nil
 
-    -- buttons
+    -- server listing screen
     self.autojoinbtn = nil
     self.joinbtn = nil
+
+    -- auto-joining
+    self.autojointhread = nil
+    self.isautojoining = nil
+    self.isuidisabled = false
 
     -- overrides
     self.oldjoinserver = JoinServer
@@ -177,8 +178,48 @@ function AutoJoin:OverrideRestore()
     debug("ShowConnectingToGamePopup restored")
 end
 
+function AutoJoin:CompareTable(a, b)
+    -- basic validation
+    if a == b then
+        return true
+    end
+
+    -- null check
+    if a == nil or b == nil then
+        return false
+    end
+
+    -- validate type
+    if type(a) ~= "table" then
+        return false
+    end
+
+    -- compare meta tables
+    local meta_table_a = getmetatable(a)
+    local meta_table_b = getmetatable(b)
+    if not self:CompareTable(meta_table_a, meta_table_b) then
+        return false
+    end
+
+    -- compare nested tables
+    for index, va in pairs(a) do
+        local vb = b[index]
+        if not self:CompareTable(va, vb) then
+            return false
+        end
+    end
+    for index, vb in pairs(b) do
+        local va = a[index]
+        if not self:CompareTable(va, vb) then
+            return false
+        end
+    end
+
+    return true
+end
+
 --
--- Buttons
+-- Server Listing Screen
 --
 
 local function MakeButton(onclick, text, size)
