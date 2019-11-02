@@ -1,7 +1,12 @@
 name = "Auto-Join"
-version = "0.1.0"
+version = "0.2.0"
 description = [[Version: ]] .. version .. "\n\n" ..
-    [[Adds an Auto-Join button to the server listing screen to continue reconnecting to the same server until joining.]]
+    [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
+    [[v]] .. version .. [[:]] .. "\n" ..
+    [[- Added different button focus states]] .. "\n" ..
+    [[- Added different button hover text states]] .. "\n" ..
+    [[- Added support for highlighting the selected server]] .. "\n" ..
+    [[- Improved the countdown]]
 author = "Demonblink"
 api_version = 10
 forumthread = ""
