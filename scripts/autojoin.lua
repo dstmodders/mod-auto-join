@@ -324,6 +324,11 @@ function AutoJoin:MakeAutoJoinButton(parent, serverfn, successcb, cancelcb)
     btn.circle:SetPosition(.5, 0)
     btn.circle:Hide()
 
+    btn.circlecross = btn:AddChild(Image("images/auto_join_icons.xml", "circle_cross.tex"))
+    btn.circlecross:ScaleToSize(width, width)
+    btn.circlecross:SetPosition(.5, 0)
+    btn.circlecross:Hide()
+
     btn:SetHoverText("Auto-Join", {
         font = NEWFONT_OUTLINE,
         offset_x = 0,
@@ -331,6 +336,20 @@ function AutoJoin:MakeAutoJoinButton(parent, serverfn, successcb, cancelcb)
         colour = UICOLOURS.WHITE,
         bg = nil
     })
+
+    btn.ongainfocus = function()
+        if self:IsAutoJoining() then
+            btn.circle:Hide()
+            btn.circlecross:Show()
+        end
+    end
+
+    btn.onlosefocus = function()
+        if self:IsAutoJoining() then
+            btn.circle:Show()
+            btn.circlecross:Hide()
+        end
+    end
 
     if self:IsAutoJoining() then
         btn:Enable()
@@ -450,7 +469,14 @@ function AutoJoin:StartAutoJoinThread(server, password)
                     self.autojoinbtn:SetTextSize(18)
                 end
 
-                self.autojoinbtn.circle:Show()
+                if self.autojoinbtn.focus then
+                    self.autojoinbtn.circle:Hide()
+                    self.autojoinbtn.circlecross:Show()
+                else
+                    self.autojoinbtn.circle:Show()
+                    self.autojoinbtn.circlecross:Hide()
+                end
+
                 self.autojoinbtn.icon:Hide()
             end
 
@@ -482,6 +508,7 @@ function AutoJoin:ClearAutoJoinThread()
 
         if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
             self.autojoinbtn.circle:Hide()
+            self.autojoinbtn.circlecross:Hide()
             self.autojoinbtn.icon:Show()
             self.autojoinbtn:SetText(nil)
         end
