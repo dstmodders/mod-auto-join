@@ -397,6 +397,12 @@ local function IsServerListed(guid)
     return false
 end
 
+local function SetHoverTextString(btn, string)
+    btn.hovertext:SetString(string)
+    local w, h = btn.hovertext:GetRegionSize()
+    btn.hovertext_bg:SetSize(w * 1.5, h * 2.0)
+end
+
 function AutoJoin:IsAutoJoining()
     return self.isautojoining
 end
@@ -427,6 +433,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
         if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
             self.autojoinbtn.circle:Show()
             self.autojoinbtn.icon:Hide()
+            SetHoverTextString(self.autojoinbtn, "Disable Auto-Join")
         end
 
         local function Join()
@@ -511,6 +518,7 @@ function AutoJoin:ClearAutoJoinThread()
             self.autojoinbtn.circlecross:Hide()
             self.autojoinbtn.icon:Show()
             self.autojoinbtn:SetText(nil)
+            SetHoverTextString(self.autojoinbtn, "Auto-Join")
         end
     end
 end
