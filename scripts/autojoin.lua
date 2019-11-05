@@ -146,6 +146,12 @@ local function JoinServerOverride(server_listing, optional_password_override)
     end
 end
 
+function AutoJoin:Join(server, password)
+    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
+    debug("Joining server...")
+    JoinServer(server, password)
+end
+
 function AutoJoin:Override()
     JoinServer = JoinServerOverride
 
@@ -256,12 +262,6 @@ local function IsServerListed(guid)
     return false
 end
 
-local function Join(server, password)
-    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
-    debug("Joining server...")
-    JoinServer(server, password)
-end
-
 function AutoJoin:IsAutoJoining()
     return self.isautojoining
 end
@@ -293,7 +293,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
             self.autojoinbtn:Active()
         end
 
-        Join(server, password)
+        self:Join(server, password)
 
         while self.isautojoining do
             if not self.isuidisabled then
@@ -326,7 +326,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
 
             if seconds < 1 then
                 seconds = defaultseconds + 1
-                Join(server, password)
+                self:Join(server, password)
             end
 
             seconds = seconds - 1
