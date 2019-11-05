@@ -256,10 +256,10 @@ local function IsServerListed(guid)
     return false
 end
 
-local function SetHoverTextString(btn, string)
-    btn.hovertext:SetString(string)
-    local w, h = btn.hovertext:GetRegionSize()
-    btn.hovertext_bg:SetSize(w * 1.5, h * 2.0)
+local function Join(server, password)
+    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
+    debug("Joining server...")
+    JoinServer(server, password)
 end
 
 function AutoJoin:IsAutoJoining()
@@ -290,17 +290,10 @@ function AutoJoin:StartAutoJoinThread(server, password)
         self:Override()
 
         if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
-            self.autojoinbtn.circle:Show()
-            self.autojoinbtn.icon:Hide()
-            SetHoverTextString(self.autojoinbtn, "Disable Auto-Join")
+            self.autojoinbtn:Active()
         end
 
-        local function Join()
-            DebugThreadString("Joining server...")
-            JoinServer(server, password)
-        end
-
-        Join()
+        Join(server, password)
 
         while self.isautojoining do
             if not self.isuidisabled then
@@ -328,27 +321,12 @@ function AutoJoin:StartAutoJoinThread(server, password)
             end
 
             if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
-                self.autojoinbtn:SetText(seconds)
-                if seconds > 9 then
-                    self.autojoinbtn:SetTextSize(14)
-                else
-                    self.autojoinbtn:SetTextSize(18)
-                end
-
-                if self.autojoinbtn.focus then
-                    self.autojoinbtn.circle:Hide()
-                    self.autojoinbtn.circlecross:Show()
-                else
-                    self.autojoinbtn.circle:Show()
-                    self.autojoinbtn.circlecross:Hide()
-                end
-
-                self.autojoinbtn.icon:Hide()
+                self.autojoinbtn:SetSeconds(seconds)
             end
 
             if seconds < 1 then
                 seconds = defaultseconds + 1
-                Join()
+                Join(server, password)
             end
 
             seconds = seconds - 1
@@ -373,11 +351,7 @@ function AutoJoin:ClearAutoJoinThread()
         self:OverrideRestore()
 
         if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
-            self.autojoinbtn.circle:Hide()
-            self.autojoinbtn.circlecross:Hide()
-            self.autojoinbtn.icon:Show()
-            self.autojoinbtn:SetText(nil)
-            SetHoverTextString(self.autojoinbtn, "Auto-Join")
+            self.autojoinbtn:Inactive()
         end
     end
 end
