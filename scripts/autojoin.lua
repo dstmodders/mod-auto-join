@@ -1,5 +1,3 @@
-local Image = require "widgets/image"
-local ImageButton = require "widgets/imagebutton"
 local InputDialogScreen = require "screens/redux/inputdialog"
 
 -- general
@@ -223,39 +221,13 @@ end
 -- Server Listing Screen
 --
 
-local function MakeButton(onclick, text, size)
-    local prefix = "button_carny_long"
-    if size and #size == 2 then
-        local ratio = size[1] / size[2]
-        if ratio > 4 then
-            prefix = "button_carny_xlong"
-        elseif ratio < 1.1 then
-            prefix = "button_carny_square"
-        end
+function AutoJoin:GetBtnIsActiveFn()
+    return function()
+        return self:IsAutoJoining()
     end
-
-    local btn = ImageButton("images/global_redux.xml",
-        prefix .. "_normal.tex",
-        prefix .. "_hover.tex",
-        prefix .. "_disabled.tex",
-        prefix .. "_down.tex")
-
-    btn:SetOnClick(onclick)
-    btn:SetText(text)
-    btn:SetFont(CHATFONT)
-    btn:SetDisabledFont(CHATFONT)
-
-    if size then
-        btn:ForceImageSize(unpack(size))
-        btn:SetTextSize(math.ceil(size[2] * .45))
-    end
-
-    return btn
 end
 
-function AutoJoin:MakeAutoJoinButton(parent, serverfn, successcb, cancelcb)
-    local btn
-
+function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
     local function Join(server, password)
         if self:IsAutoJoining() then
             self:ClearAutoJoinThread()
@@ -287,7 +259,12 @@ function AutoJoin:MakeAutoJoinButton(parent, serverfn, successcb, cancelcb)
         end
     end
 
-    local function OnClick()
+    return function()
+        if not self.joinbtn then
+            DebugString("[error] AutoJoin.joinbtn is required")
+            return
+        end
+
         local server = serverfn()
         if server and server.has_password and not self:IsAutoJoining() then
             DebugString("Auto-joining the password-protected server:", server.name)
@@ -301,84 +278,6 @@ function AutoJoin:MakeAutoJoinButton(parent, serverfn, successcb, cancelcb)
             OnCancel(server)
         end
     end
-
-    btn = parent:AddChild(MakeButton(OnClick, nil, { 60, 60 }))
-    btn:SetPosition(120, -RESOLUTION_Y * .5 + BACK_BUTTON_Y - 15)
-    btn:SetScale(1.4)
-
-    btn:SetDisabledFont(HEADERFONT)
-    btn:SetFont(HEADERFONT)
-    btn:SetText(nil)
-    btn:SetTextSize(18)
-    btn.text:SetPosition(.5, -.5)
-
-    local width = 28
-
-    btn.icon = btn:AddChild(Image("images/auto_join_icons.xml", "clock.tex"))
-    btn.icon:ScaleToSize(width, width)
-    btn.icon:SetPosition(.5, 0)
-    btn.icon:Show()
-
-    btn.circle = btn:AddChild(Image("images/auto_join_icons.xml", "circle.tex"))
-    btn.circle:ScaleToSize(width, width)
-    btn.circle:SetPosition(.5, 0)
-    btn.circle:Hide()
-
-    btn.circlecross = btn:AddChild(Image("images/auto_join_icons.xml", "circle_cross.tex"))
-    btn.circlecross:ScaleToSize(width, width)
-    btn.circlecross:SetPosition(.5, 0)
-    btn.circlecross:Hide()
-
-    btn:SetHoverText("Auto-Join", {
-        font = NEWFONT_OUTLINE,
-        offset_x = 0,
-        offset_y = 70,
-        colour = UICOLOURS.WHITE,
-        bg = nil
-    })
-
-    btn.ongainfocus = function()
-        if self:IsAutoJoining() then
-            btn.circle:Hide()
-            btn.circlecross:Show()
-        end
-    end
-
-    btn.onlosefocus = function()
-        if self:IsAutoJoining() then
-            btn.circle:Show()
-            btn.circlecross:Hide()
-        end
-    end
-
-    if self:IsAutoJoining() then
-        btn:Enable()
-    else
-        btn:Disable()
-    end
-
-    self.autojoinbtn = btn
-
-    DebugString("Auto-Join button initialized")
-
-    return btn
-end
-
-function AutoJoin:MakeJoinButton(parent, onclick)
-    local btn
-    local spacing = 10
-    local width = 240
-
-    btn = parent:AddChild(MakeButton(onclick, STRINGS.UI.SERVERLISTINGSCREEN.JOIN, { width - 60 - spacing, 60 }))
-    btn:SetPosition(-30 - spacing, -RESOLUTION_Y * .5 + BACK_BUTTON_Y - 15)
-    btn:SetScale(1.45)
-    btn:Disable()
-
-    self.joinbtn = btn
-
-    DebugString("Join button initialized")
-
-    return btn
 end
 
 --

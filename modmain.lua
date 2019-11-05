@@ -11,6 +11,8 @@ local TheNet = _G.TheNet
 --
 
 local AutoJoin = require "autojoin"
+local AutoJoinDefaultButton = require "widgets/autojoindefaultbutton"
+local AutoJoinIconButton = require "widgets/autojoiniconbutton"
 
 --
 -- Assets
@@ -88,8 +90,14 @@ local function ServerListingScreenPostInit(_self)
         _self.servers_scroll_list:RefreshView()
     end
 
-    _self.autojoinbtn = AutoJoin:MakeAutoJoinButton(_self.side_panel, serverfn, OnAutoJoinSuccess, OnAutoJoinCancel)
-    _self.autojoindefaultbtn = AutoJoin:MakeJoinButton(_self.side_panel, OnJoinClick)
+    AutoJoin.joinbtn = _self.side_panel:AddChild(AutoJoinDefaultButton(OnJoinClick))
+    AutoJoin.autojoinbtn = _self.side_panel:AddChild(AutoJoinIconButton(
+        AutoJoin:GetBtnOnClickFn(serverfn, OnAutoJoinSuccess, OnAutoJoinCancel),
+        AutoJoin:GetBtnIsActiveFn()
+    ))
+
+    _self.autojoindefaultbtn = AutoJoin.joinbtn
+    _self.autojoiniconbtn = AutoJoin.autojoinbtn
     _self.join_button:Hide()
 
     --
@@ -108,7 +116,7 @@ local function ServerListingScreenPostInit(_self)
             and (AutoJoin:CompareTable(selectedserver, self.selected_server) == false
             or self.details_hidden_name ~= isnamehidden)
         then
-            _self.autojoinbtn:Enable()
+            _self.autojoiniconbtn:Enable()
             _self.autojoindefaultbtn:Enable()
         end
     end
