@@ -7,7 +7,7 @@ local _DEBUG_FN
 local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
 
 local AutoJoin = Class(function(self)
-    self:Init()
+    self:DoInit()
 end)
 
 --
@@ -37,7 +37,7 @@ end
 -- Initialization
 --
 
-function AutoJoin:Init()
+function AutoJoin:DoInit()
     -- config
     self.configwaitingtime = 15
 

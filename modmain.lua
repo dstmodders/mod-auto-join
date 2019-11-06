@@ -52,7 +52,7 @@ local function DebugConfigString(description, name)
 end
 
 --
--- Player-related
+-- Server Listing Screen
 --
 
 local function ServerListingScreenPostInit(_self)
@@ -188,7 +188,6 @@ AddClassPostConstruct("screens/redux/serverlistingscreen", ServerListingScreenPo
 --
 
 AutoJoin:SetDebugFn(DebugFn)
-AutoJoin:Init()
 
 -- config
 AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
