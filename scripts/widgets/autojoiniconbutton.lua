@@ -4,11 +4,17 @@ local Image = require "widgets/image"
 local BUTTON_SIZE = 60
 local ICON_SIZE = 28
 
+local function GetScreenSize()
+    return TheSim and TheSim:GetScreenSize() or RESOLUTION_X, RESOLUTION_Y
+end
+
 local AutoJoinIconButton = Class(AutoJoinButton, function(self, onclick, isactivefn)
     AutoJoinButton._ctor(self, nil, onclick, { BUTTON_SIZE, BUTTON_SIZE })
 
     self.isactivefn = isactivefn
     self.seconds = 0
+
+    local screenx = GetScreenSize()
 
     self:SetDisabledFont(HEADERFONT)
     self:SetFont(HEADERFONT)
@@ -35,7 +41,7 @@ local AutoJoinIconButton = Class(AutoJoinButton, function(self, onclick, isactiv
     self:SetHoverText("Auto-Join", {
         font = NEWFONT_OUTLINE,
         offset_x = 0,
-        offset_y = 70,
+        offset_y = 70 * screenx / 2560,
         colour = UICOLOURS.WHITE,
         bg = nil
     })
@@ -67,19 +73,13 @@ end
 -- States
 --
 
-local function SetHoverTextString(btn, string)
-    btn.hovertext:SetString(string)
-    local w, h = btn.hovertext:GetRegionSize()
-    btn.hovertext_bg:SetSize(w * 1.5, h * 2.0)
-end
-
 function AutoJoinIconButton:Active()
     self.circle:Show()
     self.circlecross:Hide()
     self.icon:Hide()
     self:SetSeconds(self.seconds)
+    self:SetHoverText("Disable")
     self:Enable()
-    SetHoverTextString(self, "Disable Auto-Join")
 end
 
 function AutoJoinIconButton:Inactive()
@@ -87,8 +87,8 @@ function AutoJoinIconButton:Inactive()
     self.circlecross:Hide()
     self.icon:Show()
     self:SetText(nil)
+    self:SetHoverText("Auto-Join")
     self:Enable()
-    SetHoverTextString(self, "Auto-Join")
 end
 
 function AutoJoinIconButton:OnGainFocus()
