@@ -131,14 +131,14 @@ local function ServerListingScreenPostInit(_self)
         _self.servers_scroll_list:RefreshView()
     end
 
-    AutoJoin.joinbtn = _self.side_panel:AddChild(AutoJoinDefaultButton(OnJoinClick))
-    AutoJoin.autojoinbtn = _self.side_panel:AddChild(AutoJoinIconButton(
+    AutoJoin.defaultbtn = _self.side_panel:AddChild(AutoJoinDefaultButton(OnJoinClick))
+    AutoJoin.iconbtn = _self.side_panel:AddChild(AutoJoinIconButton(
         AutoJoin:GetBtnOnClickFn(serverfn, OnAutoJoinSuccess, OnAutoJoinCancel),
         AutoJoin:GetBtnIsActiveFn()
     ))
 
-    _self.autojoindefaultbtn = AutoJoin.joinbtn
-    _self.autojoiniconbtn = AutoJoin.autojoinbtn
+    _self.autojoindefaultbtn = AutoJoin.defaultbtn
+    _self.autojoiniconbtn = AutoJoin.iconbtn
     _self.join_button:Hide()
 
     --

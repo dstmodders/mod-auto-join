@@ -45,8 +45,8 @@ function AutoJoin:DoInit()
     self.serverguid = nil
 
     -- server listing screen
-    self.autojoinbtn = nil
-    self.joinbtn = nil
+    self.defaultbtn = nil
+    self.iconbtn = nil
 
     -- auto-joining
     self.autojointhread = nil
@@ -195,14 +195,13 @@ end
 
 function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
     local function Join(server, password)
-        if self:IsAutoJoining() then
-            self:ClearAutoJoinThread()
-            self.joinbtn:Enable()
-        else
-            self:ClearAutoJoinThread()
+        self:ClearAutoJoinThread()
+
+        if not self:IsAutoJoining() then
             self:StartAutoJoinThread(server, password)
-            self.joinbtn:Enable()
         end
+
+        self.defaultbtn:Enable()
 
         if successcb then
             successcb(self)
@@ -213,11 +212,11 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
         self:ClearAutoJoinThread()
 
         if server then
-            self.autojoinbtn:Enable()
-            self.joinbtn:Enable()
+            self.defaultbtn:Enable()
+            self.iconbtn:Enable()
         else
-            self.autojoinbtn:Disable()
-            self.joinbtn:Disable()
+            self.defaultbtn:Disable()
+            self.iconbtn:Disable()
         end
 
         if cancelcb then
@@ -226,7 +225,7 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
     end
 
     return function()
-        if not self.joinbtn then
+        if not self.defaultbtn then
             DebugString("[error] AutoJoin.joinbtn is required")
             return
         end
@@ -289,8 +288,8 @@ function AutoJoin:StartAutoJoinThread(server, password)
         self.isautojoining = true
         self:Override()
 
-        if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
-            self.autojoinbtn:Active()
+        if self.iconbtn and self.iconbtn.inst:IsValid() then
+            self.iconbtn:Active()
         end
 
         self:Join(server, password)
@@ -320,8 +319,8 @@ function AutoJoin:StartAutoJoinThread(server, password)
                 end
             end
 
-            if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
-                self.autojoinbtn:SetSeconds(seconds)
+            if self.iconbtn and self.iconbtn.inst:IsValid() then
+                self.iconbtn:SetSeconds(seconds)
             end
 
             if seconds < 1 then
@@ -350,8 +349,8 @@ function AutoJoin:ClearAutoJoinThread()
         TheNet:JoinServerResponse(true)
         self:OverrideRestore()
 
-        if self.autojoinbtn and self.autojoinbtn.inst:IsValid() then
-            self.autojoinbtn:Inactive()
+        if self.iconbtn and self.iconbtn.inst:IsValid() then
+            self.iconbtn:Inactive()
         end
     end
 end
