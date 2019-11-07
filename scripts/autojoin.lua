@@ -55,9 +55,9 @@ function AutoJoin:DoInit()
     self.server = nil
 
     -- overrides
-    self.oldjoinserver = JoinServer
-    self.oldonnetworkdisconnect = OnNetworkDisconnect
-    self.oldshowconnectingtogamepopup = ShowConnectingToGamePopup
+    self.oldjoinserver = nil
+    self.oldonnetworkdisconnect = nil
+    self.oldshowconnectingtogamepopup = nil
 
     DebugString("AutoJoin initialized")
 end
@@ -153,6 +153,28 @@ function AutoJoin:Join(server, password)
 end
 
 function AutoJoin:Override()
+    if not self.oldjoinserver then
+        self.oldjoinserver = JoinServer
+    end
+
+    if not self.oldonnetworkdisconnect then
+        self.oldonnetworkdisconnect = OnNetworkDisconnect
+    end
+
+    if not self.oldshowconnectingtogamepopup then
+        self.oldshowconnectingtogamepopup = ShowConnectingToGamePopup
+    end
+
+    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
+
+    if not self.oldjoinserver
+        or not self.oldonnetworkdisconnect
+        or not self.oldshowconnectingtogamepopup
+    then
+        debug("[error] AutoJoin:Override() has failed storing one of the functions")
+        return
+    end
+
     JoinServer = JoinServerOverride
 
     OnNetworkDisconnect = function(message)
@@ -166,7 +188,7 @@ function AutoJoin:Override()
 
     self.isuidisabled = true
 
-    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
+    debug("JoinServer overridden")
     debug("OnNetworkDisconnect overridden")
     debug("ShowConnectingToGamePopup overridden")
 end
@@ -179,6 +201,7 @@ function AutoJoin:OverrideRestore()
     self.isuidisabled = false
 
     local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
+    debug("JoinServer restored")
     debug("OnNetworkDisconnect restored")
     debug("ShowConnectingToGamePopup restored")
 end

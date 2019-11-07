@@ -188,6 +188,7 @@ AddClassPostConstruct("screens/redux/serverlistingscreen", ServerListingScreenPo
 --
 
 AutoJoin:SetDebugFn(DebugFn)
+AutoJoin:DoInit()
 
 -- config
 AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
