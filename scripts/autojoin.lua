@@ -195,10 +195,10 @@ end
 
 function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
     local function Join(server, password)
-        self:ClearAutoJoinThread()
+        self:StopAutoJoining()
 
         if not self:IsAutoJoining() then
-            self:StartAutoJoinThread(server, password)
+            self:StartAutoJoining(server, password)
         end
 
         self.defaultbtn:Enable()
@@ -209,7 +209,7 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
     end
 
     local function OnCancel(server)
-        self:ClearAutoJoinThread()
+        self:StopAutoJoining()
 
         if server then
             self.defaultbtn:Enable()
@@ -265,6 +265,29 @@ function AutoJoin:IsAutoJoining()
     return self.isautojoining
 end
 
+function AutoJoin:StartAutoJoining(server, password)
+    if not self.isuidisabled then
+        self:Override()
+    end
+
+    self:StartAutoJoinThread(server, password)
+end
+
+function AutoJoin:StopAutoJoining()
+    self:ClearAutoJoinThread()
+
+    self.isautojoining = false
+    TheNet:JoinServerResponse(true)
+
+    if self.isuidisabled then
+        self:OverrideRestore()
+    end
+
+    if self.iconbtn and self.iconbtn.inst:IsValid() then
+        self.iconbtn:Inactive()
+    end
+end
+
 function AutoJoin:StartAutoJoinThread(server, password)
     if not server then
         return server
@@ -286,7 +309,6 @@ function AutoJoin:StartAutoJoinThread(server, password)
         DebugThreadString(string.format("Refreshing every %d seconds...", refreshseconds))
 
         self.isautojoining = true
-        self:Override()
 
         if self.iconbtn and self.iconbtn.inst:IsValid() then
             self.iconbtn:Active()
@@ -295,10 +317,6 @@ function AutoJoin:StartAutoJoinThread(server, password)
         self:Join(server, password)
 
         while self.isautojoining do
-            if not self.isuidisabled then
-                self:Override()
-            end
-
             if not isservernotlisted
                 and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
                 and not IsServerListed(server.guid)
@@ -334,7 +352,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
             Sleep(FRAMES / FRAMES * 1)
         end
 
-        self:ClearFakeEatingThread()
+        self:ClearAutoJoinThread()
     end, _AUTO_JOIN_THREAD_ID)
 end
 
@@ -344,23 +362,6 @@ function AutoJoin:ClearAutoJoinThread()
         KillThreadsWithID(self.autojointhread.id)
         self.autojointhread:SetList(nil)
         self.autojointhread = nil
-
-        self.isautojoining = false
-        TheNet:JoinServerResponse(true)
-        self:OverrideRestore()
-
-        if self.iconbtn and self.iconbtn.inst:IsValid() then
-            self.iconbtn:Inactive()
-        end
-    end
-end
-
-function AutoJoin:ToggleAutoJoin(server, password)
-    self.isautojoining = not self.isautojoining
-    if self.isautojoining then
-        self:StartAutoJoinThread(server, password)
-    else
-        self:ClearAutoJoinThread()
     end
 end
 

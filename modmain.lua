@@ -116,7 +116,7 @@ local function ServerListingScreenPostInit(_self)
                 DebugString("Joining the server:", server.name)
             end
 
-            AutoJoin:ClearAutoJoinThread()
+            AutoJoin:StopAutoJoining()
             _self:Join(false)
         end
     end
