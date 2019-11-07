@@ -1,4 +1,4 @@
-local InputDialogScreen = require "screens/redux/inputdialog"
+local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
 local PopupDialogScreen = require "screens/redux/popupdialog"
 
 -- general
@@ -70,9 +70,7 @@ end
 -- an override of the JoinServer() global function from the networking module
 local function JoinServerOverride(server_listing, optional_password_override)
     local function send_response(password)
-        local start_worked = TheNet:JoinServerResponse(false, server_listing.guid, password)
-
-        if start_worked then
+        if TheNet:JoinServerResponse(false, server_listing.guid, password) then
             DisableAllDLC()
         end
         ShowConnectingToGamePopup()
@@ -87,40 +85,17 @@ local function JoinServerOverride(server_listing, optional_password_override)
     end
 
     local function after_mod_warning()
-        if server_listing.has_password and (optional_password_override == "" or optional_password_override == nil) then
-            local password_prompt_screen
-            password_prompt_screen = InputDialogScreen(STRINGS.UI.SERVERLISTINGSCREEN.PASSWORDREQUIRED,
-                {
-                    {
-                        text = STRINGS.UI.SERVERLISTINGSCREEN.OK,
-                        cb = function()
-                            TheFrontEnd:PopScreen()
-                            send_response(password_prompt_screen:GetActualString())
-                        end
-                    },
-                    {
-                        text = STRINGS.UI.SERVERLISTINGSCREEN.CANCEL,
-                        cb = function()
-                            TheFrontEnd:PopScreen()
-                            on_cancelled()
-                        end
-                    },
-                },
-                true)
-            password_prompt_screen.edit_text.OnTextEntered = function()
-                if password_prompt_screen:GetActualString() ~= "" then
-                    TheFrontEnd:PopScreen()
-                    send_response(password_prompt_screen:GetActualString())
-                else
-                    password_prompt_screen.edit_text:SetEditing(true)
-                end
-            end
-            if not Profile:GetShowPasswordEnabled() then
-                password_prompt_screen.edit_text:SetPassword(true)
-            end
-            TheFrontEnd:PushScreen(password_prompt_screen)
-            password_prompt_screen.edit_text:SetForceEdit(true)
-            password_prompt_screen.edit_text:OnControl(CONTROL_ACCEPT, false)
+        if server_listing.has_password
+            and (optional_password_override == "" or optional_password_override == nil)
+        then
+            local screen = AutoJoinPasswordScreen(nil, function(_, string)
+                send_response(string)
+            end, function()
+                on_cancelled()
+            end)
+
+            TheFrontEnd:PushScreen(screen)
+            screen:ForceInput()
         else
             send_response(optional_password_override or "")
         end
@@ -130,18 +105,24 @@ local function JoinServerOverride(server_listing, optional_password_override)
         after_mod_warning()
     end
 
-    if server_listing.client_mods_disabled and
-        not IsMigrating() and
-        (server_listing.dedicated or not server_listing.owner) and
-        AreAnyClientModsEnabled() then
-
-        local client_mod_msg = PopupDialogScreen(STRINGS.UI.SERVERLISTINGSCREEN.CLIENT_MODS_DISABLED_TITLE, STRINGS.UI.SERVERLISTINGSCREEN.CLIENT_MODS_DISABLED_BODY,
-            { { text = STRINGS.UI.SERVERLISTINGSCREEN.CONTINUE, cb = function()
-                TheFrontEnd:PopScreen()
-                after_client_mod_message()
-            end } })
-
-        TheFrontEnd:PushScreen(client_mod_msg)
+    if server_listing.client_mods_disabled
+        and not IsMigrating()
+        and (server_listing.dedicated or not server_listing.owner)
+        and AreAnyClientModsEnabled()
+    then
+        TheFrontEnd:PushScreen(PopupDialogScreen(
+            STRINGS.UI.SERVERLISTINGSCREEN.CLIENT_MODS_DISABLED_TITLE,
+            STRINGS.UI.SERVERLISTINGSCREEN.CLIENT_MODS_DISABLED_BODY,
+            {
+                {
+                    text = STRINGS.UI.SERVERLISTINGSCREEN.CONTINUE,
+                    cb = function()
+                        TheFrontEnd:PopScreen()
+                        after_client_mod_message()
+                    end
+                }
+            }
+        ))
     else
         after_client_mod_message()
     end
@@ -257,7 +238,10 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
         local server = serverfn()
         if server and server.has_password and not self:IsAutoJoining() then
             DebugString("Auto-joining the password-protected server:", server.name)
-            self:PasswordPrompt(server, Join, OnCancel)
+            DebugString("Prompting password...")
+            local screen = AutoJoinPasswordScreen(server, Join, OnCancel)
+            TheFrontEnd:PushScreen(screen)
+            screen:ForceInput()
         elseif server and not self:IsAutoJoining() then
             DebugString("Auto-joining the server:", server.name)
             OnCancel(server)
@@ -387,53 +371,6 @@ function AutoJoin:ClearAutoJoinThread()
         self.autojointhread:SetList(nil)
         self.autojointhread = nil
     end
-end
-
-function AutoJoin:PasswordPrompt(server, successcb, cancelcb)
-    local screen
-
-    local function OnSuccess()
-        TheFrontEnd:PopScreen()
-        if successcb then
-            successcb(server, screen:GetActualString())
-        end
-    end
-
-    screen = InputDialogScreen(STRINGS.UI.SERVERLISTINGSCREEN.PASSWORDREQUIRED,
-        {
-            {
-                text = STRINGS.UI.SERVERLISTINGSCREEN.OK,
-                cb = OnSuccess
-            },
-            {
-                text = STRINGS.UI.SERVERLISTINGSCREEN.CANCEL,
-                cb = function()
-                    TheFrontEnd:PopScreen()
-                    if cancelcb then
-                        cancelcb(server)
-                    end
-                end
-            },
-        },
-        true)
-
-    screen.edit_text.OnTextEntered = function()
-        if screen:GetActualString() ~= "" then
-            OnSuccess()
-        else
-            screen.edit_text:SetEditing(true)
-        end
-    end
-
-    if not Profile:GetShowPasswordEnabled() then
-        screen.edit_text:SetPassword(true)
-    end
-
-    TheFrontEnd:PushScreen(screen)
-    screen.edit_text:SetForceEdit(true)
-    screen.edit_text:OnControl(CONTROL_ACCEPT, false)
-
-    DebugString("Prompting password...")
 end
 
 return AutoJoin
