@@ -2,10 +2,14 @@ local AutoJoinButton = require "widgets/autojoinbutton"
 local AutoJoinIcon = require "widgets/autojoinicon"
 
 local SCREENX = 2560
+local SCREENY = 1440
 local SIZE = 60
 
 local function GetScreenSize()
-    return TheSim and TheSim:GetScreenSize() or RESOLUTION_X, RESOLUTION_Y
+    if TheSim then
+        return TheSim:GetScreenSize()
+    end
+    return RESOLUTION_X, RESOLUTION_Y
 end
 
 local AutoJoinIconButton = Class(AutoJoinButton, function(self, onclick, isactivefn)
@@ -13,18 +17,18 @@ local AutoJoinIconButton = Class(AutoJoinButton, function(self, onclick, isactiv
 
     self.isactivefn = isactivefn
 
-    local screenx = GetScreenSize()
+    local screenx, screeny = GetScreenSize()
 
     self.icon = self:AddChild(AutoJoinIcon())
 
     self:SetPosition(120, -RESOLUTION_Y * .5 + BACK_BUTTON_Y - 15)
     self:SetScale(1.4)
     self:SetHoverText("Auto-Join", {
-        font = NEWFONT_OUTLINE,
-        offset_x = 0,
-        offset_y = 70 * screenx / SCREENX,
+        bg = nil,
         colour = UICOLOURS.WHITE,
-        bg = nil
+        font = NEWFONT_OUTLINE,
+        offset_x = 0 * screenx / SCREENX,
+        offset_y = 70 * screeny / SCREENY,
     })
 
     if isactivefn() then
