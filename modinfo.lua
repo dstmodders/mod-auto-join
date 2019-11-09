@@ -55,5 +55,6 @@ end
 
 configuration_options = {
     AddConfig("Waiting time", "waiting_time", waiting_time, 15, "The time between the reconnection attempts"),
+    AddConfig("Indicator", "indicator", boolean, true, "Enables/Disables the indicator on other screens"),
     AddConfig("Debug", "debug", boolean, false, "Enables/Disables the debug mode"),
 }

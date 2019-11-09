@@ -28,6 +28,7 @@ Assets = {
 --
 
 local _DEBUG = GetModConfigData("debug")
+local _INDICATOR = GetModConfigData("indicator")
 
 --
 -- Debugging-related
@@ -249,24 +250,26 @@ local function MultiplayerMainScreenPostInit(_self)
     DebugString(_self.name, "initialized")
 end
 
-AddClassPostConstruct("screens/redux/multiplayermainscreen", MultiplayerMainScreenPostInit) -- Main Screen
+if _INDICATOR then
+    AddClassPostConstruct("screens/redux/multiplayermainscreen", MultiplayerMainScreenPostInit) -- Main Screen
 
--- Main Screen
-AddClassPostConstruct("screens/redux/servercreationscreen", IndicatorScreenPostInit) -- Host Game
-AddClassPostConstruct("screens/redux/playersummaryscreen", IndicatorScreenPostInit) -- Item Collection
-AddClassPostConstruct("screens/redux/optionsscreen", IndicatorScreenPostInit) -- Options
-AddClassPostConstruct("screens/redux/modsscreen", IndicatorScreenPostInit) -- Mods
-AddClassPostConstruct("screens/redux/modconfigurationscreen", IndicatorScreenPostInit) -- Mods (Configuration)
+    -- Main Screen
+    AddClassPostConstruct("screens/redux/servercreationscreen", IndicatorScreenPostInit) -- Host Game
+    AddClassPostConstruct("screens/redux/playersummaryscreen", IndicatorScreenPostInit) -- Item Collection
+    AddClassPostConstruct("screens/redux/optionsscreen", IndicatorScreenPostInit) -- Options
+    AddClassPostConstruct("screens/redux/modsscreen", IndicatorScreenPostInit) -- Mods
+    AddClassPostConstruct("screens/redux/modconfigurationscreen", IndicatorScreenPostInit) -- Mods (Configuration)
 
--- Item Collection
-AddClassPostConstruct("screens/redux/collectionscreen", IndicatorScreenPostInit) -- Curio Cabinet
-AddClassPostConstruct("screens/redux/mysteryboxscreen", IndicatorScreenPostInit) -- Treasury
-AddClassPostConstruct("screens/redux/morguescreen", IndicatorScreenPostInit) -- History
-AddClassPostConstruct("screens/tradescreen", IndicatorScreenPostInit) -- Trade Inn
-AddClassPostConstruct("screens/crowgamescreen", IndicatorScreenPostInit) -- Trade Inn (Crow Game)
-AddClassPostConstruct("screens/redeemdialog", IndicatorScreenPostInit) -- Redeem Codes
-AddClassPostConstruct("screens/redux/purchasepackscreen", IndicatorScreenPostInit) -- Shop
-AddClassPostConstruct("screens/redux/achievementspopup", IndicatorScreenPostInit) -- Achievements
+    -- Item Collection
+    AddClassPostConstruct("screens/redux/collectionscreen", IndicatorScreenPostInit) -- Curio Cabinet
+    AddClassPostConstruct("screens/redux/mysteryboxscreen", IndicatorScreenPostInit) -- Treasury
+    AddClassPostConstruct("screens/redux/morguescreen", IndicatorScreenPostInit) -- History
+    AddClassPostConstruct("screens/tradescreen", IndicatorScreenPostInit) -- Trade Inn
+    AddClassPostConstruct("screens/crowgamescreen", IndicatorScreenPostInit) -- Trade Inn (Crow Game)
+    AddClassPostConstruct("screens/redeemdialog", IndicatorScreenPostInit) -- Redeem Codes
+    AddClassPostConstruct("screens/redux/purchasepackscreen", IndicatorScreenPostInit) -- Shop
+    AddClassPostConstruct("screens/redux/achievementspopup", IndicatorScreenPostInit) -- Achievements
+end
 
 --
 -- AutoJoin
@@ -276,6 +279,8 @@ AutoJoin:SetDebugFn(DebugFn)
 AutoJoin:DoInit()
 
 -- config
+AutoJoin.configindicator = GetModConfigData("indicator")
 AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
 
+DebugConfigString("Indicator:", "indicator")
 DebugConfigString("Waiting time:", "waiting_time")

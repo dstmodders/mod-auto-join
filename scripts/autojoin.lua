@@ -41,6 +41,7 @@ end
 
 function AutoJoin:DoInit()
     -- config
+    self.configindicator = true
     self.configwaitingtime = 15
 
     -- server
