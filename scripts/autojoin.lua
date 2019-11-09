@@ -1,3 +1,4 @@
+local AutoJoinIconIndicator = require "widgets/autojoiniconindicator"
 local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
 local PopupDialogScreen = require "screens/redux/popupdialog"
 
@@ -44,6 +45,9 @@ function AutoJoin:DoInit()
 
     -- server
     self.serverguid = nil
+
+    -- indicators
+    self.indicators = {}
 
     -- server listing screen
     self.defaultbtn = nil
@@ -186,6 +190,55 @@ function AutoJoin:OverrideRestore()
     debug("JoinServer restored")
     debug("OnNetworkDisconnect restored")
     debug("ShowConnectingToGamePopup restored")
+end
+
+--
+-- Indicators
+--
+
+function AutoJoin:GetIndicatorOnClickFn(cancelcb)
+    return function()
+        DebugString("Auto-joining has been cancelled")
+        self:StopAutoJoining()
+        self:RemoveAllIndicators()
+        if cancelcb then
+            cancelcb(self)
+        end
+    end
+end
+
+function AutoJoin:AddIndicator(root)
+    local indicator = root:AddChild(AutoJoinIconIndicator(
+        self.server,
+        self:GetIndicatorOnClickFn(),
+        self:GetBtnIsActiveFn()
+    ))
+    table.insert(self.indicators, indicator)
+    return indicator
+end
+
+function AutoJoin:RemoveIndicator(indicator)
+    for k, v in ipairs(self.indicators) do
+        if indicator.inst.GUID == v.inst.GUID then
+            v:Kill()
+            table.remove(self.indicators, k)
+        end
+    end
+end
+
+function AutoJoin:RemoveAllIndicators()
+    for _, v in ipairs(self.indicators) do
+        v:Kill()
+    end
+    self.indicators = {}
+end
+
+function AutoJoin:SetIndicatorsSeconds(seconds)
+    for _, v in ipairs(self.indicators) do
+        if v.inst:IsValid() then
+            v:SetSeconds(seconds)
+        end
+    end
 end
 
 --
@@ -348,6 +401,8 @@ function AutoJoin:StartAutoJoinThread(server, password)
             if self.iconbtn and self.iconbtn.inst:IsValid() then
                 self.iconbtn:SetSeconds(seconds)
             end
+
+            self:SetIndicatorsSeconds(seconds)
 
             if seconds < 1 then
                 seconds = defaultseconds + 1

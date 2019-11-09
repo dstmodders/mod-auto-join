@@ -184,6 +184,91 @@ end
 AddClassPostConstruct("screens/redux/serverlistingscreen", ServerListingScreenPostInit)
 
 --
+-- Indicators
+--
+
+local function IndicatorScreenPostInit(_self)
+    _self.autojoinindicator = nil
+
+    if not _self.autojoinindicator then
+        _self.autojoinindicator = AutoJoin:AddIndicator(_self)
+    end
+
+    --
+    -- Overrides
+    --
+
+    local OldOnDestroy = _self.OnDestroy
+
+    local function NewOnDestroy(self)
+        DebugString(self.name, "destroyed")
+        OldOnDestroy(self)
+        if self.autojoinindicator then
+            AutoJoin:RemoveIndicator(self.autojoinindicator)
+            self.autojoinindicator = nil
+        end
+    end
+
+    _self.OnDestroy = NewOnDestroy
+
+    DebugString(_self.name, "initialized")
+end
+
+local function MultiplayerMainScreenPostInit(_self)
+    _self.autojoinindicator = nil
+
+    --
+    -- Overrides
+    --
+
+    local OldOnHide = _self.OnHide
+    local OldOnShow = _self.OnShow
+
+    local function NewOnShow(self)
+        DebugString(self.name, "is shown")
+        OldOnShow(self)
+        if not self.autojoinindicator then
+            self.autojoinindicator = AutoJoin:AddIndicator(self.fixed_root, function()
+                return self.autojoinindicator
+            end)
+        end
+    end
+
+    local function NewOnHide(self)
+        DebugString(self.name, "is hidden")
+        OldOnHide(self)
+        if self.autojoinindicator then
+            AutoJoin:RemoveIndicator(self.autojoinindicator)
+            self.autojoinindicator = nil
+        end
+    end
+
+    _self.OnHide = NewOnHide
+    _self.OnShow = NewOnShow
+
+    DebugString(_self.name, "initialized")
+end
+
+AddClassPostConstruct("screens/redux/multiplayermainscreen", MultiplayerMainScreenPostInit) -- Main Screen
+
+-- Main Screen
+AddClassPostConstruct("screens/redux/servercreationscreen", IndicatorScreenPostInit) -- Host Game
+AddClassPostConstruct("screens/redux/playersummaryscreen", IndicatorScreenPostInit) -- Item Collection
+AddClassPostConstruct("screens/redux/optionsscreen", IndicatorScreenPostInit) -- Options
+AddClassPostConstruct("screens/redux/modsscreen", IndicatorScreenPostInit) -- Mods
+AddClassPostConstruct("screens/redux/modconfigurationscreen", IndicatorScreenPostInit) -- Mods (Configuration)
+
+-- Item Collection
+AddClassPostConstruct("screens/redux/collectionscreen", IndicatorScreenPostInit) -- Curio Cabinet
+AddClassPostConstruct("screens/redux/mysteryboxscreen", IndicatorScreenPostInit) -- Treasury
+AddClassPostConstruct("screens/redux/morguescreen", IndicatorScreenPostInit) -- History
+AddClassPostConstruct("screens/tradescreen", IndicatorScreenPostInit) -- Trade Inn
+AddClassPostConstruct("screens/crowgamescreen", IndicatorScreenPostInit) -- Trade Inn (Crow Game)
+AddClassPostConstruct("screens/redeemdialog", IndicatorScreenPostInit) -- Redeem Codes
+AddClassPostConstruct("screens/redux/purchasepackscreen", IndicatorScreenPostInit) -- Shop
+AddClassPostConstruct("screens/redux/achievementspopup", IndicatorScreenPostInit) -- Achievements
+
+--
 -- AutoJoin
 --
 
