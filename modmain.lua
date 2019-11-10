@@ -280,9 +280,11 @@ AutoJoin:DoInit()
 
 -- config
 AutoJoin.configindicator = GetModConfigData("indicator")
+AutoJoin.configindicatorpadding = GetModConfigData("indicator_padding")
 AutoJoin.configindicatorposition = GetModConfigData("indicator_position")
 AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
 
-DebugConfigString("Indicator:", "indicator")
+DebugConfigString("Indicator padding:", "indicator_padding")
 DebugConfigString("Indicator position:", "indicator_position")
+DebugConfigString("Indicator:", "indicator")
 DebugConfigString("Waiting time:", "waiting_time")

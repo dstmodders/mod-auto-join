@@ -42,6 +42,7 @@ end
 function AutoJoin:DoInit()
     -- config
     self.configindicator = true
+    self.configindicatorpadding = 10
     self.configindicatorposition = "tr"
     self.configwaitingtime = 15
 
@@ -214,7 +215,8 @@ function AutoJoin:AddIndicator(root)
         self.server,
         self:GetIndicatorOnClickFn(),
         self:GetBtnIsActiveFn(),
-        self.configindicatorposition
+        self.configindicatorposition,
+        self.configindicatorpadding
     ))
     table.insert(self.indicators, indicator)
     return indicator

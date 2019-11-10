@@ -34,6 +34,13 @@ local boolean = {
     { description = "No", data = false },
 }
 
+local indicator_padding = {
+    { description = "5", data = 5 },
+    { description = "10", data = 10 },
+    { description = "15", data = 15 },
+    { description = "20", data = 20 },
+}
+
 local indicator_position = {
     { description = "Top Left", data = "tl" },
     { description = "Top Right", data = "tr" },
@@ -64,5 +71,6 @@ configuration_options = {
     AddConfig("Waiting time", "waiting_time", waiting_time, 15, "The time between the reconnection attempts"),
     AddConfig("Indicator", "indicator", boolean, true, "Enables/Disables the indicator on other screens"),
     AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "The indicator position on the screen"),
+    AddConfig("Indicator padding", "indicator_padding", indicator_padding, 10, "The indicator padding from the screen edges"),
     AddConfig("Debug", "debug", boolean, false, "Enables/Disables the debug mode"),
 }

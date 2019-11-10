@@ -1,11 +1,11 @@
 local AutoJoinButton = require "widgets/autojoinbutton"
 local AutoJoinIcon = require "widgets/autojoinicon"
 
-local PADDING = 10
+local DEFAULT_PADDING = 10
 local SCALE = 1.3
 local SIZE = 60
 
-local AutoJoinIconIndicator = Class(AutoJoinButton, function(self, server, onclick, isactivefn, position)
+local AutoJoinIconIndicator = Class(AutoJoinButton, function(self, server, onclick, isactivefn, position, padding)
     AutoJoinButton._ctor(self, nil, onclick, { SIZE, SIZE })
 
     self.isactivefn = isactivefn
@@ -15,7 +15,11 @@ local AutoJoinIconIndicator = Class(AutoJoinButton, function(self, server, oncli
     self.icon:SetScale(SCALE)
     self.icon:Active()
 
-    local pos = ((SIZE / 2) + PADDING) * SCALE
+    if not padding then
+        padding = DEFAULT_PADDING
+    end
+
+    local pos = ((SIZE / 2) + padding) * SCALE
 
     self:SetHAnchor(ANCHOR_RIGHT)
     self:SetPosition(-pos, -pos)
