@@ -1,13 +1,13 @@
 name = "Auto-Join"
-version = "0.3.0"
+version = "0.4.0"
 description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
-    [[- Fixed button hover text position and states]] .. "\n" ..
-    [[- Improved behaviour to start/stop auto-joining]] .. "\n" ..
-    [[- Improved some existing functions and variables]] .. "\n" ..
-    [[- Refactored buttons into widgets]] .. "\n" ..
-    [[- Refactored password prompt into the separate screen]]
+    [[- Added indicators on other screens]] .. "\n" ..
+    [[- Added support for the indicator configuration]] .. "\n" ..
+    [[- Added support for the indicator padding configuration]] .. "\n" ..
+    [[- Added support for the indicator position configuration]] .. "\n" ..
+    [[- Added support for the indicator scale configuration]]
 author = "Demonblink"
 api_version = 10
 forumthread = ""
