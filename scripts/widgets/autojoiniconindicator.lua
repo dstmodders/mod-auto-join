@@ -5,7 +5,7 @@ local PADDING = 10
 local SCALE = 1.3
 local SIZE = 60
 
-local AutoJoinIconIndicator = Class(AutoJoinButton, function(self, server, onclick, isactivefn)
+local AutoJoinIconIndicator = Class(AutoJoinButton, function(self, server, onclick, isactivefn, position)
     AutoJoinButton._ctor(self, nil, onclick, { SIZE, SIZE })
 
     self.isactivefn = isactivefn
@@ -15,12 +15,26 @@ local AutoJoinIconIndicator = Class(AutoJoinButton, function(self, server, oncli
     self.icon:SetScale(SCALE)
     self.icon:Active()
 
+    local pos = ((SIZE / 2) + PADDING) * SCALE
+
     self:SetHAnchor(ANCHOR_RIGHT)
+    self:SetPosition(-pos, -pos)
     self:SetScale(SCALE)
     self:SetVAnchor(ANCHOR_TOP)
 
-    local pos = -((SIZE / 2) + PADDING) * SCALE
-    self:SetPosition(pos, pos)
+    if position == "br" then
+        self:SetHAnchor(ANCHOR_RIGHT)
+        self:SetVAnchor(ANCHOR_BOTTOM)
+        self:SetPosition(-pos, pos)
+    elseif position == "bl" then
+        self:SetHAnchor(ANCHOR_LEFT)
+        self:SetVAnchor(ANCHOR_BOTTOM)
+        self:SetPosition(pos, pos)
+    elseif position == "tl" then
+        self:SetHAnchor(ANCHOR_LEFT)
+        self:SetVAnchor(ANCHOR_TOP)
+        self:SetPosition(pos, -pos)
+    end
 
     if isactivefn and isactivefn() then
         self:Show()

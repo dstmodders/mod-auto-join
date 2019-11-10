@@ -17,12 +17,12 @@ local AutoJoinIconButton = Class(AutoJoinButton, function(self, onclick, isactiv
 
     self.isactivefn = isactivefn
 
-    local screenx, screeny = GetScreenSize()
-
     self.icon = self:AddChild(AutoJoinIcon())
 
     self:SetPosition(120, -RESOLUTION_Y * .5 + BACK_BUTTON_Y - 15)
     self:SetScale(1.4)
+
+    local screenx, screeny = GetScreenSize()
     self:SetHoverText("Auto-Join", {
         bg = nil,
         colour = UICOLOURS.WHITE,

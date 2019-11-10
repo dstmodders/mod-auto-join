@@ -34,6 +34,13 @@ local boolean = {
     { description = "No", data = false },
 }
 
+local indicator_position = {
+    { description = "Top Left", data = "tl" },
+    { description = "Top Right", data = "tr" },
+    { description = "Bottom Right", data = "br" },
+    { description = "Bottom Left", data = "bl" },
+}
+
 local waiting_time = {
     { description = "5s", data = 5 },
     { description = "10s", data = 10 },
@@ -56,5 +63,6 @@ end
 configuration_options = {
     AddConfig("Waiting time", "waiting_time", waiting_time, 15, "The time between the reconnection attempts"),
     AddConfig("Indicator", "indicator", boolean, true, "Enables/Disables the indicator on other screens"),
+    AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "The indicator position on the screen"),
     AddConfig("Debug", "debug", boolean, false, "Enables/Disables the debug mode"),
 }
