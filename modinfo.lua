@@ -48,6 +48,15 @@ local indicator_position = {
     { description = "Bottom Left", data = "bl" },
 }
 
+local indicator_scale = {
+    { description = "1", data = 1 },
+    { description = "1.1", data = 1.1 },
+    { description = "1.2", data = 1.2 },
+    { description = "1.3", data = 1.3 },
+    { description = "1.4", data = 1.4 },
+    { description = "1.5", data = 1.5 },
+}
+
 local waiting_time = {
     { description = "5s", data = 5 },
     { description = "10s", data = 10 },
@@ -72,5 +81,6 @@ configuration_options = {
     AddConfig("Indicator", "indicator", boolean, true, "Enables/Disables the indicator on other screens"),
     AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "The indicator position on the screen"),
     AddConfig("Indicator padding", "indicator_padding", indicator_padding, 10, "The indicator padding from the screen edges"),
+    AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "The indicator size on the screen"),
     AddConfig("Debug", "debug", boolean, false, "Enables/Disables the debug mode"),
 }
