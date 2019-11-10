@@ -13,17 +13,23 @@ reconnect to the selected server until joining. Now you can finally stop
 
 ## Configuration
 
-| Configuration             | Options   | Default | Description                                |
-|---------------------------|-----------|---------|--------------------------------------------|
-| **Waiting time**          | _5s - 1m_ | _15s_   | The time between the reconnection attempts |
-| **Debug**                 | _Yes/No_  | _No_    | Enables/Disables the debug mode            |
+Don't like the default behaviour? Choose your own configuration to match your
+needs:
+
+| Configuration          | Options     | Default     | Description                                     |
+|------------------------|-------------|-------------|-------------------------------------------------|
+| **Waiting time**       | _5s - 1m_   | _15s_       | The time between the reconnection attempts      |
+| **Indicator**          | _Yes/No_    | _No_        | Enables/Disables the indicator on other screens |
+| **Indicator position** | _[corners]_ | _Top Right_ | The indicator position on the screen            |
+| **Indicator padding**  | _5 - 20_    | _10_        | The indicator padding from the screen edges     |
+| **Indicator scale**    | _1 - 1.5_   | _1.3_       | The indicator size on the screen                |
+| **Debug**              | _Yes/No_    | _No_        | Enables/Disables the debug mode                 |
 
 ## Roadmap
 
 Below are the features/improvements yet to be implemented:
 
 - [ ] Console commands to start/stop auto-joining to the server similar to `c_connect()`
-- [ ] Global button/indicator to show the current auto-joining state in other screens
 
 ## License
 
