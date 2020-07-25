@@ -1,8 +1,27 @@
 ### Intellij ###
 .idea/
 
-### Project specific ###
+### Lua ###
+# luarocks build files
+*.src.rock
+*.zip
+*.tar.gz
+
+# luacov
+luacov.*
+
+### Project ###
+# general
+.github/slack*.json
+busted.out
 description.txt
 images/auto_join_icons/
 modsettings.lua
 workshop/
+
+# doc
+doc/*
+!doc/.dockerignore
+!doc/Dockerfile
+!doc/docker-stack.yml
+!doc/ldoc/
