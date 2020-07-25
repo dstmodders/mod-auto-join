@@ -3,15 +3,23 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 4
+indent_size = 2
 indent_style = space
-max_line_length = 100
+max_line_length = 80
 trim_trailing_whitespace = true
 
-# Markdown Files
-[*.md]
-max_line_length = 80
-trim_trailing_whitespace = false
+# Lua
+[*.lua]
+indent_size = 4
+max_line_length = 100
+
+# XML
+[*.xml]
+indent_size = 4
+
+# .luacheckrc
+[.luacheckrc]
+indent_size = 2
 
 # Makefile
 [Makefile]
