@@ -3,6 +3,7 @@
 --
 
 local _G = GLOBAL
+local getmetatable = _G.getmetatable
 local require = _G.require
 local TheNet = _G.TheNet
 
@@ -34,6 +35,7 @@ local _INDICATOR = GetModConfigData("indicator")
 -- Debugging-related
 --
 
+-- luacheck: only
 local DebugFn = _DEBUG and function(...)
     local msg = string.format("[%s]", modname)
     for i = 1, arg.n do
@@ -57,7 +59,6 @@ end
 --
 
 local function ServerListingScreenPostInit(_self)
-    local getmetatable = _G.getmetatable
     local ServerPreferences = _G.ServerPreferences
 
     local function CompareTable(a, b)
@@ -146,22 +147,8 @@ local function ServerListingScreenPostInit(_self)
     -- Overrides
     --
 
-    local OldUpdateServerData = _self.UpdateServerData
     local OldSetRowColour = _self.SetRowColour
-
-    local function NewUpdateServerData(self, selected_index_actual)
-        OldUpdateServerData(self, selected_index_actual)
-
-        local selectedserver = TheNet:GetServerListingFromActualIndex(selected_index_actual)
-        local isnamehidden = selectedserver and ServerPreferences:IsNameAndDescriptionHidden(selectedserver) or false
-        if selectedserver
-            and (CompareTable(selectedserver, self.selected_server) == false
-            or self.details_hidden_name ~= isnamehidden)
-        then
-            _self.autojoiniconbtn:Enable()
-            _self.autojoindefaultbtn:Enable()
-        end
-    end
+    local OldUpdateServerData = _self.UpdateServerData
 
     local function NewSetRowColour(self, row_widget, colour)
         OldSetRowColour(self, row_widget, colour)
@@ -176,8 +163,25 @@ local function ServerListingScreenPostInit(_self)
         end
     end
 
-    _self.UpdateServerData = NewUpdateServerData
+    local function NewUpdateServerData(self, selected_index_actual)
+        OldUpdateServerData(self, selected_index_actual)
+
+        local selectedserver = TheNet:GetServerListingFromActualIndex(selected_index_actual)
+        local isnamehidden = selectedserver
+            and ServerPreferences:IsNameAndDescriptionHidden(selectedserver)
+            or false
+
+        if selectedserver
+            and (CompareTable(selectedserver, self.selected_server) == false
+            or self.details_hidden_name ~= isnamehidden)
+        then
+            _self.autojoiniconbtn:Enable()
+            _self.autojoindefaultbtn:Enable()
+        end
+    end
+
     _self.SetRowColour = NewSetRowColour
+    _self.UpdateServerData = NewUpdateServerData
 
     DebugString("ServerListingScreen initialized")
 end

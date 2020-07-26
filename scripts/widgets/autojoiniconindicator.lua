@@ -5,7 +5,15 @@ local DEFAULT_PADDING = 10
 local DEFAULT_SCALE = 1.3
 local SIZE = 60
 
-local AutoJoinIconIndicator = Class(AutoJoinButton, function(self, server, onclick, isactivefn, position, padding, scale)
+local AutoJoinIconIndicator = Class(AutoJoinButton, function(
+    self,
+    server,
+    onclick,
+    isactivefn,
+    position,
+    padding,
+    scale
+)
     AutoJoinButton._ctor(self, nil, onclick, { SIZE, SIZE })
 
     self.isactivefn = isactivefn

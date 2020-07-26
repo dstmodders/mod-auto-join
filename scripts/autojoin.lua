@@ -16,7 +16,7 @@ end)
 -- Debugging-related
 --
 
-function AutoJoin:SetDebugFn(fn)
+function AutoJoin:SetDebugFn(fn) -- luacheck: only
     _DEBUG_FN = fn
 end
 
@@ -136,7 +136,7 @@ local function JoinServerOverride(server_listing, optional_password_override)
     end
 end
 
-function AutoJoin:Join(server, password)
+function AutoJoin:Join(server, password) -- luacheck: only
     local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
     debug("Joining server...")
     JoinServer(server, password)
