@@ -1,8 +1,14 @@
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
+	@echo "   assets      to pack images"
 	@echo "   install     to install the mod"
+	@echo "   modicon     to pack modicon"
 	@echo "   uninstall   to uninstall the mod"
 	@echo "   workshop    to prepare the Steam Workshop directory"
+
+assets:
+	@:$(call check_defined, DS_KTOOLS_KTECH)
+	@${DS_KTOOLS_KTECH} images/auto_join_icons/* . --atlas images/auto_join_icons.xml
 
 install:
 	@:$(call check_defined, DST_MODS)
@@ -25,6 +31,10 @@ install:
 		. \
 		"${DST_MODS}/dst-mod-auto-join/"
 
+modicon:
+	@:$(call check_defined, DS_KTOOLS_KTECH)
+	@${DS_KTOOLS_KTECH} ./modicon.png . --atlas ./modicon.xml --square
+
 uninstall:
 	@:$(call check_defined, DST_MODS)
 	@rm -Rf "${DST_MODS}/dst-mod-auto-join/"
@@ -41,4 +51,4 @@ workshop:
 	@cp -R ./modmain.lua ./workshop/
 	@cp -R ./scripts/ ./workshop/
 
-.PHONY: workshop
+.PHONY: assets modicon workshop
