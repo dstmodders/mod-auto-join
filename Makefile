@@ -2,6 +2,7 @@ help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
 	@echo "   assets      to pack images"
 	@echo "   install     to install the mod"
+	@echo "   lint        to run code linting"
 	@echo "   modicon     to pack modicon"
 	@echo "   uninstall   to uninstall the mod"
 	@echo "   workshop    to prepare the Steam Workshop directory"
@@ -30,6 +31,14 @@ install:
 		--exclude 'workshop/' \
 		. \
 		"${DST_MODS}/dst-mod-auto-join/"
+
+lint:
+	@EXIT=0; \
+		printf "Luacheck:\n\n"; luacheck . --exclude-files="here/" || EXIT=$$?; \
+		printf "\nPrettier (Markdown):\n\n"; prettier --check ./**/*.md || EXIT=$$?; \
+		printf "\nPrettier (XML):\n\n"; prettier --check ./**/*.xml || EXIT=$$?; \
+		printf "\nPrettier (YAML):\n\n"; prettier --check ./**/*.yml || EXIT=$$?; \
+		exit $${EXIT}
 
 modicon:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
