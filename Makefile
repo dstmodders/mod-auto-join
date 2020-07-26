@@ -2,6 +2,7 @@ help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
 	@echo "   assets      to pack images"
 	@echo "   install     to install the mod"
+	@echo "   ldoc        to generate an LDoc documentation"
 	@echo "   lint        to run code linting"
 	@echo "   modicon     to pack modicon"
 	@echo "   uninstall   to uninstall the mod"
@@ -32,6 +33,10 @@ install:
 		. \
 		"${DST_MODS}/dst-mod-auto-join/"
 
+ldoc:
+	@find ./doc/* -type f -not -name Dockerfile -not -name docker-stack.yml -not -wholename ./doc/ldoc/ldoc.css -delete
+	@ldoc .
+
 lint:
 	@EXIT=0; \
 		printf "Luacheck:\n\n"; luacheck . --exclude-files="here/" || EXIT=$$?; \
@@ -60,4 +65,4 @@ workshop:
 	@cp -R ./modmain.lua ./workshop/
 	@cp -R ./scripts/ ./workshop/
 
-.PHONY: assets modicon workshop
+.PHONY: assets ldoc modicon workshop
