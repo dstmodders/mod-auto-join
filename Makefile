@@ -1,3 +1,7 @@
+# Source: https://stackoverflow.com/a/10858332
+__check_defined = $(if $(value $1),, $(error Undefined $1$(if $2, ($2))))
+check_defined = $(strip $(foreach 1,$1, $(call __check_defined,$1,$(strip $(value 2)))))
+
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
 	@echo "   assets      to pack images"
