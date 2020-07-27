@@ -1,19 +1,26 @@
+----
+-- Modmain.
 --
--- Globals
+-- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
-
+-- @author Victor Popkov
+-- @copyright 2019
+-- @license MIT
+-- @release 0.5.0-alpha
+----
 local _G = GLOBAL
-local getmetatable = _G.getmetatable
 local require = _G.require
-local TheNet = _G.TheNet
-
---
--- Requires
---
 
 local AutoJoin = require "autojoin"
 local AutoJoinDefaultButton = require "widgets/autojoindefaultbutton"
 local AutoJoinIconButton = require "widgets/autojoiniconbutton"
+
+--
+-- Globals
+--
+
+local TheNet = _G.TheNet
+local getmetatable = _G.getmetatable
 
 --
 -- Assets
@@ -25,33 +32,43 @@ Assets = {
 }
 
 --
--- GetModConfigData-related
+-- Debugging
 --
 
-local _DEBUG = GetModConfigData("debug")
-local _INDICATOR = GetModConfigData("indicator")
+local Debug
 
---
--- Debugging-related
---
-
--- luacheck: only
-local DebugFn = _DEBUG and function(...)
-    local msg = string.format("[%s]", modname)
-    for i = 1, arg.n do
-        msg = msg .. " " .. tostring(arg[i])
-    end
-    print(msg)
-end or function()
-    --nil
+if GetModConfigData("debug") then
+    Debug = require "autojoin/debug"
+    Debug:DoInit(modname)
+    Debug:SetIsEnabled(true)
+    Debug:DebugModConfigs()
 end
+
+_G.AutoJoinDebug = Debug
 
 local function DebugString(...)
-    DebugFn(...)
+    return Debug and Debug:DebugString(...)
 end
 
-local function DebugConfigString(description, name)
-    DebugFn("[config]", description .. ":", GetModConfigData(name))
+local function DebugInit(...)
+    return Debug and Debug:DebugInit(...)
+end
+
+--
+-- Initialization
+--
+
+AutoJoin:DoInit()
+
+-- GetModConfigData
+AutoJoin.configindicator = GetModConfigData("indicator")
+AutoJoin.configindicatorpadding = GetModConfigData("indicator_padding")
+AutoJoin.configindicatorposition = GetModConfigData("indicator_position")
+AutoJoin.configindicatorscale = GetModConfigData("indicator_scale")
+AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
+
+if Debug then
+    Debug:DebugModConfigs()
 end
 
 --
@@ -183,13 +200,13 @@ local function ServerListingScreenPostInit(_self)
     _self.SetRowColour = NewSetRowColour
     _self.UpdateServerData = NewUpdateServerData
 
-    DebugString("ServerListingScreen initialized")
+    DebugInit("ServerListingScreenPostInit")
 end
 
 AddClassPostConstruct("screens/redux/serverlistingscreen", ServerListingScreenPostInit)
 
 --
--- Indicators
+-- Indicator
 --
 
 local function IndicatorScreenPostInit(_self)
@@ -216,7 +233,7 @@ local function IndicatorScreenPostInit(_self)
 
     _self.OnDestroy = NewOnDestroy
 
-    DebugString(_self.name, "initialized")
+    DebugInit(_self.name)
 end
 
 local function MultiplayerMainScreenPostInit(_self)
@@ -251,10 +268,10 @@ local function MultiplayerMainScreenPostInit(_self)
     _self.OnHide = NewOnHide
     _self.OnShow = NewOnShow
 
-    DebugString(_self.name, "initialized")
+    DebugInit(_self.name)
 end
 
-if _INDICATOR then
+if GetModConfigData("indicator") then
     AddClassPostConstruct("screens/redux/multiplayermainscreen", MultiplayerMainScreenPostInit) -- Main Screen
 
     -- Main Screen
@@ -274,23 +291,3 @@ if _INDICATOR then
     AddClassPostConstruct("screens/redux/purchasepackscreen", IndicatorScreenPostInit) -- Shop
     AddClassPostConstruct("screens/redux/achievementspopup", IndicatorScreenPostInit) -- Achievements
 end
-
---
--- AutoJoin
---
-
-AutoJoin:SetDebugFn(DebugFn)
-AutoJoin:DoInit()
-
--- config
-AutoJoin.configindicator = GetModConfigData("indicator")
-AutoJoin.configindicatorpadding = GetModConfigData("indicator_padding")
-AutoJoin.configindicatorposition = GetModConfigData("indicator_position")
-AutoJoin.configindicatorscale = GetModConfigData("indicator_scale")
-AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
-
-DebugConfigString("Indicator padding:", "indicator_padding")
-DebugConfigString("Indicator position:", "indicator_position")
-DebugConfigString("Indicator scale:", "indicator_scale")
-DebugConfigString("Indicator:", "indicator")
-DebugConfigString("Waiting time:", "waiting_time")

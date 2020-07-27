@@ -1,75 +1,13 @@
 local AutoJoinIconIndicator = require "widgets/autojoiniconindicator"
 local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
 local PopupDialogScreen = require "screens/redux/popupdialog"
+local Utils = require "autojoin/utils"
 
--- general
-local _DEBUG_FN
-
--- threads
 local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
 
 local AutoJoin = Class(function(self)
     self:DoInit()
 end)
-
---
--- Debugging-related
---
-
-function AutoJoin:SetDebugFn(fn) -- luacheck: only
-    _DEBUG_FN = fn
-end
-
-local function DebugString(...)
-    if _DEBUG_FN then
-        _DEBUG_FN(...)
-    end
-end
-
-local function DebugThreadString(...)
-    if _DEBUG_FN then
-        local task = scheduler:GetCurrentTask()
-        if task then
-            _DEBUG_FN("[" .. task.id .. "]", ...)
-        end
-    end
-end
-
---
--- Initialization
---
-
-function AutoJoin:DoInit()
-    -- config
-    self.configindicator = true
-    self.configindicatorpadding = 10
-    self.configindicatorposition = "tr"
-    self.configindicatorscale = 1.3
-    self.configwaitingtime = 15
-
-    -- server
-    self.serverguid = nil
-
-    -- indicators
-    self.indicators = {}
-
-    -- server listing screen
-    self.defaultbtn = nil
-    self.iconbtn = nil
-
-    -- auto-joining
-    self.autojointhread = nil
-    self.isautojoining = nil
-    self.isuidisabled = false
-    self.server = nil
-
-    -- overrides
-    self.oldjoinserver = nil
-    self.oldonnetworkdisconnect = nil
-    self.oldshowconnectingtogamepopup = nil
-
-    DebugString("AutoJoin initialized")
-end
 
 --
 -- General
@@ -136,9 +74,8 @@ local function JoinServerOverride(server_listing, optional_password_override)
     end
 end
 
-function AutoJoin:Join(server, password) -- luacheck: only
-    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
-    debug("Joining server...")
+function AutoJoin:Join(server, password)
+    self:DebugString("Joining server...")
     JoinServer(server, password)
 end
 
@@ -155,20 +92,18 @@ function AutoJoin:Override()
         self.oldshowconnectingtogamepopup = ShowConnectingToGamePopup
     end
 
-    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
-
     if not self.oldjoinserver
         or not self.oldonnetworkdisconnect
         or not self.oldshowconnectingtogamepopup
     then
-        debug("[error] AutoJoin:Override() has failed storing one of the functions")
+        self:DebugError("AutoJoin:Override() has failed storing one of the functions")
         return
     end
 
     JoinServer = JoinServerOverride
 
     OnNetworkDisconnect = function(message)
-        DebugString("Disconnected:", message)
+        self:DebugString("Disconnected:", message)
         return false
     end
 
@@ -178,9 +113,9 @@ function AutoJoin:Override()
 
     self.isuidisabled = true
 
-    debug("JoinServer overridden")
-    debug("OnNetworkDisconnect overridden")
-    debug("ShowConnectingToGamePopup overridden")
+    self:DebugString("JoinServer overridden")
+    self:DebugString("OnNetworkDisconnect overridden")
+    self:DebugString("ShowConnectingToGamePopup overridden")
 end
 
 function AutoJoin:OverrideRestore()
@@ -190,10 +125,9 @@ function AutoJoin:OverrideRestore()
 
     self.isuidisabled = false
 
-    local debug = scheduler:GetCurrentTask() and DebugThreadString or DebugString
-    debug("JoinServer restored")
-    debug("OnNetworkDisconnect restored")
-    debug("ShowConnectingToGamePopup restored")
+    self:DebugString("JoinServer restored")
+    self:DebugString("OnNetworkDisconnect restored")
+    self:DebugString("ShowConnectingToGamePopup restored")
 end
 
 --
@@ -202,7 +136,7 @@ end
 
 function AutoJoin:GetIndicatorOnClickFn(cancelcb)
     return function()
-        DebugString("Auto-joining has been cancelled")
+        self:DebugString("Auto-joining has been cancelled")
         self:StopAutoJoining()
         self:RemoveAllIndicators()
         if cancelcb then
@@ -291,23 +225,23 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
 
     return function()
         if not self.defaultbtn then
-            DebugString("[error] AutoJoin.joinbtn is required")
+            self:DebugError("AutoJoin.joinbtn is required")
             return
         end
 
         local server = serverfn()
         if server and server.has_password and not self:IsAutoJoining() then
-            DebugString("Auto-joining the password-protected server:", server.name)
-            DebugString("Prompting password...")
+            self:DebugString("Auto-joining the password-protected server:", server.name)
+            self:DebugString("Prompting password...")
             local screen = AutoJoinPasswordScreen(server, Join, OnCancel)
             TheFrontEnd:PushScreen(screen)
             screen:ForceInput()
         elseif server and not self:IsAutoJoining() then
-            DebugString("Auto-joining the server:", server.name)
+            self:DebugString("Auto-joining the server:", server.name)
             OnCancel(server)
             Join(server)
         elseif self:IsAutoJoining() then
-            DebugString("Auto-joining has been cancelled")
+            self:DebugString("Auto-joining has been cancelled")
             OnCancel(server)
         end
     end
@@ -372,9 +306,9 @@ function AutoJoin:StartAutoJoinThread(server, password)
         refreshseconds = defaultrefreshseconds
         seconds = defaultseconds
 
-        DebugThreadString("Thread started")
-        DebugThreadString(string.format("Auto-joining every %d seconds...", seconds))
-        DebugThreadString(string.format("Refreshing every %d seconds...", refreshseconds))
+        self:DebugString("Thread started")
+        self:DebugString(string.format("Auto-joining every %d seconds...", seconds))
+        self:DebugString(string.format("Refreshing every %d seconds...", refreshseconds))
 
         self.isautojoining = true
 
@@ -390,7 +324,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
                 and not IsServerListed(server.guid)
             then
                 isservernotlisted = true
-                DebugThreadString("Server is not listed")
+                self:DebugString("Server is not listed")
             end
 
             if refreshseconds <= 0 then
@@ -400,7 +334,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
                 then
                     refreshseconds = 30 + 1
                     isservernotlisted = false
-                    DebugThreadString("Refreshing the server listing...")
+                    self:DebugString("Refreshing the server listing...")
                     TheNet:SearchServers()
                 end
             end
@@ -428,11 +362,49 @@ end
 
 function AutoJoin:ClearAutoJoinThread()
     if self.autojointhread then
-        DebugString("[" .. self.autojointhread.id .. "]", "Thread cleared")
+        self:DebugString("[" .. self.autojointhread.id .. "]", "Thread cleared")
         KillThreadsWithID(self.autojointhread.id)
         self.autojointhread:SetList(nil)
         self.autojointhread = nil
     end
+end
+
+--
+-- Initialization
+--
+
+function AutoJoin:DoInit()
+    Utils.AddDebugMethods(self)
+
+    -- config
+    self.configindicator = true
+    self.configindicatorpadding = 10
+    self.configindicatorposition = "tr"
+    self.configindicatorscale = 1.3
+    self.configwaitingtime = 15
+
+    -- server
+    self.serverguid = nil
+
+    -- indicators
+    self.indicators = {}
+
+    -- server listing screen
+    self.defaultbtn = nil
+    self.iconbtn = nil
+
+    -- auto-joining
+    self.autojointhread = nil
+    self.isautojoining = nil
+    self.isuidisabled = false
+    self.server = nil
+
+    -- overrides
+    self.oldjoinserver = nil
+    self.oldonnetworkdisconnect = nil
+    self.oldshowconnectingtogamepopup = nil
+
+    self:DebugInit("AutoJoin")
 end
 
 return AutoJoin
