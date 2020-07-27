@@ -1,17 +1,37 @@
+----
+-- Our password screen.
+--
+-- Screen that extends `InputDialogScreen` and creates a very similar to already existing one in the
+-- engine.
+--
+-- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+--
+-- @classmod AutoJoinPasswordScreen
+--
+-- @author Victor Popkov
+-- @copyright 2019
+-- @license MIT
+-- @release 0.5.0-alpha
+----
 local InputDialogScreen = require "screens/redux/inputdialog"
 
-local AutoJoinPasswordScreen = Class(InputDialogScreen, function(self, server, successcb, cancelcb)
+local AutoJoinPasswordScreen = Class(InputDialogScreen, function(
+    self,
+    server,
+    success_cb,
+    cancel_cb
+)
     local function OnSuccess()
         TheFrontEnd:PopScreen()
-        if successcb then
-            successcb(server, self:GetActualString())
+        if success_cb then
+            success_cb(server, self:GetActualString())
         end
     end
 
     local function OnCancel()
         TheFrontEnd:PopScreen()
-        if cancelcb then
-            cancelcb(server)
+        if cancel_cb then
+            cancel_cb(server)
         end
     end
 
@@ -38,6 +58,11 @@ local AutoJoinPasswordScreen = Class(InputDialogScreen, function(self, server, s
     end
 end)
 
+--
+-- States
+--
+
+--- State to force input.
 function AutoJoinPasswordScreen:ForceInput()
     self.edit_text:SetForceEdit(true)
     self.edit_text:OnControl(CONTROL_ACCEPT, false)
