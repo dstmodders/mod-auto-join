@@ -309,20 +309,53 @@ function AutoJoin:StartAutoJoinThread(server, password)
         return server
     end
 
-    self.auto_join_thread = StartThread(function()
-        local defaultrefreshseconds, defaultseconds
-        local refreshseconds, seconds
-        local isservernotlisted
+    local default_refresh_seconds = 30
+    local default_seconds = self.config.waiting_time
+    local is_server_not_listed = false
+    local refresh_seconds = default_refresh_seconds
+    local seconds = default_seconds
 
-        defaultrefreshseconds = 30
-        defaultseconds = self.config.waiting_time
-        isservernotlisted = false
-        refreshseconds = defaultrefreshseconds
-        seconds = defaultseconds
+    self.auto_join_thread = Utils.ThreadStart(_AUTO_JOIN_THREAD_ID, function()
+        if not is_server_not_listed
+            and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
+            and not IsServerListed(server.guid)
+        then
+            is_server_not_listed = true
+            self:DebugString("Server is not listed")
+        end
 
-        self:DebugString("Thread started")
+        if refresh_seconds <= 0 then
+            if is_server_not_listed
+                and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
+                and not IsServerListed(server.guid)
+            then
+                refresh_seconds = 30 + 1
+                is_server_not_listed = false
+                self:DebugString("Refreshing the server listing...")
+                TheNet:SearchServers()
+            end
+        end
+
+        if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
+            self.auto_join_btn:SetSeconds(seconds)
+        end
+
+        self:SetIndicatorsSeconds(seconds)
+
+        if seconds < 1 then
+            seconds = default_seconds + 1
+            self:Join(server, password)
+        end
+
+        seconds = seconds - 1
+        refresh_seconds = refresh_seconds - 1
+
+        Sleep(FRAMES / FRAMES * 1)
+    end, function()
+        return self.is_auto_joining
+    end, function()
         self:DebugString(string.format("Auto-joining every %d seconds...", seconds))
-        self:DebugString(string.format("Refreshing every %d seconds...", refreshseconds))
+        self:DebugString(string.format("Refreshing every %d seconds...", refresh_seconds))
 
         self.is_auto_joining = true
 
@@ -331,56 +364,13 @@ function AutoJoin:StartAutoJoinThread(server, password)
         end
 
         self:Join(server, password)
-
-        while self.is_auto_joining do
-            if not isservernotlisted
-                and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
-                and not IsServerListed(server.guid)
-            then
-                isservernotlisted = true
-                self:DebugString("Server is not listed")
-            end
-
-            if refreshseconds <= 0 then
-                if isservernotlisted
-                    and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
-                    and not IsServerListed(server.guid)
-                then
-                    refreshseconds = 30 + 1
-                    isservernotlisted = false
-                    self:DebugString("Refreshing the server listing...")
-                    TheNet:SearchServers()
-                end
-            end
-
-            if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
-                self.auto_join_btn:SetSeconds(seconds)
-            end
-
-            self:SetIndicatorsSeconds(seconds)
-
-            if seconds < 1 then
-                seconds = defaultseconds + 1
-                self:Join(server, password)
-            end
-
-            seconds = seconds - 1
-            refreshseconds = refreshseconds - 1
-
-            Sleep(FRAMES / FRAMES * 1)
-        end
-
-        self:ClearAutoJoinThread()
-    end, _AUTO_JOIN_THREAD_ID)
+    end, function()
+        self.is_auto_joining = false
+    end)
 end
 
 function AutoJoin:ClearAutoJoinThread()
-    if self.auto_join_thread then
-        self:DebugString("[" .. self.auto_join_thread.id .. "]", "Thread cleared")
-        KillThreadsWithID(self.auto_join_thread.id)
-        self.auto_join_thread:SetList(nil)
-        self.auto_join_thread = nil
-    end
+    return Utils.ThreadClear(self.auto_join_thread)
 end
 
 --
