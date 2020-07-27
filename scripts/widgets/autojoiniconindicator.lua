@@ -1,3 +1,19 @@
+----
+-- Indicator.
+--
+-- Widget that extends `AutoJoinButton` and creates a corner indicator that is shown during
+-- auto-joining state. Acts as a button clicking on which should stop auto-joining and must be
+-- visible on most of the non-in-game screens.
+--
+-- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+--
+-- @classmod AutoJoinIconIndicator
+--
+-- @author Victor Popkov
+-- @copyright 2019
+-- @license MIT
+-- @release 0.5.0-alpha
+----
 local AutoJoinButton = require "widgets/autojoinbutton"
 local AutoJoinIcon = require "widgets/autojoinicon"
 
@@ -8,29 +24,26 @@ local SIZE = 60
 local AutoJoinIconIndicator = Class(AutoJoinButton, function(
     self,
     server,
-    onclick,
-    isactivefn,
+    on_click,
+    is_active_fn,
     position,
     padding,
     scale
 )
-    AutoJoinButton._ctor(self, nil, onclick, { SIZE, SIZE })
+    padding = padding ~= nil and padding or DEFAULT_PADDING
+    scale = scale ~= nil and scale or DEFAULT_SCALE
 
-    self.isactivefn = isactivefn
+    AutoJoinButton._ctor(self, nil, on_click, { SIZE, SIZE })
+
+    -- fields
+    self.is_active_fn = is_active_fn
     self.server = server
-
-    if not padding then
-        padding = DEFAULT_PADDING
-    end
-
-    if not scale then
-        scale = DEFAULT_SCALE
-    end
 
     self.icon = self:AddChild(AutoJoinIcon())
     self.icon:SetScale(1.3)
     self.icon:Active()
 
+    -- general
     local pos = ((SIZE / 2) + padding) * scale
 
     self:SetHAnchor(ANCHOR_RIGHT)
@@ -52,7 +65,7 @@ local AutoJoinIconIndicator = Class(AutoJoinButton, function(
         self:SetPosition(pos, -pos)
     end
 
-    if isactivefn and isactivefn() then
+    if is_active_fn and is_active_fn() then
         self:Show()
     else
         self:Hide()
@@ -63,10 +76,14 @@ end)
 -- General
 --
 
+--- Gets icon seconds.
+-- @treturn number
 function AutoJoinIconIndicator:GetSeconds()
     return self.icon:GetSeconds()
 end
 
+--- Sets icon seconds.
+-- @tparam number seconds
 function AutoJoinIconIndicator:SetSeconds(seconds)
     self.icon:SetSeconds(seconds)
 end
@@ -75,20 +92,23 @@ end
 -- States
 --
 
+--- State when becomes visible.
 function AutoJoinIconIndicator:Show()
     AutoJoinButton._base.Show(self)
 end
 
+--- State when the focus is gained.
 function AutoJoinIconIndicator:OnGainFocus()
     AutoJoinButton._base.OnGainFocus(self)
-    if self.isactivefn and self.isactivefn() then
+    if self.is_active_fn and self.is_active_fn() then
         self.icon:ShowCircleCross()
     end
 end
 
+--- State when the focus is lost.
 function AutoJoinIconIndicator:OnLoseFocus()
     AutoJoinButton._base.OnLoseFocus(self)
-    if self.isactivefn and self.isactivefn() then
+    if self.is_active_fn and self.is_active_fn() then
         self.icon:HideCircleCross()
     end
 end

@@ -1,3 +1,17 @@
+----
+-- Auto-Join icon.
+--
+-- Widget for an icon used in `AutoJoinButton`.
+--
+-- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+--
+-- @classmod AutoJoinIcon
+--
+-- @author Victor Popkov
+-- @copyright 2019
+-- @license MIT
+-- @release 0.5.0-alpha
+----
 local Image = require "widgets/image"
 local Text = require "widgets/text"
 local Widget = require "widgets/widget"
@@ -7,6 +21,7 @@ local SIZE = 28
 local AutoJoinIcon = Class(Widget, function(self)
     Widget._ctor(self)
 
+    -- fields
     self.seconds = 0
 
     self.text = self:AddChild(Text(HEADERFONT, 18))
@@ -22,20 +37,24 @@ local AutoJoinIcon = Class(Widget, function(self)
     self.circle:ScaleToSize(SIZE, SIZE)
     self.circle:SetPosition(.5, 0)
 
-    self.circlecross = self:AddChild(Image("images/auto_join_icons.xml", "circle_cross.tex"))
-    self.circlecross:ScaleToSize(SIZE, SIZE)
-    self.circlecross:SetPosition(.5, 0)
-    self.circlecross:Hide()
+    self.circle_cross = self:AddChild(Image("images/auto_join_icons.xml", "circle_cross.tex"))
+    self.circle_cross:ScaleToSize(SIZE, SIZE)
+    self.circle_cross:SetPosition(.5, 0)
+    self.circle_cross:Hide()
 end)
 
 --
 -- General
 --
 
+--- Gets seconds.
+-- @treturn number
 function AutoJoinIcon:GetSeconds()
     return self.seconds
 end
 
+--- Sets seconds.
+-- @tparam number seconds
 function AutoJoinIcon:SetSeconds(seconds)
     self.seconds = seconds
     self.text:SetSize(seconds > 9 and 14 or 18)
@@ -46,28 +65,32 @@ end
 -- States
 --
 
+--- Changes to an active state.
 function AutoJoinIcon:Active()
     self.circle:Show()
-    self.circlecross:Hide()
+    self.circle_cross:Hide()
     self.icon:Hide()
     self:SetSeconds(self.seconds)
 end
 
+--- Changes to an inactive state.
 function AutoJoinIcon:Inactive()
     self.circle:Hide()
-    self.circlecross:Hide()
+    self.circle_cross:Hide()
     self.icon:Show()
     self.text:SetString(nil)
 end
 
+--- Changes a circle to the state with cross.
 function AutoJoinIcon:ShowCircleCross()
     self.circle:Hide()
-    self.circlecross:Show()
+    self.circle_cross:Show()
 end
 
+--- Changes a circle to the state without cross.
 function AutoJoinIcon:HideCircleCross()
     self.circle:Show()
-    self.circlecross:Hide()
+    self.circle_cross:Hide()
 end
 
 return AutoJoinIcon
