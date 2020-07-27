@@ -94,21 +94,21 @@ function AutoJoin:Join(server, password)
 end
 
 function AutoJoin:Override()
-    if not self.oldjoinserver then
-        self.oldjoinserver = JoinServer
+    if not self.old_join_server_fn then
+        self.old_join_server_fn = JoinServer
     end
 
-    if not self.oldonnetworkdisconnect then
-        self.oldonnetworkdisconnect = OnNetworkDisconnect
+    if not self.old_on_network_disconnect_fn then
+        self.old_on_network_disconnect_fn = OnNetworkDisconnect
     end
 
-    if not self.oldshowconnectingtogamepopup then
-        self.oldshowconnectingtogamepopup = ShowConnectingToGamePopup
+    if not self.old_show_connecting_to_game_popup_fn then
+        self.old_show_connecting_to_game_popup_fn = ShowConnectingToGamePopup
     end
 
-    if not self.oldjoinserver
-        or not self.oldonnetworkdisconnect
-        or not self.oldshowconnectingtogamepopup
+    if not self.old_join_server_fn
+        or not self.old_on_network_disconnect_fn
+        or not self.old_show_connecting_to_game_popup_fn
     then
         self:DebugError("AutoJoin:Override() has failed storing one of the functions")
         return
@@ -125,7 +125,7 @@ function AutoJoin:Override()
         return false
     end
 
-    self.isuidisabled = true
+    self.is_ui_disabled = true
 
     self:DebugString("JoinServer overridden")
     self:DebugString("OnNetworkDisconnect overridden")
@@ -133,11 +133,11 @@ function AutoJoin:Override()
 end
 
 function AutoJoin:OverrideRestore()
-    JoinServer = self.oldjoinserver
-    OnNetworkDisconnect = self.oldonnetworkdisconnect
-    ShowConnectingToGamePopup = self.oldshowconnectingtogamepopup
+    JoinServer = self.old_join_server_fn
+    OnNetworkDisconnect = self.old_on_network_disconnect_fn
+    ShowConnectingToGamePopup = self.old_show_connecting_to_game_popup_fn
 
-    self.isuidisabled = false
+    self.is_ui_disabled = false
 
     self:DebugString("JoinServer restored")
     self:DebugString("OnNetworkDisconnect restored")
@@ -214,7 +214,7 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
             self:StartAutoJoining(server, password)
         end
 
-        self.defaultbtn:Enable()
+        self.join_btn:Enable()
 
         if successcb then
             successcb(self)
@@ -225,11 +225,11 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
         self:StopAutoJoining()
 
         if server then
-            self.defaultbtn:Enable()
-            self.iconbtn:Enable()
+            self.join_btn:Enable()
+            self.auto_join_btn:Enable()
         else
-            self.defaultbtn:Disable()
-            self.iconbtn:Disable()
+            self.join_btn:Disable()
+            self.auto_join_btn:Disable()
         end
 
         if cancelcb then
@@ -238,7 +238,7 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
     end
 
     return function()
-        if not self.defaultbtn then
+        if not self.join_btn then
             self:DebugError("AutoJoin.joinbtn is required")
             return
         end
@@ -278,11 +278,11 @@ local function IsServerListed(guid)
 end
 
 function AutoJoin:IsAutoJoining()
-    return self.isautojoining
+    return self.is_auto_joining
 end
 
 function AutoJoin:StartAutoJoining(server, password)
-    if not self.isuidisabled then
+    if not self.is_ui_disabled then
         self:Override()
     end
 
@@ -292,15 +292,15 @@ end
 function AutoJoin:StopAutoJoining()
     self:ClearAutoJoinThread()
 
-    self.isautojoining = false
+    self.is_auto_joining = false
     TheNet:JoinServerResponse(true)
 
-    if self.isuidisabled then
+    if self.is_ui_disabled then
         self:OverrideRestore()
     end
 
-    if self.iconbtn and self.iconbtn.inst:IsValid() then
-        self.iconbtn:Inactive()
+    if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
+        self.auto_join_btn:Inactive()
     end
 end
 
@@ -309,7 +309,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
         return server
     end
 
-    self.autojointhread = StartThread(function()
+    self.auto_join_thread = StartThread(function()
         local defaultrefreshseconds, defaultseconds
         local refreshseconds, seconds
         local isservernotlisted
@@ -324,15 +324,15 @@ function AutoJoin:StartAutoJoinThread(server, password)
         self:DebugString(string.format("Auto-joining every %d seconds...", seconds))
         self:DebugString(string.format("Refreshing every %d seconds...", refreshseconds))
 
-        self.isautojoining = true
+        self.is_auto_joining = true
 
-        if self.iconbtn and self.iconbtn.inst:IsValid() then
-            self.iconbtn:Active()
+        if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
+            self.auto_join_btn:Active()
         end
 
         self:Join(server, password)
 
-        while self.isautojoining do
+        while self.is_auto_joining do
             if not isservernotlisted
                 and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
                 and not IsServerListed(server.guid)
@@ -353,8 +353,8 @@ function AutoJoin:StartAutoJoinThread(server, password)
                 end
             end
 
-            if self.iconbtn and self.iconbtn.inst:IsValid() then
-                self.iconbtn:SetSeconds(seconds)
+            if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
+                self.auto_join_btn:SetSeconds(seconds)
             end
 
             self:SetIndicatorsSeconds(seconds)
@@ -375,11 +375,11 @@ function AutoJoin:StartAutoJoinThread(server, password)
 end
 
 function AutoJoin:ClearAutoJoinThread()
-    if self.autojointhread then
-        self:DebugString("[" .. self.autojointhread.id .. "]", "Thread cleared")
-        KillThreadsWithID(self.autojointhread.id)
-        self.autojointhread:SetList(nil)
-        self.autojointhread = nil
+    if self.auto_join_thread then
+        self:DebugString("[" .. self.auto_join_thread.id .. "]", "Thread cleared")
+        KillThreadsWithID(self.auto_join_thread.id)
+        self.auto_join_thread:SetList(nil)
+        self.auto_join_thread = nil
     end
 end
 
@@ -390,26 +390,23 @@ end
 function AutoJoin:DoInit()
     Utils.AddDebugMethods(self)
 
-    -- server
-    self.serverguid = nil
-
     -- indicators
     self.indicators = {}
 
     -- server listing screen
-    self.defaultbtn = nil
-    self.iconbtn = nil
+    self.auto_join_btn = nil
+    self.join_btn = nil
 
     -- auto-joining
-    self.autojointhread = nil
-    self.isautojoining = nil
-    self.isuidisabled = false
+    self.auto_join_thread = nil
+    self.is_auto_joining = nil
+    self.is_ui_disabled = false
     self.server = nil
 
     -- overrides
-    self.oldjoinserver = nil
-    self.oldonnetworkdisconnect = nil
-    self.oldshowconnectingtogamepopup = nil
+    self.old_join_server_fn = nil
+    self.old_on_network_disconnect_fn = nil
+    self.old_show_connecting_to_game_popup_fn = nil
 
     -- config
     self.config = {

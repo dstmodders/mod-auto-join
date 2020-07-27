@@ -157,14 +157,14 @@ local function ServerListingScreenPostInit(_self)
         _self.servers_scroll_list:RefreshView()
     end
 
-    AutoJoin.defaultbtn = _self.side_panel:AddChild(JoinButton(OnJoinClick))
-    AutoJoin.iconbtn = _self.side_panel:AddChild(AutoJoinButton(
+    AutoJoin.join_btn = _self.side_panel:AddChild(JoinButton(OnJoinClick))
+    AutoJoin.auto_join_btn = _self.side_panel:AddChild(AutoJoinButton(
         AutoJoin:GetBtnOnClickFn(serverfn, OnAutoJoinSuccess, OnAutoJoinCancel),
         AutoJoin:GetBtnIsActiveFn()
     ))
 
-    _self.autojoindefaultbtn = AutoJoin.defaultbtn
-    _self.autojoiniconbtn = AutoJoin.iconbtn
+    _self.auto_join_join_btn = AutoJoin.join_btn
+    _self.auto_join_auto_join_btn = AutoJoin.auto_join_btn
     _self.join_button:Hide()
 
     --
@@ -199,8 +199,8 @@ local function ServerListingScreenPostInit(_self)
             and (CompareTable(selectedserver, self.selected_server) == false
             or self.details_hidden_name ~= isnamehidden)
         then
-            _self.autojoiniconbtn:Enable()
-            _self.autojoindefaultbtn:Enable()
+            _self.auto_join_join_btn:Enable()
+            _self.auto_join_auto_join_btn:Enable()
         end
     end
 
@@ -217,10 +217,10 @@ AddClassPostConstruct("screens/redux/serverlistingscreen", ServerListingScreenPo
 --
 
 local function IndicatorScreenPostInit(_self)
-    _self.autojoinindicator = nil
+    _self.auto_join_indicator = nil
 
-    if not _self.autojoinindicator then
-        _self.autojoinindicator = AutoJoin:AddIndicator(_self)
+    if not _self.auto_join_indicator then
+        _self.auto_join_indicator = AutoJoin:AddIndicator(_self)
     end
 
     --
@@ -232,9 +232,9 @@ local function IndicatorScreenPostInit(_self)
     local function NewOnDestroy(self)
         DebugString(self.name, "destroyed")
         OldOnDestroy(self)
-        if self.autojoinindicator then
-            AutoJoin:RemoveIndicator(self.autojoinindicator)
-            self.autojoinindicator = nil
+        if self.auto_join_indicator then
+            AutoJoin:RemoveIndicator(self.auto_join_indicator)
+            self.auto_join_indicator = nil
         end
     end
 
@@ -244,7 +244,7 @@ local function IndicatorScreenPostInit(_self)
 end
 
 local function MultiplayerMainScreenPostInit(_self)
-    _self.autojoinindicator = nil
+    _self.auto_join_indicator = nil
 
     --
     -- Overrides
@@ -256,9 +256,9 @@ local function MultiplayerMainScreenPostInit(_self)
     local function NewOnShow(self)
         DebugString(self.name, "is shown")
         OldOnShow(self)
-        if not self.autojoinindicator then
-            self.autojoinindicator = AutoJoin:AddIndicator(self.fixed_root, function()
-                return self.autojoinindicator
+        if not self.auto_join_indicator then
+            self.auto_join_indicator = AutoJoin:AddIndicator(self.fixed_root, function()
+                return self.auto_join_indicator
             end)
         end
     end
@@ -266,9 +266,9 @@ local function MultiplayerMainScreenPostInit(_self)
     local function NewOnHide(self)
         DebugString(self.name, "is hidden")
         OldOnHide(self)
-        if self.autojoinindicator then
-            AutoJoin:RemoveIndicator(self.autojoinindicator)
-            self.autojoinindicator = nil
+        if self.auto_join_indicator then
+            AutoJoin:RemoveIndicator(self.auto_join_indicator)
+            self.auto_join_indicator = nil
         end
     end
 
