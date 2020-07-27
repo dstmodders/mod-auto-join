@@ -62,11 +62,17 @@ end
 AutoJoin:DoInit()
 
 -- GetModConfigData
-AutoJoin.configindicator = GetModConfigData("indicator")
-AutoJoin.configindicatorpadding = GetModConfigData("indicator_padding")
-AutoJoin.configindicatorposition = GetModConfigData("indicator_position")
-AutoJoin.configindicatorscale = GetModConfigData("indicator_scale")
-AutoJoin.configwaitingtime = GetModConfigData("waiting_time")
+local configs = {
+    "indicator",
+    "indicator_padding",
+    "indicator_position",
+    "indicator_scale",
+    "waiting_time",
+}
+
+for _, config in ipairs(configs) do
+    AutoJoin.config[config] = GetModConfigData(config)
+end
 
 if Debug then
     Debug:DebugModConfigs()

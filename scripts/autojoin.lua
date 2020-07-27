@@ -164,9 +164,9 @@ function AutoJoin:AddIndicator(root)
         self.server,
         self:GetIndicatorOnClickFn(),
         self:GetBtnIsActiveFn(),
-        self.configindicatorposition,
-        self.configindicatorpadding,
-        self.configindicatorscale
+        self.config.indicator_position,
+        self.config.indicator_padding,
+        self.config.indicator_scale
     ))
     table.insert(self.indicators, indicator)
     return indicator
@@ -315,7 +315,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
         local isservernotlisted
 
         defaultrefreshseconds = 30
-        defaultseconds = self.configwaitingtime
+        defaultseconds = self.config.waiting_time
         isservernotlisted = false
         refreshseconds = defaultrefreshseconds
         seconds = defaultseconds
@@ -390,13 +390,6 @@ end
 function AutoJoin:DoInit()
     Utils.AddDebugMethods(self)
 
-    -- config
-    self.configindicator = true
-    self.configindicatorpadding = 10
-    self.configindicatorposition = "tr"
-    self.configindicatorscale = 1.3
-    self.configwaitingtime = 15
-
     -- server
     self.serverguid = nil
 
@@ -417,6 +410,15 @@ function AutoJoin:DoInit()
     self.oldjoinserver = nil
     self.oldonnetworkdisconnect = nil
     self.oldshowconnectingtogamepopup = nil
+
+    -- config
+    self.config = {
+        indicator = true,
+        indicator_padding = 10,
+        indicator_position = "tr",
+        indicator_scale = 1.3,
+        waiting_time = 15,
+    }
 
     self:DebugInit("AutoJoin")
 end
