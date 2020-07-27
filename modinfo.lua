@@ -1,13 +1,9 @@
 name = "Auto-Join"
-version = "0.4.0"
+version = "0.5.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
-    [[- Added indicators on other screens]] .. "\n" ..
-    [[- Added support for the indicator configuration]] .. "\n" ..
-    [[- Added support for the indicator padding configuration]] .. "\n" ..
-    [[- Added support for the indicator position configuration]] .. "\n" ..
-    [[- Added support for the indicator scale configuration]]
+    [[- Changed configuration to be divided into sections]]
 author = "Demonblink"
 api_version = 10
 forumthread = ""
@@ -28,6 +24,22 @@ folder_name = folder_name or "dst-mod-auto-join"
 if not folder_name:find("workshop-") then
     name = name .. " (dev)"
 end
+
+--
+-- Helpers
+--
+
+local function AddConfig(label, name, options, default, hover)
+    return { label = label, name = name, options = options, default = default, hover = hover or "" }
+end
+
+local function AddSection(title)
+    return AddConfig(title, "", { { description = "", data = 0 } }, 0)
+end
+
+--
+-- Configuration
+--
 
 local boolean = {
     { description = "Yes", data = true },
@@ -72,15 +84,16 @@ local waiting_time = {
     { description = "1m", data = 60 },
 }
 
-local function AddConfig(label, name, options, default, hover)
-    return { label = label, name = name, options = options, default = default, hover = hover or "" }
-end
-
 configuration_options = {
-    AddConfig("Waiting time", "waiting_time", waiting_time, 15, "The time between the reconnection attempts"),
-    AddConfig("Indicator", "indicator", boolean, true, "Enables/Disables the indicator on other screens"),
-    AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "The indicator position on the screen"),
-    AddConfig("Indicator padding", "indicator_padding", indicator_padding, 10, "The indicator padding from the screen edges"),
-    AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "The indicator size on the screen"),
-    AddConfig("Debug", "debug", boolean, false, "Enables/Disables the debug mode"),
+    AddSection("General"),
+    AddConfig("Waiting time", "waiting_time", waiting_time, 15, "The time between reconnection attempts"),
+
+    AddSection("Indicator"),
+    AddConfig("Indicator", "indicator", boolean, true, "Should the corner indicator be visible?"),
+    AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "Indicator position on the screen"),
+    AddConfig("Indicator padding", "indicator_padding", indicator_padding, 10, "Indicator padding from the screen edges"),
+    AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "Indicator scale on the screen"),
+
+    AddSection("Other"),
+    AddConfig("Debug", "debug", boolean, false, "Should the debug mode be enabled?"),
 }
