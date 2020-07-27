@@ -1,0 +1,9 @@
+return {
+  include = {
+    "scripts",
+  },
+  exclude = {
+    "spec",
+  },
+  runreport = true,
+}

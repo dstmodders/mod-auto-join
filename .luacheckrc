@@ -93,6 +93,7 @@ files["scripts/**/*.lua"] = {
     "JoinServer",
     "OnNetworkDisconnect",
     "ShowConnectingToGamePopup",
+    "_G",
 
     -- project
     "Debug",
@@ -107,7 +108,6 @@ files["scripts/**/*.lua"] = {
     "TheFrontEnd",
     "TheNet",
     "TheSim",
-    "_G",
 
     -- constants
     "ANCHOR_BOTTOM",
@@ -132,5 +132,42 @@ files["scripts/**/*.lua"] = {
     "Sleep",
     "StartThread",
     "scheduler",
+  },
+}
+
+files["spec/**/*.lua"] = {
+  max_code_line_length = 100,
+  max_comment_line_length = 250,
+  max_line_length = 100,
+  max_string_line_length = 100,
+
+  -- globals
+  globals = {
+    -- general
+    "Class",
+    "ClassRegistry",
+    "_G",
+    "package",
+
+    -- project
+    "AssertChainNil",
+    "AssertGetter",
+    "AssertMethodExists",
+    "AssertMethodIsMissing",
+    "AssertSetter",
+    "DebugSpy",
+    "DebugSpyAssert",
+    "DebugSpyAssertWasCalled",
+    "DebugSpyClear",
+    "DebugSpyInit",
+    "DebugSpyTerm",
+    "Empty",
+    "ReturnValueFn",
+    "ReturnValues",
+    "ReturnValuesFn",
+  },
+  read_globals = {
+    "rawget",
+    "setmetatable",
   },
 }
