@@ -4,13 +4,16 @@ check_defined = $(strip $(foreach 1,$1, $(call __check_defined,$1,$(strip $(valu
 
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
-	@echo "   assets      to pack images"
-	@echo "   install     to install the mod"
-	@echo "   ldoc        to generate an LDoc documentation"
-	@echo "   lint        to run code linting"
-	@echo "   modicon     to pack modicon"
-	@echo "   uninstall   to uninstall the mod"
-	@echo "   workshop    to prepare the Steam Workshop directory"
+	@echo "   assets         to pack images"
+	@echo "   install        to install the mod"
+	@echo "   ldoc           to generate an LDoc documentation"
+	@echo "   lint           to run code linting"
+	@echo "   modicon        to pack modicon"
+	@echo "   test           to run Busted tests"
+	@echo "   testcoverage   to print the tests coverage report"
+	@echo "   testlist       to list all existing tests"
+	@echo "   uninstall      to uninstall the mod"
+	@echo "   workshop       to prepare the Steam Workshop directory"
 
 assets:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
@@ -52,6 +55,15 @@ lint:
 modicon:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
 	@${DS_KTOOLS_KTECH} ./modicon.png . --atlas ./modicon.xml --square
+
+test:
+	@busted . && luacov-console . && luacov-console -s
+
+testcoverage:
+	@luacov-console . && luacov-console -s
+
+testlist:
+	@busted --list . | awk '{$$1=""}1' | awk '{ gsub(/^[ \t]+|[ \t]+$$/, ""); print }'
 
 uninstall:
 	@:$(call check_defined, DST_MODS)
