@@ -1,28 +1,29 @@
 ----
--- Default "Join" button.
+-- Our "Join" button.
 --
--- Widget that extends `AutoJoinButton` and creates our own version of the "Join" button very
--- similar to one on the server listing screen.
+-- Widget that extends `Button` and creates our own version of the "Join" button very similar to one
+-- on the server listing screen.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
--- @classmod AutoJoinDefaultButton
+-- @classmod widgets.autojoin.JoinButton
+-- @see widgets.autojoin.Button
 --
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
 -- @release 0.5.0-alpha
 ----
-local AutoJoinButton = require "widgets/autojoinbutton"
+local Button = require "widgets/autojoin/button"
 
 local AUTO_JOIN_ICON_BUTTON_SIZE = 60
 local SPACING = 10
 local WIDTH = 240
 
-local AutoJoinDefaultButton = Class(AutoJoinButton, function(self, on_click)
+local JoinButton = Class(Button, function(self, on_click)
     local sx = WIDTH - AUTO_JOIN_ICON_BUTTON_SIZE - SPACING
     local sy = AUTO_JOIN_ICON_BUTTON_SIZE
-    AutoJoinButton._ctor(self, STRINGS.UI.SERVERLISTINGSCREEN.JOIN, on_click, { sx, sy })
+    Button._ctor(self, STRINGS.UI.SERVERLISTINGSCREEN.JOIN, on_click, { sx, sy })
 
     -- general
     self:SetScale(1.45)
@@ -34,4 +35,4 @@ local AutoJoinDefaultButton = Class(AutoJoinButton, function(self, on_click)
     self:SetPosition(x, y)
 end)
 
-return AutoJoinDefaultButton
+return JoinButton

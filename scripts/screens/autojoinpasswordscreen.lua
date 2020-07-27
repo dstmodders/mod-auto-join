@@ -6,7 +6,7 @@
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
--- @classmod AutoJoinPasswordScreen
+-- @classmod screens.AutoJoinPasswordScreen
 --
 -- @author Victor Popkov
 -- @copyright 2019

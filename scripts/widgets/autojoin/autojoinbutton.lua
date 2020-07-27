@@ -1,19 +1,21 @@
 ----
 -- Our "Auto-Join" button.
 --
--- Widget that extends `AutoJoinButton` and creates our "Auto-Join" button with an icon.
+-- Widget that extends `Button` and creates our "Auto-Join" button with an icon `Icon`.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
--- @classmod AutoJoinIconButton
+-- @classmod widgets.autojoin.AutoJoinButton
+-- @see widgets.autojoin.Button
+-- @see widgets.autojoin.Icon
 --
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
 -- @release 0.5.0-alpha
 ----
-local AutoJoinButton = require "widgets/autojoinbutton"
-local AutoJoinIcon = require "widgets/autojoinicon"
+local Button = require "widgets/autojoin/button"
+local Icon = require "widgets/autojoin/icon"
 
 local SCREEN_X = 2560
 local SCREEN_Y = 1440
@@ -34,11 +36,11 @@ end
 -- Class
 --
 
-local AutoJoinIconButton = Class(AutoJoinButton, function(self, on_click, is_active_fn)
-    AutoJoinButton._ctor(self, nil, on_click, { SIZE, SIZE })
+local AutoJoinButton = Class(Button, function(self, on_click, is_active_fn)
+    Button._ctor(self, nil, on_click, { SIZE, SIZE })
 
     -- fields
-    self.icon = self:AddChild(AutoJoinIcon())
+    self.icon = self:AddChild(Icon())
     self.is_active_fn = is_active_fn
 
     -- general
@@ -69,13 +71,13 @@ end)
 
 --- Gets icon seconds.
 -- @treturn number
-function AutoJoinIconButton:GetSeconds()
+function AutoJoinButton:GetSeconds()
     return self.icon:GetSeconds()
 end
 
 --- Sets icon seconds.
 -- @tparam number seconds
-function AutoJoinIconButton:SetSeconds(seconds)
+function AutoJoinButton:SetSeconds(seconds)
     self.icon:SetSeconds(seconds)
 end
 
@@ -84,33 +86,33 @@ end
 --
 
 --- Changes to an active state.
-function AutoJoinIconButton:Active()
+function AutoJoinButton:Active()
     self.icon:Active()
     self:SetHoverText("Disable")
     self:Enable()
 end
 
 --- Changes to an inactive state.
-function AutoJoinIconButton:Inactive()
+function AutoJoinButton:Inactive()
     self.icon:Inactive()
     self:SetHoverText("Auto-Join")
     self:Enable()
 end
 
 --- State when the focus is gained.
-function AutoJoinIconButton:OnGainFocus()
-    AutoJoinButton._base.OnGainFocus(self)
+function AutoJoinButton:OnGainFocus()
+    Button._base.OnGainFocus(self)
     if self.is_active_fn and self.is_active_fn() then
         self.icon:ShowCircleCross()
     end
 end
 
 --- State when the focus is lost.
-function AutoJoinIconButton:OnLoseFocus()
-    AutoJoinButton._base.OnLoseFocus(self)
+function AutoJoinButton:OnLoseFocus()
+    Button._base.OnLoseFocus(self)
     if self.is_active_fn and self.is_active_fn() then
         self.icon:HideCircleCross()
     end
 end
 
-return AutoJoinIconButton
+return AutoJoinButton

@@ -12,8 +12,8 @@ local _G = GLOBAL
 local require = _G.require
 
 local AutoJoin = require "autojoin"
-local AutoJoinDefaultButton = require "widgets/autojoindefaultbutton"
-local AutoJoinIconButton = require "widgets/autojoiniconbutton"
+local AutoJoinButton = require "widgets/autojoin/autojoinbutton"
+local JoinButton = require "widgets/autojoin/joinbutton"
 local Utils = require "autojoin/utils"
 
 --
@@ -151,8 +151,8 @@ local function ServerListingScreenPostInit(_self)
         _self.servers_scroll_list:RefreshView()
     end
 
-    AutoJoin.defaultbtn = _self.side_panel:AddChild(AutoJoinDefaultButton(OnJoinClick))
-    AutoJoin.iconbtn = _self.side_panel:AddChild(AutoJoinIconButton(
+    AutoJoin.defaultbtn = _self.side_panel:AddChild(JoinButton(OnJoinClick))
+    AutoJoin.iconbtn = _self.side_panel:AddChild(AutoJoinButton(
         AutoJoin:GetBtnOnClickFn(serverfn, OnAutoJoinSuccess, OnAutoJoinCancel),
         AutoJoin:GetBtnIsActiveFn()
     ))

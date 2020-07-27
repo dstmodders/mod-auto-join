@@ -5,7 +5,9 @@
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
--- @classmod AutoJoinIcon
+-- @classmod widgets.autojoin.Icon
+-- @see widgets.autojoin.AutoJoinButton
+-- @see widgets.autojoin.Indicator
 --
 -- @author Victor Popkov
 -- @copyright 2019
@@ -18,7 +20,7 @@ local Widget = require "widgets/widget"
 
 local SIZE = 28
 
-local AutoJoinIcon = Class(Widget, function(self)
+local Icon = Class(Widget, function(self)
     Widget._ctor(self)
 
     -- fields
@@ -49,13 +51,13 @@ end)
 
 --- Gets seconds.
 -- @treturn number
-function AutoJoinIcon:GetSeconds()
+function Icon:GetSeconds()
     return self.seconds
 end
 
 --- Sets seconds.
 -- @tparam number seconds
-function AutoJoinIcon:SetSeconds(seconds)
+function Icon:SetSeconds(seconds)
     self.seconds = seconds
     self.text:SetSize(seconds > 9 and 14 or 18)
     self.text:SetString(seconds)
@@ -66,7 +68,7 @@ end
 --
 
 --- Changes to an active state.
-function AutoJoinIcon:Active()
+function Icon:Active()
     self.circle:Show()
     self.circle_cross:Hide()
     self.icon:Hide()
@@ -74,7 +76,7 @@ function AutoJoinIcon:Active()
 end
 
 --- Changes to an inactive state.
-function AutoJoinIcon:Inactive()
+function Icon:Inactive()
     self.circle:Hide()
     self.circle_cross:Hide()
     self.icon:Show()
@@ -82,15 +84,15 @@ function AutoJoinIcon:Inactive()
 end
 
 --- Changes a circle to the state with cross.
-function AutoJoinIcon:ShowCircleCross()
+function Icon:ShowCircleCross()
     self.circle:Hide()
     self.circle_cross:Show()
 end
 
 --- Changes a circle to the state without cross.
-function AutoJoinIcon:HideCircleCross()
+function Icon:HideCircleCross()
     self.circle:Show()
     self.circle_cross:Hide()
 end
 
-return AutoJoinIcon
+return Icon

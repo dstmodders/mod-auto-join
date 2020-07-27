@@ -1,5 +1,19 @@
-local AutoJoinIconIndicator = require "widgets/autojoiniconindicator"
+----
+-- Auto-join.
+--
+-- Includes auto-joining features/functionality.
+--
+-- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+--
+-- @classmod AutoJoin
+--
+-- @author Victor Popkov
+-- @copyright 2019
+-- @license MIT
+-- @release 0.5.0-alpha
+----
 local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
+local Indicator = require "widgets/autojoin/indicator"
 local PopupDialogScreen = require "screens/redux/popupdialog"
 local Utils = require "autojoin/utils"
 
@@ -146,7 +160,7 @@ function AutoJoin:GetIndicatorOnClickFn(cancelcb)
 end
 
 function AutoJoin:AddIndicator(root)
-    local indicator = root:AddChild(AutoJoinIconIndicator(
+    local indicator = root:AddChild(Indicator(
         self.server,
         self:GetIndicatorOnClickFn(),
         self:GetBtnIsActiveFn(),

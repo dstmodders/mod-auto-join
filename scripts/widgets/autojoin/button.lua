@@ -3,12 +3,13 @@
 --
 -- Base widget to create a button by extending an `ImageButton` from the engine.
 --
--- Designed to be extended by other button widgets like `AutoJoinDefaultButton` and
--- `AutoJoinIconButton`.
+-- Designed to be extended by other button widgets like `AutoJoinButton` and `JoinButton`.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
--- @classmod AutoJoinButton
+-- @classmod widgets.autojoin.Button
+-- @see widgets.autojoin.AutoJoinButton
+-- @see widgets.autojoin.JoinButton
 --
 -- @author Victor Popkov
 -- @copyright 2019
@@ -17,7 +18,7 @@
 ----
 local ImageButton = require "widgets/imagebutton"
 
-local AutoJoinButton = Class(ImageButton, function(self, text, on_click, size)
+local Button = Class(ImageButton, function(self, text, on_click, size)
     local prefix = "button_carny_long"
     if size and #size == 2 then
         local ratio = size[1] / size[2]
@@ -48,4 +49,4 @@ local AutoJoinButton = Class(ImageButton, function(self, text, on_click, size)
     end
 end)
 
-return AutoJoinButton
+return Button
