@@ -3,6 +3,7 @@ version = "0.5.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
+    [[- Added support for the hide changelog configuration]] .. "\n" ..
     [[- Changed configuration to be divided into sections]]
 author = "Demonblink"
 api_version = 10
@@ -95,5 +96,6 @@ configuration_options = {
     AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "Indicator scale on the screen"),
 
     AddSection("Other"),
+    AddConfig("Hide changelog", "hide_changelog", boolean, true, "Should the changelog in the mod description be hidden?\nMods should be reloaded to take effect"),
     AddConfig("Debug", "debug", boolean, false, "Should the debug mode be enabled?"),
 }

@@ -14,6 +14,7 @@ local require = _G.require
 local AutoJoin = require "autojoin"
 local AutoJoinDefaultButton = require "widgets/autojoindefaultbutton"
 local AutoJoinIconButton = require "widgets/autojoiniconbutton"
+local Utils = require "autojoin/utils"
 
 --
 -- Globals
@@ -290,4 +291,12 @@ if GetModConfigData("indicator") then
     AddClassPostConstruct("screens/redeemdialog", IndicatorScreenPostInit) -- Redeem Codes
     AddClassPostConstruct("screens/redux/purchasepackscreen", IndicatorScreenPostInit) -- Shop
     AddClassPostConstruct("screens/redux/achievementspopup", IndicatorScreenPostInit) -- Achievements
+end
+
+--
+-- KnownModIndex
+--
+
+if GetModConfigData("hide_changelog") then
+    Utils.HideChangelog(modname, true)
 end
