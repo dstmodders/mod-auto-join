@@ -285,4 +285,72 @@ describe("Utils", function()
             end)
         end)
     end)
+
+    describe("table", function()
+        describe("TableCompare", function()
+            describe("when both tables have the same reference", function()
+                local first
+
+                before_each(function()
+                    first = {}
+                end)
+
+                it("should return true", function()
+                    assert.is_true(Utils.TableCompare(first, first))
+                end)
+            end)
+
+            describe("when both tables with nested ones are the same", function()
+                local first, second
+
+                before_each(function()
+                    first = { first = {}, second = { third = {} } }
+                    second = { first = {}, second = { third = {} } }
+                end)
+
+                it("should return true", function()
+                    assert.is_true(Utils.TableCompare(first, second))
+                end)
+            end)
+
+            describe("when one of the tables is nil", function()
+                local first
+
+                before_each(function()
+                    first = {}
+                end)
+
+                it("should return false", function()
+                    assert.is_false(Utils.TableCompare(nil, first))
+                    assert.is_false(Utils.TableCompare(first, nil))
+                end)
+            end)
+
+            describe("when one of the tables is not a table type", function()
+                local first
+
+                before_each(function()
+                    first = {}
+                end)
+
+                it("should return false", function()
+                    assert.is_false(Utils.TableCompare("table", first))
+                    assert.is_false(Utils.TableCompare(first, "table"))
+                end)
+            end)
+
+            describe("when both tables with nested ones are not the same", function()
+                local first, second
+
+                before_each(function()
+                    first = { first = {}, second = { third = {} } }
+                    second = { first = {}, second = { third = { "fourth" } } }
+                end)
+
+                it("should return false", function()
+                    assert.is_false(Utils.TableCompare(first, second))
+                end)
+            end)
+        end)
+    end)
 end)

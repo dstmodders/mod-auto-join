@@ -195,6 +195,55 @@ function Utils.HideChangelog(modname, enable)
 end
 
 --
+-- Table
+--
+
+--- Compares two tables if they are the same.
+-- @tparam table a Table A
+-- @tparam table b Table B
+-- @treturn boolean
+function Utils.TableCompare(a, b)
+    -- basic validation
+    if a == b then
+        return true
+    end
+
+    -- null check
+    if a == nil or b == nil then
+        return false
+    end
+
+    -- validate type
+    if type(a) ~= "table" then
+        return false
+    end
+
+    -- compare meta tables
+    local meta_table_a = getmetatable(a)
+    local meta_table_b = getmetatable(b)
+    if not Utils.TableCompare(meta_table_a, meta_table_b) then
+        return false
+    end
+
+    -- compare nested tables
+    for index, va in pairs(a) do
+        local vb = b[index]
+        if not Utils.TableCompare(va, vb) then
+            return false
+        end
+    end
+
+    for index, vb in pairs(b) do
+        local va = a[index]
+        if not Utils.TableCompare(va, vb) then
+            return false
+        end
+    end
+
+    return true
+end
+
+--
 -- Thread
 --
 
