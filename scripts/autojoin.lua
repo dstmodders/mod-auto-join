@@ -27,16 +27,16 @@ end)
 -- General
 --
 
--- an override of the JoinServer() global function from the networking module
+-- an override for global `JoinServer` function from the networking module
 local function JoinServerOverride(server_listing, optional_password_override)
-    local function send_response(password)
+    local function OnSuccess(password)
         if TheNet:JoinServerResponse(false, server_listing.guid, password) then
             DisableAllDLC()
         end
         ShowConnectingToGamePopup()
     end
 
-    local function on_cancelled()
+    local function OnCancel()
         TheNet:JoinServerResponse(true)
         local screen = TheFrontEnd:GetActiveScreen()
         if screen ~= nil and screen.name == "ConnectingToGamePopup" then
@@ -44,25 +44,25 @@ local function JoinServerOverride(server_listing, optional_password_override)
         end
     end
 
-    local function after_mod_warning()
+    local function AfterModWarning()
         if server_listing.has_password
             and (optional_password_override == "" or optional_password_override == nil)
         then
             local screen = AutoJoinPasswordScreen(nil, function(_, string)
-                send_response(string)
+                OnSuccess(string)
             end, function()
-                on_cancelled()
+                OnCancel()
             end)
 
             TheFrontEnd:PushScreen(screen)
             screen:ForceInput()
         else
-            send_response(optional_password_override or "")
+            OnSuccess(optional_password_override or "")
         end
     end
 
-    local function after_client_mod_message()
-        after_mod_warning()
+    local function AfterClientModMessage()
+        AfterModWarning()
     end
 
     if server_listing.client_mods_disabled
@@ -78,21 +78,32 @@ local function JoinServerOverride(server_listing, optional_password_override)
                     text = STRINGS.UI.SERVERLISTINGSCREEN.CONTINUE,
                     cb = function()
                         TheFrontEnd:PopScreen()
-                        after_client_mod_message()
+                        AfterClientModMessage()
                     end
                 }
             }
         ))
     else
-        after_client_mod_message()
+        AfterClientModMessage()
     end
 end
 
+--- Joins a server.
+--
+-- Just a convenience wrapper for `JoinServer`.
+--
+-- @tparam table server
+-- @tparam string password
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
     JoinServer(server, password)
 end
 
+--- Overrides global functions.
+--
+-- Overrides all corresponding global functions so that the joining process would become "silent".
+-- Also, stores the previous functions respectively so that they could be restored later by calling
+-- `OverrideRestore`.
 function AutoJoin:Override()
     if not self.old_join_server_fn then
         self.old_join_server_fn = JoinServer
@@ -132,6 +143,9 @@ function AutoJoin:Override()
     self:DebugString("ShowConnectingToGamePopup overridden")
 end
 
+--- Restores overridden global functions.
+--
+-- Restores all corresponding global functions previously overridden by `Override`.
 function AutoJoin:OverrideRestore()
     JoinServer = self.old_join_server_fn
     OnNetworkDisconnect = self.old_on_network_disconnect_fn
@@ -148,17 +162,30 @@ end
 -- Indicators
 --
 
-function AutoJoin:GetIndicatorOnClickFn(cancelcb)
+--- Gets an indicator on-click function.
+--
+-- Returns a function for a corner indicator on-click action which stops auto-joining and removes
+-- all existing indicators.
+--
+-- @tparam[opt] function cancel_cb Callback function on cancel
+-- @treturn function
+function AutoJoin:GetIndicatorOnClickFn(cancel_cb)
     return function()
         self:DebugString("Auto-joining has been cancelled")
         self:StopAutoJoining()
         self:RemoveAllIndicators()
-        if cancelcb then
-            cancelcb(self)
+        if cancel_cb then
+            cancel_cb(self)
         end
     end
 end
 
+--- Creates and adds an indicator.
+--
+-- Creates a corner indicator and adds it to the table where all indicators are stored.
+--
+-- @tparam table root Parent widget
+-- @treturn widgets.autojoin.Indicator
 function AutoJoin:AddIndicator(root)
     local indicator = root:AddChild(Indicator(
         self.server,
@@ -172,15 +199,26 @@ function AutoJoin:AddIndicator(root)
     return indicator
 end
 
+--- Removes an indicator.
+--
+-- Kills a corner indicator and removes it from the table where all indicators are stored.
+--
+-- @tparam widgets.autojoin.Indicator indicator
+-- @treturn boolean
 function AutoJoin:RemoveIndicator(indicator)
     for k, v in ipairs(self.indicators) do
         if indicator.inst.GUID == v.inst.GUID then
             v:Kill()
             table.remove(self.indicators, k)
+            return true
         end
     end
+    return false
 end
 
+--- Removes all indicators.
+--
+-- Kills all corner indicators and resets the storage table.
 function AutoJoin:RemoveAllIndicators()
     for _, v in ipairs(self.indicators) do
         v:Kill()
@@ -200,14 +238,29 @@ end
 -- Server Listing Screen
 --
 
+--- Gets an auto-joining state function.
+--
+-- Returns a function for checking if auto-joining is active or not.
+--
+-- @treturn function
 function AutoJoin:GetBtnIsActiveFn()
     return function()
         return self:IsAutoJoining()
     end
 end
 
-function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
-    local function Join(server, password)
+--- Gets a button on-click function.
+--
+-- Returns a function for the "Auto-Join" button on-click action for both joining and cancelling.
+-- Creates an `screens.AutoJoinPasswordScreen` screen and prompts for password if the server has
+-- one.
+--
+-- @tparam function server_fn Function to return a server table
+-- @tparam[opt] function success_cb Callback function on success
+-- @tparam[opt] function cancel_cb Callback function on cancel
+-- @treturn function
+function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
+    local function OnJoin(server, password)
         self:StopAutoJoining()
 
         if not self:IsAutoJoining() then
@@ -216,8 +269,8 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
 
         self.join_btn:Enable()
 
-        if successcb then
-            successcb(self)
+        if success_cb then
+            success_cb(self)
         end
     end
 
@@ -232,28 +285,28 @@ function AutoJoin:GetBtnOnClickFn(serverfn, successcb, cancelcb)
             self.auto_join_btn:Disable()
         end
 
-        if cancelcb then
-            cancelcb(self)
+        if cancel_cb then
+            cancel_cb(self)
         end
     end
 
     return function()
         if not self.join_btn then
-            self:DebugError("AutoJoin.joinbtn is required")
+            self:DebugError("AutoJoin.join_btn is required")
             return
         end
 
-        local server = serverfn()
+        local server = server_fn()
         if server and server.has_password and not self:IsAutoJoining() then
             self:DebugString("Auto-joining the password-protected server:", server.name)
             self:DebugString("Prompting password...")
-            local screen = AutoJoinPasswordScreen(server, Join, OnCancel)
+            local screen = AutoJoinPasswordScreen(server, OnJoin, OnCancel)
             TheFrontEnd:PushScreen(screen)
             screen:ForceInput()
         elseif server and not self:IsAutoJoining() then
             self:DebugString("Auto-joining the server:", server.name)
             OnCancel(server)
-            Join(server)
+            OnJoin(server)
         elseif self:IsAutoJoining() then
             self:DebugString("Auto-joining has been cancelled")
             OnCancel(server)
@@ -277,18 +330,24 @@ local function IsServerListed(guid)
     return false
 end
 
-function AutoJoin:IsAutoJoining()
-    return self.is_auto_joining
-end
-
+--- Starts auto-joining a server.
+--
+-- Overrides some functions by calling `Override` and starts the auto-joining thread by calling
+-- `StartAutoJoinThread`.
+--
+-- @tparam table server Server
+-- @tparam[opt] string password Server password
 function AutoJoin:StartAutoJoining(server, password)
     if not self.is_ui_disabled then
         self:Override()
     end
-
     self:StartAutoJoinThread(server, password)
 end
 
+--- Stops auto-joining a server.
+--
+-- Stops the auto-joining thread by calling `ClearAutoJoinThread`, restores previously overridden
+-- functions by calling `OverrideRestore` and makes "Auto-Join" button inactive.
 function AutoJoin:StopAutoJoining()
     self:ClearAutoJoinThread()
 
@@ -304,9 +363,21 @@ function AutoJoin:StopAutoJoining()
     end
 end
 
+--- Gets the auto-joining state.
+-- @treturn boolean
+function AutoJoin:IsAutoJoining()
+    return self.is_auto_joining
+end
+
+--- Starts the auto-joining thread.
+--
+-- Starts the thread to auto-join the provided server.
+--
+-- @tparam table server Server
+-- @tparam[opt] string password Server password
 function AutoJoin:StartAutoJoinThread(server, password)
     if not server then
-        return server
+        return
     end
 
     local default_refresh_seconds = 30
@@ -369,6 +440,9 @@ function AutoJoin:StartAutoJoinThread(server, password)
     end)
 end
 
+--- Stops the auto-joining thread.
+--
+-- Stops the thread started earlier by `StartAutoJoinThread`.
 function AutoJoin:ClearAutoJoinThread()
     return Utils.ThreadClear(self.auto_join_thread)
 end
