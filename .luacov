@@ -1,5 +1,6 @@
 return {
   include = {
+    "modmain",
     "scripts",
   },
   exclude = {
