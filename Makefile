@@ -8,6 +8,7 @@ check_defined = $(strip $(foreach 1,$1, $(call __check_defined,$1,$(strip $(valu
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
 	@echo "   assets         to pack images"
+	@echo "   citest         to run Busted tests for CI"
 	@echo "   gitrelease     to commit modinfo.lua and CHANGELOG.md + add a new tag"
 	@echo "   install        to install the mod"
 	@echo "   ldoc           to generate an LDoc documentation"
@@ -23,6 +24,9 @@ help:
 assets:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
 	@${DS_KTOOLS_KTECH} images/auto_join_icons/* . --atlas images/auto_join_icons.xml
+
+citest:
+	@busted . && awk '/^Summary$$/{if (a) print a;if (b) print b}{a=b;b=$$0;} /^Summary$$/,f' luacov.report.out
 
 gitrelease:
 	@echo "Latest Git tag: ${GIT_LATEST_TAG}"
@@ -94,7 +98,7 @@ testcoverage:
 	@luacov-console . && luacov-console -s
 
 testlist:
-	@busted --list . | awk '{$$1=""}1' | awk '{ gsub(/^[ \t]+|[ \t]+$$/, ""); print }'
+	@busted --list . | awk '{$$1=""}1' | awk '{gsub(/^[ \t]+|[ \t]+$$/,"");print}'
 
 uninstall:
 	@:$(call check_defined, DST_MODS)
