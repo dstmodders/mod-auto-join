@@ -355,11 +355,9 @@ template {
  */
 
 body {
-  margin-left: 1em;
-  margin-right: 1em;
   font-family: arial, helvetica, geneva, sans-serif;
   background-color: #ffffff;
-  margin: 0;
+  margin: 0 1em;
 }
 
 code,
@@ -662,7 +660,7 @@ dl.function h3 {
 
 ul.nowrap {
   overflow: auto;
-  whitespace: nowrap;
+  white-space: nowrap;
 }
 
 /* stop sublists from having initial vertical space */
@@ -876,7 +874,9 @@ pre code {
 
 #navigation li {
   margin: 3px 0 0 0;
+  overflow: hidden;
   text-indent: 0;
+  text-overflow: ellipsis;
 }
 
 #navigation::-webkit-scrollbar {
@@ -913,6 +913,13 @@ pre code {
 
 #about i:first-child {
   margin-left: 264px;
+}
+
+table.function_list td.name {
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media only screen and (max-width: 1124px) {
