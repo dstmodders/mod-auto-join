@@ -4,7 +4,9 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
     [[- Added support for the hide changelog configuration]] .. "\n" ..
-    [[- Changed configuration to be divided into sections]]
+    [[- Added tests and documentation]] .. "\n" ..
+    [[- Changed configuration to be divided into sections]]  .. "\n" ..
+    [[- Refactored and restructured most of the existing code]]
 author = "Demonblink"
 api_version = 10
 forumthread = ""
