@@ -21,7 +21,6 @@ local Utils = require "autojoin/utils"
 --
 
 local TheNet = _G.TheNet
-local getmetatable = _G.getmetatable
 
 --
 -- Assets
@@ -85,56 +84,16 @@ end
 local function ServerListingScreenPostInit(_self)
     local ServerPreferences = _G.ServerPreferences
 
-    local function CompareTable(a, b)
-        -- basic validation
-        if a == b then
-            return true
-        end
-
-        -- null check
-        if a == nil or b == nil then
-            return false
-        end
-
-        -- validate type
-        if type(a) ~= "table" then
-            return false
-        end
-
-        -- compare meta tables
-        local meta_table_a = getmetatable(a)
-        local meta_table_b = getmetatable(b)
-        if not CompareTable(meta_table_a, meta_table_b) then
-            return false
-        end
-
-        -- compare nested tables
-        for index, va in pairs(a) do
-            local vb = b[index]
-            if not CompareTable(va, vb) then
-                return false
-            end
-        end
-        for index, vb in pairs(b) do
-            local va = a[index]
-            if not CompareTable(va, vb) then
-                return false
-            end
-        end
-
-        return true
-    end
-
     --
     -- Buttons
     --
 
-    local serverfn = function()
+    local server_fn = function()
         return _self.selected_server
     end
 
     local function OnJoinClick()
-        local server = serverfn()
+        local server = server_fn()
         if server then
             if server.has_password then
                 DebugString("Joining the password-protected server:", server.name)
@@ -148,7 +107,7 @@ local function ServerListingScreenPostInit(_self)
     end
 
     local function OnAutoJoinSuccess(self)
-        self.server = serverfn()
+        self.server = server_fn()
         _self.servers_scroll_list:RefreshView()
     end
 
@@ -159,7 +118,7 @@ local function ServerListingScreenPostInit(_self)
 
     AutoJoin.join_btn = _self.side_panel:AddChild(JoinButton(OnJoinClick))
     AutoJoin.auto_join_btn = _self.side_panel:AddChild(AutoJoinButton(
-        AutoJoin:GetBtnOnClickFn(serverfn, OnAutoJoinSuccess, OnAutoJoinCancel),
+        AutoJoin:GetBtnOnClickFn(server_fn, OnAutoJoinSuccess, OnAutoJoinCancel),
         AutoJoin:GetBtnIsActiveFn()
     ))
 
@@ -178,10 +137,10 @@ local function ServerListingScreenPostInit(_self)
         OldSetRowColour(self, row_widget, colour)
 
         local server = self.servers[row_widget.unfiltered_index]
-        local autojoinserver = AutoJoin.server
+        local auto_join_server = AutoJoin.server
 
-        if server and autojoinserver then
-            if self.servers[row_widget.unfiltered_index].guid == AutoJoin.server.guid then
+        if server and auto_join_server then
+            if self.servers[row_widget.unfiltered_index].guid == auto_join_server.guid then
                 OldSetRowColour(self, row_widget, _G.UICOLOURS.GOLD)
             end
         end
@@ -190,14 +149,14 @@ local function ServerListingScreenPostInit(_self)
     local function NewUpdateServerData(self, selected_index_actual)
         OldUpdateServerData(self, selected_index_actual)
 
-        local selectedserver = TheNet:GetServerListingFromActualIndex(selected_index_actual)
-        local isnamehidden = selectedserver
-            and ServerPreferences:IsNameAndDescriptionHidden(selectedserver)
+        local selected_server = TheNet:GetServerListingFromActualIndex(selected_index_actual)
+        local is_name_and_description_hidden = selected_server
+            and ServerPreferences:IsNameAndDescriptionHidden(selected_server)
             or false
 
-        if selectedserver
-            and (CompareTable(selectedserver, self.selected_server) == false
-            or self.details_hidden_name ~= isnamehidden)
+        if selected_server
+            and (Utils.TableCompare(selected_server, self.selected_server) == false
+            or self.details_hidden_name ~= is_name_and_description_hidden)
         then
             _self.auto_join_join_btn:Enable()
             _self.auto_join_auto_join_btn:Enable()
