@@ -1,6 +1,9 @@
 ### Intellij ###
 .idea/
 
+### VisualStudioCode ###
+.vscode/
+
 ### Lua ###
 # luarocks build files
 *.src.rock
