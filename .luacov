@@ -6,5 +6,6 @@ return {
   exclude = {
     "spec",
   },
+  includeuntestedfiles = true,
   runreport = true,
 }
