@@ -3,6 +3,7 @@ version = "0.5.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
+    [[- Added support for a corner indicator in some other screens]] .. "\n" ..
     [[- Added support for the hide changelog configuration]] .. "\n" ..
     [[- Added tests and documentation]] .. "\n" ..
     [[- Changed configuration to be divided into sections]]  .. "\n" ..

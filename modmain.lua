@@ -243,6 +243,7 @@ if GetModConfigData("indicator") then
     -- Main Screen
     AddClassPostConstruct("screens/redux/servercreationscreen", IndicatorScreenPostInit) -- Host Game
     AddClassPostConstruct("screens/redux/playersummaryscreen", IndicatorScreenPostInit) -- Item Collection
+    AddClassPostConstruct("screens/redux/compendiumscreen", IndicatorScreenPostInit) -- Compendium
     AddClassPostConstruct("screens/redux/optionsscreen", IndicatorScreenPostInit) -- Options
     AddClassPostConstruct("screens/redux/modsscreen", IndicatorScreenPostInit) -- Mods
     AddClassPostConstruct("screens/redux/modconfigurationscreen", IndicatorScreenPostInit) -- Mods (Configuration)
@@ -250,12 +251,17 @@ if GetModConfigData("indicator") then
     -- Item Collection
     AddClassPostConstruct("screens/redux/collectionscreen", IndicatorScreenPostInit) -- Curio Cabinet
     AddClassPostConstruct("screens/redux/mysteryboxscreen", IndicatorScreenPostInit) -- Treasury
-    AddClassPostConstruct("screens/redux/morguescreen", IndicatorScreenPostInit) -- History
     AddClassPostConstruct("screens/tradescreen", IndicatorScreenPostInit) -- Trade Inn
     AddClassPostConstruct("screens/crowgamescreen", IndicatorScreenPostInit) -- Trade Inn (Crow Game)
+    AddClassPostConstruct("screens/redbirdgamescreen", IndicatorScreenPostInit) -- Trade Inn (Red Bird Game)
+    AddClassPostConstruct("screens/snowbirdgamescreen", IndicatorScreenPostInit) -- Trade Inn (Snow Bird Game)
     AddClassPostConstruct("screens/redeemdialog", IndicatorScreenPostInit) -- Redeem Codes
     AddClassPostConstruct("screens/redux/purchasepackscreen", IndicatorScreenPostInit) -- Shop
     AddClassPostConstruct("screens/redux/achievementspopup", IndicatorScreenPostInit) -- Achievements
+    AddClassPostConstruct("screens/redux/wardrobescreen", IndicatorScreenPostInit) -- Wardrobe
+
+    -- Compendium
+    AddClassPostConstruct("screens/redux/characterbioscreen", IndicatorScreenPostInit) -- Survivors
 end
 
 --
