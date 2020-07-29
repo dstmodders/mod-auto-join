@@ -25,44 +25,44 @@ end)
 --- Checks if the debugging is enabled.
 -- @treturn boolean
 function Debug:IsEnabled()
-    return self.isenabled
+    return self.is_enabled
 end
 
 --- Sets the debugging.
--- @tparam boolean value
-function Debug:SetIsEnabled(value)
-    self.isenabled = value
+-- @tparam boolean enable
+function Debug:SetIsEnabled(enable)
+    self.is_enabled = enable
 end
 
 --- Enables the debugging.
 function Debug:Enable()
-    self.isenabled = true
+    self.is_enabled = true
 end
 
 --- Disables the debugging.
 function Debug:Disable()
-    self.isenabled = false
+    self.is_enabled = false
 end
 
 --- Checks if name is in the debugging.
 -- @tparam string name
 -- @treturn boolean
 function Debug:IsDebug(name)
-    return self.isdebug[name] and true or false
+    return self.is_debug[name] and true or false
 end
 
 --- Adds the name to the debugging.
 -- @tparam string name
--- @tparam boolean boolean
-function Debug:SetIsDebug(name, boolean)
-    boolean = boolean and true or false
-    self.isdebug[name] = boolean
+-- @tparam boolean enable
+function Debug:SetIsDebug(name, enable)
+    enable = enable and true or false
+    self.is_debug[name] = enable
 end
 
 --- Prints the provided strings.
 -- @tparam string ... Strings
 function Debug:DebugString(...) -- luacheck: only
-    if self.isenabled then
+    if self.is_enabled then
         local task = scheduler:GetCurrentTask()
         local msg = string.format("[%s]", self.modname)
 
@@ -85,7 +85,7 @@ end
 --
 -- @tparam string ... Strings
 function Debug:DebugStringStart(...)
-    self.starttime = os.clock()
+    self.start_time = os.clock()
     self:DebugString(...)
 end
 
@@ -99,9 +99,9 @@ function Debug:DebugStringStop(...)
     local arg = { ... }
     local last = string.gsub(arg[#arg], "%.$", "") .. "."
     arg[#arg] = last
-    table.insert(arg, string.format("Time: %0.4f", os.clock() - self.starttime))
+    table.insert(arg, string.format("Time: %0.4f", os.clock() - self.start_time))
     self:DebugString(unpack(arg))
-    self.starttime = nil
+    self.start_time = nil
 end
 
 --- Prints an initialized method name.
@@ -156,10 +156,10 @@ end
 -- @tparam string modname
 function Debug:DoInit(modname)
     -- general
-    self.isdebug = {}
-    self.isenabled = false
+    self.is_debug = {}
+    self.is_enabled = false
     self.modname = modname
-    self.starttime = nil
+    self.start_time = nil
 
     -- other
     self:DebugInit("Debug")
