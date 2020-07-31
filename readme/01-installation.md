@@ -24,7 +24,7 @@ version has been released.
 The mods' directory path on Linux installed through [Steam][]:
 
 ```text
-/home/<your username>/.steam/steam/steamapps/common/Don't Starve Together/mods
+/home/<your username>/.steam/steam/steamapps/common/Don't Starve Together/mods/
 ```
 
 ### Steam (Windows)
@@ -32,7 +32,7 @@ The mods' directory path on Linux installed through [Steam][]:
 The mods' directory path on Windows installed through [Steam][]:
 
 ```text
-C:\Program Files (x86)\Steam\steamapps\common\Don't Starve Together\mods
+C:\Program Files (x86)\Steam\steamapps\common\Don't Starve Together\mods\
 ```
 
 ## Makefile

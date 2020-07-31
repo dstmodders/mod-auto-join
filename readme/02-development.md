@@ -28,7 +28,7 @@ To learn more, consider checking out the corresponding [Docker Hub][] image:
 
 ```shell script
 $ git clone https://github.com/victorpopkov/dst-mod-auto-join
-$ cd dst-mod-keep-following
+$ cd ./dst-mod-auto-join/
 $ export DST_MODS="${HOME}/.steam/steam/steamapps/common/Don't Starve Together/mods/"
 $ docker run --rm -itv "$(pwd):/mod/" -v "${DST_MODS}:/mods/" viktorpopkov/dst-mod
 ```
@@ -37,9 +37,9 @@ $ docker run --rm -itv "$(pwd):/mod/" -v "${DST_MODS}:/mods/" viktorpopkov/dst-m
 
 ```powershell
 PS C:\> git clone https://github.com/victorpopkov/dst-mod-auto-join
-PS C:\> cd dst-mod-auto-join
-PS C:\> $Env:DST_MODS = "C:\Program Files (x86)\Steam\steamapps\common\Don't Starve Together\mods"
-PS C:\> docker run --rm -itv "${PWD}:/mod/" -v "$Env:DST_MODS:/mods/" viktorpopkov/dst-mod
+PS C:\> cd .\dst-mod-auto-join\
+PS C:\> $Env:DST_MODS = "C:\Program Files (x86)\Steam\steamapps\common\Don't Starve Together\mods\"
+PS C:\> docker run --rm -itv "${PWD}:/mod/" -v "$($Env:DST_MODS):/mods/" viktorpopkov/dst-mod
 ```
 
 ## Environment
@@ -62,7 +62,7 @@ throughout the project as well.
 $ sudo apt install build-essential libreadline-dev
 $ curl -R -O http://www.lua.org/ftp/lua-5.1.5.tar.gz
 $ tar zxf lua-5.1.5.tar.gz
-$ cd lua-5.1.5
+$ cd lua-5.1.5/
 $ make linux test
 $ sudo make install
 ```
@@ -72,7 +72,7 @@ $ sudo make install
 ```shell script
 $ wget https://luarocks.org/releases/luarocks-3.3.1.tar.gz
 $ tar zxpf luarocks-3.3.1.tar.gz
-$ cd luarocks-3.3.1
+$ cd luarocks-3.3.1/
 $ ./configure
 $ make
 $ sudo make install
