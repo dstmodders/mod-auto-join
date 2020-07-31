@@ -859,6 +859,8 @@ pre code {
   overflow-x: hidden;
   overflow-y: scroll;
   position: fixed;
+  scrollbar-color: #ccc #fff;
+  scrollbar-width: thin;
   top: 0;
   width: 264px;
 }
