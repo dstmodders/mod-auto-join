@@ -10,9 +10,9 @@ std = {
 
   -- std.read_globals should include only the "native" Lua-related stuff
   read_globals = {
-    "Class",
     "arg",
     "assert",
+    "Class",
     "debug",
     "env",
     "getmetatable",
@@ -52,8 +52,8 @@ files["modinfo.lua"] = {
     "dst_compatible",
     "folder_name",
     "forumthread",
-    "icon",
     "icon_atlas",
+    "icon",
     "name",
     "priority",
     "reign_of_giants_compatible",
@@ -90,10 +90,10 @@ files["scripts/**/*.lua"] = {
   -- globals
   globals = {
     -- general
+    "_G",
     "JoinServer",
     "OnNetworkDisconnect",
     "ShowConnectingToGamePopup",
-    "_G",
 
     -- project
     "Debug",
@@ -129,9 +129,9 @@ files["scripts/**/*.lua"] = {
 
     -- threads
     "KillThreadsWithID",
+    "scheduler",
     "Sleep",
     "StartThread",
-    "scheduler",
   },
 }
 
@@ -144,9 +144,9 @@ files["spec/**/*.lua"] = {
   -- globals
   globals = {
     -- general
+    "_G",
     "Class",
     "ClassRegistry",
-    "_G",
     "package",
 
     -- project
