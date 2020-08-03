@@ -49,17 +49,18 @@ install:
 	@:$(call check_defined, DST_MODS)
 	@rsync -az \
 		--exclude '.*' \
-		--exclude 'CHANGELOG.md' \
-		--exclude 'Makefile' \
-		--exclude 'README.md' \
 		--exclude 'busted.out' \
+		--exclude 'CHANGELOG.md' \
 		--exclude 'config.ld' \
 		--exclude 'description.txt*' \
 		--exclude 'doc/' \
 		--exclude 'images/auto_join_icons/' \
 		--exclude 'luacov*' \
+		--exclude 'Makefile' \
 		--exclude 'modicon.png' \
 		--exclude 'modicon/' \
+		--exclude 'preview.gif' \
+		--exclude 'README.md' \
 		--exclude 'readme/' \
 		--exclude 'spec/' \
 		--exclude 'workshop/' \
@@ -107,9 +108,9 @@ uninstall:
 workshop:
 	@rm -Rf ./workshop/
 	@mkdir -p ./workshop/images/
-	@cp -R ./LICENSE ./workshop/LICENSE
 	@cp -R ./images/auto_join_icons.tex ./workshop/images/auto_join_icons.tex
 	@cp -R ./images/auto_join_icons.xml ./workshop/images/auto_join_icons.xml
+	@cp -R ./LICENSE ./workshop/LICENSE
 	@cp -R ./modicon.tex ./workshop/
 	@cp -R ./modicon.xml ./workshop/
 	@cp -R ./modinfo.lua ./workshop/
