@@ -1,5 +1,5 @@
 ----
--- Different global utilities.
+-- Different mod utilities.
 --
 -- Most of them are expected to be used in the gameplay console.
 --
