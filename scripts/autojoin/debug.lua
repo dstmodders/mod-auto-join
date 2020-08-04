@@ -96,12 +96,16 @@ end
 --
 -- @tparam string ... Strings
 function Debug:DebugStringStop(...)
-    local arg = { ... }
-    local last = string.gsub(arg[#arg], "%.$", "") .. "."
-    arg[#arg] = last
-    table.insert(arg, string.format("Time: %0.4f", os.clock() - self.start_time))
-    self:DebugString(unpack(arg))
-    self.start_time = nil
+    if self.start_time then
+        local arg = { ... }
+        local last = string.gsub(arg[#arg], "%.$", "") .. "."
+        arg[#arg] = last
+        table.insert(arg, string.format("Time: %0.4f", os.clock() - self.start_time))
+        self:DebugString(unpack(arg))
+        self.start_time = nil
+    else
+        self:DebugString(...)
+    end
 end
 
 --- Prints an initialized method name.
@@ -159,10 +163,11 @@ function Debug:DoInit(modname)
     self.is_debug = {}
     self.is_enabled = false
     self.modname = modname
+    self.name = "Debug"
     self.start_time = nil
 
     -- other
-    self:DebugInit("Debug")
+    self:DebugInit(self.name)
 end
 
 return Debug
