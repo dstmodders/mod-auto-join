@@ -86,6 +86,7 @@ encourage following some of the best practices:
 - [Busted][]
 - [EditorConfig][]
 - [GNU Make][]
+- [LCOV][]
 - [LDoc][]
 - [LuaCov][]
 - [Luacheck][]
@@ -107,14 +108,24 @@ $ sudo luarocks install ldoc
 $ sudo luarocks install luacheck
 $ sudo luarocks install luacov
 $ sudo luarocks install luacov-console
+$ sudo luarocks install luacov-reporter-lcov
+$ sudo luarocks install cluacov
+```
+
+##### [LCOV][]
+
+```shell script
+$ git clone https://github.com/linux-test-project/lcov.git
+$ cd lcov/
+$ sudo make install
 ```
 
 ##### [Prettier][]
 
 ```shell script
-$ npm install -g prettier
+$ npm install -g prettier @prettier/plugin-xml
 # or
-$ yarn global add prettier
+$ yarn global add prettier @prettier/plugin-xml
 ```
 
 ##### [ktools][]
@@ -309,6 +320,7 @@ Please use 'make <target>' where '<target>' is one of:
    modicon        to pack modicon
    release        to update version
    test           to run Busted tests
+   testclean      to clean up after tests
    testcoverage   to print the tests coverage report
    testlist       to list all existing tests
    uninstall      to uninstall the mod
@@ -330,6 +342,7 @@ Please use 'make <target>' where '<target>' is one of:
 [https://hub.docker.com/r/viktorpopkov/dst-mod]: https://hub.docker.com/r/viktorpopkov/dst-mod
 [https://trello.com/b/csl4sgtm/dst-mod-auto-join]: https://trello.com/b/csl4Sgtm/dst-mod-auto-join
 [ktools]: https://github.com/nsimplex/ktools
+[lcov]: http://ltp.sourceforge.net/coverage/lcov.php
 [ldoc]: https://stevedonovan.github.io/ldoc/
 [lua style guide]: https://github.com/luarocks/lua-style-guide
 [lua]: https://www.lua.org/
