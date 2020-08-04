@@ -16,6 +16,7 @@ help:
 	@echo "   modicon        to pack modicon"
 	@echo "   release        to update version"
 	@echo "   test           to run Busted tests"
+	@echo "   testclean      to clean up after tests"
 	@echo "   testcoverage   to print the tests coverage report"
 	@echo "   testlist       to list all existing tests"
 	@echo "   uninstall      to uninstall the mod"
@@ -100,6 +101,9 @@ release:
 
 test:
 	@busted .; luacov -r lcov > /dev/null 2>&1 && cp luacov.report.out lcov.info; luacov-console . && luacov-console -s
+
+testclean:
+	@rm -f lcov.info luacov*
 
 testcoverage:
 	@luacov -r lcov > /dev/null 2>&1 && cp luacov.report.out lcov.info; luacov-console . && luacov-console -s
