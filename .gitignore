@@ -17,14 +17,16 @@ luacov.*
 # general
 .github/slack*.json
 busted.out
+coverage/
 description.txt
 images/auto_join_icons/
+lcov.info
 modsettings.lua
 workshop/
 
 # doc
 doc/*
 !doc/.dockerignore
-!doc/Dockerfile
 !doc/docker-stack.yml
+!doc/Dockerfile
 !doc/ldoc/
