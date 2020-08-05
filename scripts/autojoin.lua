@@ -23,9 +23,8 @@ local AutoJoin = Class(function(self)
     self:DoInit()
 end)
 
---
--- General
---
+--- General
+-- @section general
 
 -- an override for global `JoinServer` function from the networking module
 local function JoinServerOverride(server_listing, optional_password_override)
@@ -158,9 +157,8 @@ function AutoJoin:OverrideRestore()
     self:DebugString("ShowConnectingToGamePopup restored")
 end
 
---
--- Indicators
---
+--- Indicators
+-- @section indicators
 
 --- Gets an indicator on-click function.
 --
@@ -234,9 +232,8 @@ function AutoJoin:SetIndicatorsSeconds(seconds)
     end
 end
 
---
--- Server Listing Screen
---
+--- Server listing screen
+-- @section server-listing-screen
 
 --- Gets an auto-joining state function.
 --
@@ -314,9 +311,8 @@ function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
     end
 end
 
---
--- Auto-joining
---
+--- Auto-joining
+-- @section auto-joining
 
 local function IsServerListed(guid)
     local servers = TheNet:GetServerListings()
@@ -447,9 +443,8 @@ function AutoJoin:ClearAutoJoinThread()
     return Utils.ThreadClear(self.auto_join_thread)
 end
 
---
--- Initialization
---
+--- Initialization
+-- @section initialization
 
 function AutoJoin:DoInit()
     Utils.AddDebugMethods(self)

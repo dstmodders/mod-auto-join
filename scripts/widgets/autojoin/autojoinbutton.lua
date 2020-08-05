@@ -21,9 +21,8 @@ local SCREEN_X = 2560
 local SCREEN_Y = 1440
 local SIZE = 60
 
---
--- Helpers
---
+--- Helpers
+-- @section helpers
 
 local function GetScreenSize()
     if TheSim then
@@ -65,9 +64,8 @@ local AutoJoinButton = Class(Button, function(self, on_click, is_active_fn)
     end
 end)
 
---
--- General
---
+--- General
+-- @section general
 
 --- Gets icon seconds.
 -- @treturn number
@@ -81,9 +79,8 @@ function AutoJoinButton:SetSeconds(seconds)
     self.icon:SetSeconds(seconds)
 end
 
---
--- States
---
+--- States
+-- @section states
 
 --- Changes to an active state.
 function AutoJoinButton:Active()

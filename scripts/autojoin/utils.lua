@@ -17,17 +17,15 @@ local Utils = {}
 -- base (to store original functions after overrides)
 local BaseGetModInfo
 
---
--- Helpers
---
+--- Helpers
+-- @section helpers
 
 local function DebugString(...)
     return _G.AutoJoinDebug and _G.AutoJoinDebug:DebugString(...)
 end
 
---
--- Debugging
---
+--- Debugging
+-- @section debugging
 
 --- Adds debug methods to the destination class.
 --
@@ -61,9 +59,8 @@ function Utils.AddDebugMethods(dest)
     end
 end
 
---
--- Chain
---
+--- Chain
+-- @section chain
 
 --- Gets chained field.
 --
@@ -154,9 +151,8 @@ function Utils.ChainValidate(src, ...)
     return Utils.ChainGet(src, ...) and true or false
 end
 
---
--- Modmain
---
+--- Modmain
+-- @section modmain
 
 --- Hide the modinfo changelog.
 --
@@ -194,9 +190,8 @@ function Utils.HideChangelog(modname, enable)
     return false
 end
 
---
--- Table
---
+--- Table
+-- @section table
 
 --- Compares two tables if they are the same.
 -- @tparam table a Table A
@@ -243,9 +238,8 @@ function Utils.TableCompare(a, b)
     return true
 end
 
---
--- Thread
---
+--- Thread
+-- @section thread
 
 --- Starts a new thread.
 --

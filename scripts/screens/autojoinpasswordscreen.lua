@@ -58,9 +58,8 @@ local AutoJoinPasswordScreen = Class(InputDialogScreen, function(
     end
 end)
 
---
--- States
---
+--- States
+-- @section states
 
 --- State to force input.
 function AutoJoinPasswordScreen:ForceInput()

@@ -45,9 +45,8 @@ local Icon = Class(Widget, function(self)
     self.circle_cross:Hide()
 end)
 
---
--- General
---
+--- General
+-- @section general
 
 --- Gets seconds.
 -- @treturn number
@@ -63,9 +62,8 @@ function Icon:SetSeconds(seconds)
     self.text:SetString(seconds)
 end
 
---
--- States
---
+--- States
+-- @section states
 
 --- Changes to an active state.
 function Icon:Active()

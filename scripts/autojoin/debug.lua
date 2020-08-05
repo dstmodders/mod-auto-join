@@ -18,9 +18,8 @@ local Debug = Class(function(self, modname)
     self:DoInit(modname)
 end)
 
---
--- General
---
+--- General
+-- @section general
 
 --- Checks if the debugging is enabled.
 -- @treturn boolean
@@ -58,6 +57,9 @@ function Debug:SetIsDebug(name, enable)
     enable = enable and true or false
     self.is_debug[name] = enable
 end
+
+--- Prints
+-- @section prints
 
 --- Prints the provided strings.
 -- @tparam string ... Strings
@@ -149,9 +151,8 @@ function Debug:DebugModConfigs()
     end
 end
 
---
--- Initialization
---
+--- Initialization
+-- @section initialization
 
 --- Initializes.
 --

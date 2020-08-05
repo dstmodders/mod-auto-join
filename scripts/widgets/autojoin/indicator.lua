@@ -74,9 +74,8 @@ local Indicator = Class(Button, function(
     end
 end)
 
---
--- General
---
+--- General
+-- @section general
 
 --- Gets icon seconds.
 -- @treturn number
@@ -90,9 +89,8 @@ function Indicator:SetSeconds(seconds)
     self.icon:SetSeconds(seconds)
 end
 
---
--- States
---
+--- States
+-- @section states
 
 --- State when becomes visible.
 function Indicator:Show()
