@@ -8,9 +8,9 @@ Before making any contribution make sure to look through the following topics.
 The answers to the most common questions should be already covered there:
 
 - [Installation](readme/01-installation.md)
-- [Steam Workshop](readme/01-installation.md#steam-workshop)
-- [Manually](readme/01-installation.md#manually)
-- [Makefile](readme/01-installation.md#makefile)
+  - [Steam Workshop](readme/01-installation.md#steam-workshop)
+  - [Manually](readme/01-installation.md#manually)
+  - [Makefile](readme/01-installation.md#makefile)
 - [Development](readme/02-development.md)
   - [Overview](readme/02-development.md#overview)
   - [Quick Start](readme/02-development.md#quick-start)
