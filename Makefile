@@ -59,9 +59,11 @@ install:
 		--exclude 'busted.out' \
 		--exclude 'CHANGELOG.md' \
 		--exclude 'config.ld' \
+		--exclude 'CONTRIBUTING.md' \
 		--exclude 'description.txt*' \
 		--exclude 'doc/' \
 		--exclude 'images/auto_join_icons/' \
+		--exclude 'lcov.info' \
 		--exclude 'luacov*' \
 		--exclude 'Makefile' \
 		--exclude 'modicon.png' \
@@ -81,9 +83,11 @@ ldoc:
 lint:
 	@EXIT=0; \
 		printf "Luacheck:\n\n"; luacheck . --exclude-files="here/" || EXIT=$$?; \
-		printf "\nPrettier (Markdown):\n\n"; prettier --check ./**/*.md || EXIT=$$?; \
-		printf "\nPrettier (XML):\n\n"; prettier --check ./**/*.xml || EXIT=$$?; \
-		printf "\nPrettier (YAML):\n\n"; prettier --check ./**/*.yml || EXIT=$$?; \
+		printf "\nPrettier:\n\n"; prettier --check \
+			"./**/*.md" \
+			"./**/*.xml" \
+			"./**/*.yml" \
+		|| EXIT=$$?; \
 		exit $${EXIT}
 
 modicon:
