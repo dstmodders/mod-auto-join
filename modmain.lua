@@ -16,24 +16,21 @@ local AutoJoinButton = require "widgets/autojoin/autojoinbutton"
 local JoinButton = require "widgets/autojoin/joinbutton"
 local Utils = require "autojoin/utils"
 
---
--- Globals
---
+--- Globals
+-- @section globals
 
 local TheNet = _G.TheNet
 
---
--- Assets
---
+--- Assets
+-- @section assets
 
 Assets = {
     Asset("ATLAS", "images/auto_join_icons.xml"),
     Asset("IMAGE", "images/auto_join_icons.tex"),
 }
 
---
--- Debugging
---
+--- Debugging
+-- @section debugging
 
 local Debug
 
@@ -54,9 +51,8 @@ local function DebugInit(...)
     return Debug and Debug:DebugInit(...)
 end
 
---
--- Initialization
---
+--- Initialization
+-- @section initialization
 
 AutoJoin:DoInit()
 
@@ -77,9 +73,8 @@ if Debug then
     Debug:DebugModConfigs()
 end
 
---
--- Server Listing Screen
---
+--- Server Listing Screen
+-- @section server-listing-screen
 
 local function ServerListingScreenPostInit(_self)
     local ServerPreferences = _G.ServerPreferences
@@ -131,9 +126,7 @@ local function ServerListingScreenPostInit(_self)
     --
 
     local OldSetRowColour = _self.SetRowColour
-    local OldUpdateServerData = _self.UpdateServerData
-
-    local function NewSetRowColour(self, row_widget, colour)
+    _self.SetRowColour = function(self, row_widget, colour)
         OldSetRowColour(self, row_widget, colour)
 
         local server = self.servers[row_widget.unfiltered_index]
@@ -146,7 +139,8 @@ local function ServerListingScreenPostInit(_self)
         end
     end
 
-    local function NewUpdateServerData(self, selected_index_actual)
+    local OldUpdateServerData = _self.UpdateServerData
+    _self.UpdateServerData = function(self, selected_index_actual)
         OldUpdateServerData(self, selected_index_actual)
 
         local selected_server = TheNet:GetServerListingFromActualIndex(selected_index_actual)
@@ -163,76 +157,56 @@ local function ServerListingScreenPostInit(_self)
         end
     end
 
-    _self.SetRowColour = NewSetRowColour
-    _self.UpdateServerData = NewUpdateServerData
-
     DebugInit("ServerListingScreenPostInit")
 end
 
 AddClassPostConstruct("screens/redux/serverlistingscreen", ServerListingScreenPostInit)
 
---
--- Indicator
---
+--- Indicator
+-- @section indicator
 
 local function IndicatorScreenPostInit(_self)
-    _self.auto_join_indicator = nil
-
-    if not _self.auto_join_indicator then
-        _self.auto_join_indicator = AutoJoin:AddIndicator(_self)
+    _self.mod_auto_join_indicator = nil
+    if not _self.mod_auto_join_indicator then
+        _self.mod_auto_join_indicator = AutoJoin:AddIndicator(_self)
     end
-
-    --
-    -- Overrides
-    --
 
     local OldOnDestroy = _self.OnDestroy
-
-    local function NewOnDestroy(self)
+    _self.OnDestroy = function(self)
         DebugString(self.name, "destroyed")
         OldOnDestroy(self)
-        if self.auto_join_indicator then
-            AutoJoin:RemoveIndicator(self.auto_join_indicator)
-            self.auto_join_indicator = nil
+        if self.mod_auto_join_indicator then
+            AutoJoin:RemoveIndicator(self.mod_auto_join_indicator)
+            self.mod_auto_join_indicator = nil
         end
     end
-
-    _self.OnDestroy = NewOnDestroy
 
     DebugInit(_self.name)
 end
 
 local function MultiplayerMainScreenPostInit(_self)
-    _self.auto_join_indicator = nil
-
-    --
-    -- Overrides
-    --
+    _self.mod_auto_join_indicator = nil
 
     local OldOnHide = _self.OnHide
-    local OldOnShow = _self.OnShow
+    _self.OnHide = function(self)
+        DebugString(self.name, "is hidden")
+        OldOnHide(self)
+        if self.mod_auto_join_indicator then
+            AutoJoin:RemoveIndicator(self.mod_auto_join_indicator)
+            self.mod_auto_join_indicator = nil
+        end
+    end
 
-    local function NewOnShow(self)
+    local OldOnShow = _self.OnShow
+    _self.OnShow = function(self)
         DebugString(self.name, "is shown")
         OldOnShow(self)
-        if not self.auto_join_indicator then
-            self.auto_join_indicator = AutoJoin:AddIndicator(self.fixed_root, function()
-                return self.auto_join_indicator
+        if not self.mod_auto_join_indicator then
+            self.mod_auto_join_indicator = AutoJoin:AddIndicator(self.fixed_root, function()
+                return self.mod_auto_join_indicator
             end)
         end
     end
-
-    local function NewOnHide(self)
-        DebugString(self.name, "is hidden")
-        OldOnHide(self)
-        if self.auto_join_indicator then
-            AutoJoin:RemoveIndicator(self.auto_join_indicator)
-            self.auto_join_indicator = nil
-        end
-    end
-
-    _self.OnHide = NewOnHide
-    _self.OnShow = NewOnShow
 
     DebugInit(_self.name)
 end
@@ -264,9 +238,8 @@ if GetModConfigData("indicator") then
     AddClassPostConstruct("screens/redux/characterbioscreen", IndicatorScreenPostInit) -- Survivors
 end
 
---
--- KnownModIndex
---
+--- KnownModIndex
+-- @section knownmodindex
 
 if GetModConfigData("hide_changelog") then
     Utils.HideChangelog(modname, true)
