@@ -69,10 +69,6 @@ for _, config in ipairs(configs) do
     AutoJoin.config[config] = GetModConfigData(config)
 end
 
-if Debug then
-    Debug:DebugModConfigs()
-end
-
 --- Server Listing Screen
 -- @section server-listing-screen
 
