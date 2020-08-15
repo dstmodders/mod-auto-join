@@ -26,7 +26,7 @@ local BaseGetModInfo
 -- @section helpers
 
 local function DebugString(...)
-    return _G.AutoJoinDebug and _G.AutoJoinDebug:DebugString(...)
+    return _G.ModAutoJoinDebug and _G.ModAutoJoinDebug:DebugString(...)
 end
 
 --- Debugging
@@ -34,7 +34,7 @@ end
 
 --- Adds debug methods to the destination class.
 --
--- Checks the global environment if the `AutoJoinDebug` (`Debug`) is available and adds the
+-- Checks the global environment if the `ModAutoJoinDebug` (`Debug`) is available and adds the
 -- corresponding methods from there. Otherwise, adds all the corresponding functions as empty ones.
 --
 -- @tparam table dest Destination class
@@ -48,11 +48,11 @@ function Utils.AddDebugMethods(dest)
         "DebugTerm",
     }
 
-    if _G.AutoJoinDebug then
+    if _G.ModAutoJoinDebug then
         for _, v in pairs(methods) do
             dest[v] = function(_, ...)
-                if _G.AutoJoinDebug and _G.AutoJoinDebug[v] then
-                    return _G.AutoJoinDebug[v](_G.AutoJoinDebug, ...)
+                if _G.ModAutoJoinDebug and _G.ModAutoJoinDebug[v] then
+                    return _G.ModAutoJoinDebug[v](_G.ModAutoJoinDebug, ...)
                 end
             end
         end

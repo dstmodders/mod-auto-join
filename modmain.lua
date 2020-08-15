@@ -41,7 +41,7 @@ if GetModConfigData("debug") then
     Debug:DebugModConfigs()
 end
 
-_G.AutoJoinDebug = Debug
+_G.ModAutoJoinDebug = Debug
 
 local function DebugString(...)
     return Debug and Debug:DebugString(...)

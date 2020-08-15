@@ -53,10 +53,10 @@ function DebugSpyInit(spy)
         "DebugTerm",
     }
 
-    _G.AutoJoinDebug = require "autojoin/debug"
+    _G.ModAutoJoinDebug = require "autojoin/debug"
     for _, method in pairs(methods) do
         if not _DEBUG_SPY[method] then
-            _DEBUG_SPY[method] = spy.on(_G.AutoJoinDebug, method)
+            _DEBUG_SPY[method] = spy.on(_G.ModAutoJoinDebug, method)
         end
     end
 end
@@ -65,7 +65,7 @@ function DebugSpyTerm()
     for name, _ in pairs(_DEBUG_SPY) do
         _DEBUG_SPY[name] = nil
     end
-    _G.AutoJoinDebug = nil
+    _G.ModAutoJoinDebug = nil
 end
 
 function DebugSpyClear(name)
@@ -102,7 +102,7 @@ function DebugSpyAssertWasCalled(name, calls, args)
     args = type(args) == "string" and { args } or args
     DebugSpyAssert(name).was_called(calls)
     if calls > 0 then
-        DebugSpyAssert(name).was_called_with(match.is_ref(_G.AutoJoinDebug), unpack(args))
+        DebugSpyAssert(name).was_called_with(match.is_ref(_G.ModAutoJoinDebug), unpack(args))
     end
 end
 
