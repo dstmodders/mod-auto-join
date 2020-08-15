@@ -183,7 +183,7 @@ end
 -- Creates a corner indicator and adds it to the table where all indicators are stored.
 --
 -- @tparam table root Parent widget
--- @treturn widgets.autojoin.Indicator
+-- @treturn widgets.Indicator
 function AutoJoin:AddIndicator(root)
     local indicator = root:AddChild(Indicator(
         self.server,
@@ -201,7 +201,7 @@ end
 --
 -- Kills a corner indicator and removes it from the table where all indicators are stored.
 --
--- @tparam widgets.autojoin.Indicator indicator
+-- @tparam widgets.Indicator indicator
 -- @treturn boolean
 function AutoJoin:RemoveIndicator(indicator)
     for k, v in ipairs(self.indicators) do

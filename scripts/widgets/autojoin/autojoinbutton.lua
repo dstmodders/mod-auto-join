@@ -5,9 +5,9 @@
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
--- @classmod widgets.autojoin.AutoJoinButton
--- @see widgets.autojoin.Button
--- @see widgets.autojoin.Icon
+-- @classmod widgets.AutoJoinButton
+-- @see widgets.Button
+-- @see widgets.Icon
 --
 -- @author Victor Popkov
 -- @copyright 2019

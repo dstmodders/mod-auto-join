@@ -1,7 +1,12 @@
 ----
 -- Different mod utilities.
 --
--- Most of them are expected to be used in the gameplay console.
+-- Includes different utilities used throughout the whole mod.
+--
+-- In order to become an utility the solution should either:
+--
+-- 1. Be a non-mod specific and isolated which can be reused in my other mods.
+-- 2. Be a mod specific and isolated which can be used between classes/modules.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
@@ -281,7 +286,6 @@ function Utils.ThreadClear(thread)
         thread = thread ~= nil and thread or task
         KillThreadsWithID(thread.id)
         thread:SetList(nil)
-        thread = nil -- luacheck: only
     end
 end
 

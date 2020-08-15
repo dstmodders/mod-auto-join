@@ -1,15 +1,15 @@
 ----
 -- Base button.
 --
--- Base widget to create a button by extending an `ImageButton` from the engine.
+-- Base widget to create a button by extending `ImageButton` from the engine.
 --
 -- Designed to be extended by other button widgets like `AutoJoinButton` and `JoinButton`.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
--- @classmod widgets.autojoin.Button
--- @see widgets.autojoin.AutoJoinButton
--- @see widgets.autojoin.JoinButton
+-- @classmod widgets.Button
+-- @see widgets.AutoJoinButton
+-- @see widgets.JoinButton
 --
 -- @author Victor Popkov
 -- @copyright 2019

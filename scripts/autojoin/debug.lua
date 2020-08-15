@@ -1,7 +1,7 @@
 ----
 -- Debugging.
 --
--- Includes different debugging-related features/functionality.
+-- Includes different debugging-related stuff.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
@@ -21,36 +21,36 @@ end)
 --- General
 -- @section general
 
---- Checks if the debugging is enabled.
+--- Checks if debugging is enabled.
 -- @treturn boolean
 function Debug:IsEnabled()
     return self.is_enabled
 end
 
---- Sets the debugging.
+--- Sets debugging state.
 -- @tparam boolean enable
 function Debug:SetIsEnabled(enable)
     self.is_enabled = enable
 end
 
---- Enables the debugging.
+--- Enables debugging.
 function Debug:Enable()
     self.is_enabled = true
 end
 
---- Disables the debugging.
+--- Disables debugging.
 function Debug:Disable()
     self.is_enabled = false
 end
 
---- Checks if name is in the debugging.
+--- Checks if named debugging is enabled.
 -- @tparam string name
 -- @treturn boolean
 function Debug:IsDebug(name)
     return self.is_debug[name] and true or false
 end
 
---- Adds the name to the debugging.
+--- Adds named debugging state.
 -- @tparam string name
 -- @tparam boolean enable
 function Debug:SetIsDebug(name, enable)
