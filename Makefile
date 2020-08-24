@@ -7,13 +7,14 @@ check_defined = $(strip $(foreach 1,$1, $(call __check_defined,$1,$(strip $(valu
 
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
-	@echo "   assets         to pack images"
+	@echo "   assets         to pack assets (images and/or animations)"
 	@echo "   citest         to run Busted tests for CI"
 	@echo "   gitrelease     to commit modinfo.lua and CHANGELOG.md + add a new tag"
 	@echo "   install        to install the mod"
 	@echo "   ldoc           to generate an LDoc documentation"
 	@echo "   lint           to run code linting"
 	@echo "   modicon        to pack modicon"
+	@echo "   reinstall      to uninstall and then install the mod"
 	@echo "   release        to update version"
 	@echo "   test           to run Busted tests"
 	@echo "   testclean      to clean up after tests"
@@ -25,6 +26,7 @@ help:
 assets:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
 	@${DS_KTOOLS_KTECH} images/auto_join_icons/* . --atlas images/auto_join_icons.xml
+	@prettier --xml-whitespace-sensitivity='ignore' --write './images/*.xml'
 
 citest:
 	@busted .; \
@@ -93,6 +95,8 @@ lint:
 modicon:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
 	@${DS_KTOOLS_KTECH} ./modicon.png . --atlas ./modicon.xml --square
+
+reinstall: uninstall install
 
 release:
 	@:$(call check_defined, MOD_VERSION)
