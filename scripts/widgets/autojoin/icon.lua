@@ -20,6 +20,9 @@ local Widget = require "widgets/widget"
 
 local SIZE = 28
 
+--- Constructor.
+-- @function _ctor
+-- @usage local icon = Icon()
 local Icon = Class(Widget, function(self)
     Widget._ctor(self)
 

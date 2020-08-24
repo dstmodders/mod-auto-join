@@ -18,6 +18,12 @@
 ----
 local ImageButton = require "widgets/imagebutton"
 
+--- Constructor.
+-- @function _ctor
+-- @tparam[opt] string text Text
+-- @tparam[opt] function on_click Function triggered on click
+-- @tparam[opt] table size Size (table with width and height)
+-- @usage local button = Button("Join")
 local Button = Class(ImageButton, function(self, text, on_click, size)
     local prefix = "button_carny_long"
     if size and #size == 2 then

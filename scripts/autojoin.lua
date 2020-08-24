@@ -1,11 +1,14 @@
 ----
 -- Auto-join.
 --
--- Includes auto-joining features/functionality.
+-- Entry point for all mod-related features which is initialized as soon as the mod loads. Holds
+-- auto-joining state and functionality by overriding some global functions.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
 -- @classmod AutoJoin
+-- @see screens.AutoJoinPasswordScreen
+-- @see widgets.Indicator
 --
 -- @author Victor Popkov
 -- @copyright 2019
@@ -19,6 +22,9 @@ local Utils = require "autojoin/utils"
 
 local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
 
+--- Constructor.
+-- @function _ctor
+-- @usage local autojoin = AutoJoin()
 local AutoJoin = Class(function(self)
     self:DoInit()
 end)
@@ -91,8 +97,8 @@ end
 --
 -- Just a convenience wrapper for `JoinServer`.
 --
--- @tparam table server
--- @tparam string password
+-- @tparam table server Server data
+-- @tparam string password Server password
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
     JoinServer(server, password)
@@ -331,7 +337,7 @@ end
 -- Overrides some functions by calling `Override` and starts the auto-joining thread by calling
 -- `StartAutoJoinThread`.
 --
--- @tparam table server Server
+-- @tparam table server Server data
 -- @tparam[opt] string password Server password
 function AutoJoin:StartAutoJoining(server, password)
     if not self.is_ui_disabled then
@@ -369,7 +375,7 @@ end
 --
 -- Starts the thread to auto-join the provided server.
 --
--- @tparam table server Server
+-- @tparam table server Server data
 -- @tparam[opt] string password Server password
 function AutoJoin:StartAutoJoinThread(server, password)
     if not server then

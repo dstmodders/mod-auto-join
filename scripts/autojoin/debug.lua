@@ -14,6 +14,10 @@
 ----
 require "class"
 
+--- Constructor.
+-- @function _ctor
+-- @tparam string modname Mod name
+-- @usage local debug = Debug(modname)
 local Debug = Class(function(self, modname)
     self:DoInit(modname)
 end)

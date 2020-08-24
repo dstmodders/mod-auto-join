@@ -1,13 +1,14 @@
 ----
 -- Indicator.
 --
--- Widget that extends `Button` and creates a corner indicator that is shown during auto-joining.
+-- Widget that extends `Button` and creates a corner indicator which is shown during auto-joining.
 -- Acts as a button clicking on which should stop auto-joining and must be visible on most of the
 -- non-in-game screens.
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
 -- @classmod widgets.Indicator
+-- @see AutoJoin
 -- @see widgets.Button
 -- @see widgets.Icon
 --
@@ -23,6 +24,15 @@ local DEFAULT_PADDING = 10
 local DEFAULT_SCALE = 1.3
 local SIZE = 60
 
+--- Constructor.
+-- @function _ctor
+-- @tparam[opt] table server Server data
+-- @tparam[opt] function on_click Function triggered on click
+-- @tparam[opt] boolean is_active_fn Function to check active state
+-- @tparam[opt] string position Position string from configurations
+-- @tparam[opt] number padding Padding
+-- @tparam[opt] number scale Scale
+-- @usage local indicator = Indicator()
 local Indicator = Class(Button, function(
     self,
     server,

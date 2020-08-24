@@ -1,7 +1,7 @@
 ----
 -- Our "Auto-Join" button.
 --
--- Widget that extends `Button` and creates our "Auto-Join" button with an icon `Icon`.
+-- Widget that extends `Button` and creates our "Auto-Join" button with an icon (`Icon`).
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
@@ -31,10 +31,14 @@ local function GetScreenSize()
     return RESOLUTION_X, RESOLUTION_Y
 end
 
---
--- Class
---
+--- Class
+-- @section class
 
+--- Constructor.
+-- @function _ctor
+-- @tparam[opt] function on_click Function triggered on click
+-- @tparam[opt] boolean is_active_fn Function to check active state
+-- @usage local autojoinbutton = AutoJoinButton()
 local AutoJoinButton = Class(Button, function(self, on_click, is_active_fn)
     Button._ctor(self, nil, on_click, { SIZE, SIZE })
 

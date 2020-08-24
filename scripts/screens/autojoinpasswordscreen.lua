@@ -7,6 +7,7 @@
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
 -- @classmod screens.AutoJoinPasswordScreen
+-- @see AutoJoin
 --
 -- @author Victor Popkov
 -- @copyright 2019
@@ -15,6 +16,12 @@
 ----
 local InputDialogScreen = require "screens/redux/inputdialog"
 
+--- Constructor.
+-- @function _ctor
+-- @tparam[opt] table server Server data
+-- @tparam[opt] function success_cb Success callback
+-- @tparam[opt] function cancel_cb Cancel callback
+-- @usage local autojoinpasswordscreen = AutoJoinPasswordScreen()
 local AutoJoinPasswordScreen = Class(InputDialogScreen, function(
     self,
     server,
