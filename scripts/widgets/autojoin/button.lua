@@ -14,7 +14,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.5.0-beta
+-- @release 0.5.0
 ----
 local ImageButton = require "widgets/imagebutton"
 
