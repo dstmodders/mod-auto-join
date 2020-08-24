@@ -30,7 +30,8 @@ To learn more, consider checking out the corresponding [Docker Hub][] image:
 $ git clone https://github.com/victorpopkov/dst-mod-auto-join
 $ cd ./dst-mod-auto-join/
 $ export DST_MODS="${HOME}/.steam/steam/steamapps/common/Don't Starve Together/mods/"
-$ docker run --rm -itv "$(pwd):/mod/" -v "${DST_MODS}:/mods/" viktorpopkov/dst-mod
+$ docker pull viktorpopkov/dst-mod
+$ docker run --rm -u 'dst-mod' -itv "$(pwd):/mod/" -v "${DST_MODS}:/mods/" viktorpopkov/dst-mod
 ```
 
 ### PowerShell (Windows)
@@ -39,7 +40,8 @@ $ docker run --rm -itv "$(pwd):/mod/" -v "${DST_MODS}:/mods/" viktorpopkov/dst-m
 PS C:\> git clone https://github.com/victorpopkov/dst-mod-auto-join
 PS C:\> cd .\dst-mod-auto-join\
 PS C:\> $Env:DST_MODS = "C:\Program Files (x86)\Steam\steamapps\common\Don't Starve Together\mods\"
-PS C:\> docker run --rm -itv "${PWD}:/mod/" -v "$($Env:DST_MODS):/mods/" viktorpopkov/dst-mod
+PS C:\> docker pull viktorpopkov/dst-mod
+PS C:\> docker run --rm -u 'dst-mod' -itv "${PWD}:/mod/" -v "$($Env:DST_MODS):/mods/" viktorpopkov/dst-mod
 ```
 
 ## Environment
@@ -84,14 +86,15 @@ The project uses the following tools to improve overall code quality and
 encourage following some of the best practices:
 
 - [Busted][]
+- [ds-mod-tools][]
 - [EditorConfig][]
 - [GNU Make][]
+- [ktools][]
 - [LCOV][]
 - [LDoc][]
-- [LuaCov][]
 - [Luacheck][]
+- [LuaCov][]
 - [Prettier][]
-- [ktools][]
 
 I do RECOMMEND getting familiar with these tools and integrate them into your
 workflow when developing this project. Their usage is OPTIONAL but is strongly
@@ -110,6 +113,17 @@ $ sudo luarocks install luacov
 $ sudo luarocks install luacov-console
 $ sudo luarocks install luacov-reporter-lcov
 $ sudo luarocks install cluacov
+```
+
+##### [ds-mod-tools][]
+
+```shell script
+$ sudo apt install premake4
+$ git clone https://github.com/kleientertainment/ds_mod_tools
+$ cd ds_mod_tools/src/
+$ ./premake.sh
+$ cd ../build/proj/
+$ make
 ```
 
 ##### [LCOV][]
@@ -158,7 +172,7 @@ from the mentioned guide:
 - Comments SHOULD neither have a capitalized first letter, nor a trailing dot (unless there are multiple sentences)
 - LDoc `@param`, `@tparam` and `@treturn` descriptions SHOULD have a first letter capitalized and no trailing dot
 - Use 4 spaces for indention (this is also more consistent between other languages)
-- Use PascalCase and camelCase for names of the functions and methods
+- Use PascalCase for classes/modules, functions and methods
 - Use snake_case for the class fields and variables
 
 If at some point the mentioned style guide suggests a different approach that
@@ -202,7 +216,7 @@ Each card SHOULD have at least one label:
 
 You SHOULD follow these rules:
 
-1.  Each card in the "In Progress" should have at least one member (except user story cards)
+1.  Each card (except user story cards) in the "In Progress" should have at least one member (when there are more than one member in the project)
 2.  Each card in the "Ready for QA", "QA" or "Done" should have at least one corresponding commit attached (except user story cards)
 3.  Each card name should use the present tense
 4.  Each card that doesn't have a member is free to take
@@ -311,13 +325,14 @@ the corresponding rules:
 $ make help
 Please use 'make <target>' where '<target>' is one of:
 
-   assets         to pack images
+   assets         to pack assets (images and/or animations)
    citest         to run Busted tests for CI
    gitrelease     to commit modinfo.lua and CHANGELOG.md + add a new tag
    install        to install the mod
    ldoc           to generate an LDoc documentation
    lint           to run code linting
    modicon        to pack modicon
+   reinstall      to uninstall and then install the mod
    release        to update version
    test           to run Busted tests
    testclean      to clean up after tests
@@ -335,6 +350,7 @@ Please use 'make <target>' where '<target>' is one of:
 [conventional commits]: https://www.conventionalcommits.org/
 [docker hub]: https://hub.docker.com/
 [docker]: https://www.docker.com/
+[ds-mod-tools]: https://github.com/kleientertainment/ds_mod_tools
 [editorconfig]: https://editorconfig.org/
 [github actions]: https://github.com/features/actions
 [github]: https://github.com/
