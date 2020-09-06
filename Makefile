@@ -7,21 +7,23 @@ check_defined = $(strip $(foreach 1,$1, $(call __check_defined,$1,$(strip $(valu
 
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
-	@echo "   assets         to pack assets (images and/or animations)"
-	@echo "   citest         to run Busted tests for CI"
-	@echo "   gitrelease     to commit modinfo.lua and CHANGELOG.md + add a new tag"
-	@echo "   install        to install the mod"
-	@echo "   ldoc           to generate an LDoc documentation"
-	@echo "   lint           to run code linting"
-	@echo "   modicon        to pack modicon"
-	@echo "   reinstall      to uninstall and then install the mod"
-	@echo "   release        to update version"
-	@echo "   test           to run Busted tests"
-	@echo "   testclean      to clean up after tests"
-	@echo "   testcoverage   to print the tests coverage report"
-	@echo "   testlist       to list all existing tests"
-	@echo "   uninstall      to uninstall the mod"
-	@echo "   workshop       to prepare the Steam Workshop directory"
+	@echo "   assets          to pack assets (images and/or animations)"
+	@echo "   citest          to run Busted tests for CI"
+	@echo "   dev             to run reinstall + ldoc + lint + test"
+	@echo "   gitrelease      to commit modinfo.lua and CHANGELOG.md + add a new tag"
+	@echo "   install         to install the mod"
+	@echo "   ldoc            to generate an LDoc documentation"
+	@echo "   lint            to run code linting"
+	@echo "   modicon         to pack modicon"
+	@echo "   reinstall       to uninstall and then install the mod"
+	@echo "   release         to update version"
+	@echo "   test            to run Busted tests"
+	@echo "   testclean       to clean up after tests"
+	@echo "   testcoverage    to print the tests coverage report"
+	@echo "   testlist        to list all existing tests"
+	@echo "   uninstall       to uninstall the mod"
+	@echo "   workshop        to prepare the Steam Workshop directory + archive"
+	@echo "   workshopclean   to clean up Steam Workshop directory + archive"
 
 assets:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
@@ -36,6 +38,8 @@ citest:
 			&& cp luacov.report.out.bak luacov.report.out \
 			&& rm luacov.report.out.bak; \
 		awk '/^Summary$$/{if (a) print a;if (b) print b}{a=b;b=$$0;} /^Summary$$/,f' luacov.report.out
+
+dev: reinstall ldoc lint test
 
 gitrelease:
 	@echo "Latest Git tag: ${GIT_LATEST_TAG}"
@@ -134,5 +138,8 @@ workshop:
 	@cp -R ./modinfo.lua ./workshop/
 	@cp -R ./modmain.lua ./workshop/
 	@cp -R ./scripts/ ./workshop/
+
+workshopclean:
+	@rm -Rf ./workshop* ./steam-workshop.zip
 
 .PHONY: assets ldoc modicon workshop
