@@ -145,7 +145,7 @@ local function ServerListingScreenPostInit(_self)
             or false
 
         if selected_server
-            and (Utils.TableCompare(selected_server, self.selected_server) == false
+            and (Utils.Table.Compare(selected_server, self.selected_server) == false
             or self.details_hidden_name ~= is_name_and_description_hidden)
         then
             _self.auto_join_join_btn:Enable()
@@ -238,5 +238,5 @@ end
 -- @section knownmodindex
 
 if GetModConfigData("hide_changelog") then
-    Utils.HideChangelog(modname, true)
+    Utils.Modmain.HideChangelog(modname, true)
 end

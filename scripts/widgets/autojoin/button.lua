@@ -18,6 +18,9 @@
 ----
 local ImageButton = require "widgets/imagebutton"
 
+--- Lifecycle
+-- @section lifecycle
+
 --- Constructor.
 -- @function _ctor
 -- @tparam[opt] string text Text

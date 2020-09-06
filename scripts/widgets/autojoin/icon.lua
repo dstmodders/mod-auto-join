@@ -20,6 +20,9 @@ local Widget = require "widgets/widget"
 
 local SIZE = 28
 
+--- Lifecycle
+-- @section lifecycle
+
 --- Constructor.
 -- @function _ctor
 -- @usage local icon = Icon()

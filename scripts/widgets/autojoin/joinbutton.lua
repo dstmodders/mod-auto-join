@@ -20,6 +20,9 @@ local AUTO_JOIN_ICON_BUTTON_SIZE = 60
 local SPACING = 10
 local WIDTH = 240
 
+--- Lifecycle
+-- @section lifecycle
+
 --- Constructor.
 -- @function _ctor
 -- @tparam[opt] function on_click Function triggered on click

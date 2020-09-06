@@ -16,6 +16,9 @@
 ----
 local InputDialogScreen = require "screens/redux/inputdialog"
 
+--- Lifecycle
+-- @section lifecycle
+
 --- Constructor.
 -- @function _ctor
 -- @tparam[opt] table server Server data

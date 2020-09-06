@@ -14,6 +14,9 @@
 ----
 require "class"
 
+--- Lifecycle
+-- @section lifecycle
+
 --- Constructor.
 -- @function _ctor
 -- @tparam string modname Mod name
@@ -126,7 +129,7 @@ function Debug:DebugTerm(name)
     self:DebugString("[life_cycle]", "Terminated", name)
 end
 
---- Prints an error strings.
+--- Prints the provided error strings.
 --
 -- Acts just like the `DebugString` but also prepends the "[error]" string.
 --
@@ -155,8 +158,8 @@ function Debug:DebugModConfigs()
     end
 end
 
---- Initialization
--- @section initialization
+--- Lifecycle
+-- @section lifecycle
 
 --- Initializes.
 --

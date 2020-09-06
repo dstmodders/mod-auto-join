@@ -31,8 +31,8 @@ local function GetScreenSize()
     return RESOLUTION_X, RESOLUTION_Y
 end
 
---- Class
--- @section class
+--- Lifecycle
+-- @section lifecycle
 
 --- Constructor.
 -- @function _ctor

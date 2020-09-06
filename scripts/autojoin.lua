@@ -22,6 +22,9 @@ local Utils = require "autojoin/utils"
 
 local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
 
+--- Lifecycle
+-- @section lifecycle
+
 --- Constructor.
 -- @function _ctor
 -- @usage local autojoin = AutoJoin()
@@ -388,7 +391,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
     local refresh_seconds = default_refresh_seconds
     local seconds = default_seconds
 
-    self.auto_join_thread = Utils.ThreadStart(_AUTO_JOIN_THREAD_ID, function()
+    self.auto_join_thread = Utils.Thread.Start(_AUTO_JOIN_THREAD_ID, function()
         if not is_server_not_listed
             and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
             and not IsServerListed(server.guid)
@@ -446,14 +449,15 @@ end
 --
 -- Stops the thread started earlier by `StartAutoJoinThread`.
 function AutoJoin:ClearAutoJoinThread()
-    return Utils.ThreadClear(self.auto_join_thread)
+    return Utils.Thread.Clear(self.auto_join_thread)
 end
 
---- Initialization
--- @section initialization
+--- Lifecycle
+-- @section lifecycle
 
+--- Initializes.
 function AutoJoin:DoInit()
-    Utils.AddDebugMethods(self)
+    Utils.Debug.AddMethods(self)
 
     -- indicators
     self.indicators = {}

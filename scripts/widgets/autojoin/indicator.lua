@@ -24,6 +24,9 @@ local DEFAULT_PADDING = 10
 local DEFAULT_SCALE = 1.3
 local SIZE = 60
 
+--- Lifecycle
+-- @section lifecycle
+
 --- Constructor.
 -- @function _ctor
 -- @tparam[opt] table server Server data
