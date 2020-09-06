@@ -73,12 +73,11 @@ install:
 		--exclude 'luacov*' \
 		--exclude 'Makefile' \
 		--exclude 'modicon.png' \
-		--exclude 'modicon/' \
-		--exclude 'preview.gif' \
+		--exclude 'preview.*' \
 		--exclude 'README.md' \
 		--exclude 'readme/' \
 		--exclude 'spec/' \
-		--exclude 'workshop/' \
+		--exclude 'workshop*' \
 		. \
 		"${DST_MODS}/dst-mod-auto-join/"
 
@@ -99,6 +98,7 @@ lint:
 modicon:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
 	@${DS_KTOOLS_KTECH} ./modicon.png . --atlas ./modicon.xml --square
+	@prettier --xml-whitespace-sensitivity='ignore' --write './modicon.xml'
 
 reinstall: uninstall install
 
@@ -115,7 +115,7 @@ test:
 	@busted .; luacov -r lcov > /dev/null 2>&1 && cp luacov.report.out lcov.info; luacov-console . && luacov-console -s
 
 testclean:
-	@rm -f lcov.info luacov*
+	@rm -f busted.out lcov.info luacov*
 
 testcoverage:
 	@luacov -r lcov > /dev/null 2>&1 && cp luacov.report.out lcov.info; luacov-console . && luacov-console -s
@@ -128,7 +128,7 @@ uninstall:
 	@rm -Rf "${DST_MODS}/dst-mod-auto-join/"
 
 workshop:
-	@rm -Rf ./workshop/
+	@rm -Rf ./workshop*
 	@mkdir -p ./workshop/images/
 	@cp -R ./images/auto_join_icons.tex ./workshop/images/auto_join_icons.tex
 	@cp -R ./images/auto_join_icons.xml ./workshop/images/auto_join_icons.xml
@@ -138,6 +138,9 @@ workshop:
 	@cp -R ./modinfo.lua ./workshop/
 	@cp -R ./modmain.lua ./workshop/
 	@cp -R ./scripts/ ./workshop/
+	@cp -R ./workshop/ ./workshop-1903101575/
+	@zip -r ./steam-workshop.zip ./workshop-1903101575/
+	@rm -R ./workshop-1903101575/
 
 workshopclean:
 	@rm -Rf ./workshop* ./steam-workshop.zip
