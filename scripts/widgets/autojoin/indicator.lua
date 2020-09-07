@@ -38,6 +38,7 @@ local SIZE = 60
 -- @usage local indicator = Indicator()
 local Indicator = Class(Button, function(
     self,
+    devtools,
     server,
     on_click,
     is_active_fn,
@@ -51,6 +52,7 @@ local Indicator = Class(Button, function(
     Button._ctor(self, nil, on_click, { SIZE, SIZE })
 
     -- general
+    self.devtools = devtools
     self.is_active_fn = is_active_fn
     self.padding = padding
     self.screen_position = position
@@ -61,6 +63,14 @@ local Indicator = Class(Button, function(
     self.icon = self:AddChild(Icon())
     self.icon:SetScale(1.3)
     self.icon:Active()
+
+    -- devtoolssubmenu
+    local devtoolssubmenu = self.devtools.devtoolssubmenu
+    if devtoolssubmenu then
+        self.padding = devtoolssubmenu.indicator_padding
+        self.screen_position = devtoolssubmenu.indicator_position
+        self.screen_scale = devtoolssubmenu.indicator_scale
+    end
 
     -- self
     self:Update()
@@ -171,7 +181,9 @@ function Indicator:Update()
         self:SetPosition(pos, -pos)
     end
 
-    if type(self.is_active_fn) == "function" and self.is_active_fn() then
+    if (type(self.is_active_fn) == "function" and self.is_active_fn())
+        or self.devtools.devtoolssubmenu.indicator_visibility
+    then
         self:Show()
     else
         self:Hide()

@@ -167,6 +167,7 @@ local function IndicatorScreenPostInit(_self)
         _self.mod_auto_join_indicator = AutoJoin:AddIndicator(_self)
     end
 
+    -- overrides Screen:OnDestroy()
     local OldOnDestroy = _self.OnDestroy
     _self.OnDestroy = function(self)
         DebugString(self.name, "destroyed")
@@ -183,6 +184,7 @@ end
 local function MultiplayerMainScreenPostInit(_self)
     _self.mod_auto_join_indicator = nil
 
+    -- overrides MultiplayerMainScreen:OnHide()
     local OldOnHide = _self.OnHide
     _self.OnHide = function(self)
         DebugString(self.name, "is hidden")
@@ -193,6 +195,7 @@ local function MultiplayerMainScreenPostInit(_self)
         end
     end
 
+    -- overrides MultiplayerMainScreen:OnShow()
     local OldOnShow = _self.OnShow
     _self.OnShow = function(self)
         DebugString(self.name, "is shown")

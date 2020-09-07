@@ -120,6 +120,7 @@ files["scripts/**/*.lua"] = {
     "CONTROL_ACCEPT",
     "FRAMES",
     "HEADERFONT",
+    "MOD_DEV_TOOLS",
     "NEWFONT_OUTLINE",
     "PLATFORM",
     "RESOLUTION_X",

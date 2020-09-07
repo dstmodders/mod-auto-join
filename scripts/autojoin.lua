@@ -15,7 +15,10 @@
 -- @license MIT
 -- @release 0.6.0-alpha
 ----
+require "class"
+
 local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
+local DevToolsSubmenu = require "autojoin/devtoolssubmenu"
 local Indicator = require "widgets/autojoin/indicator"
 local PopupDialogScreen = require "screens/redux/popupdialog"
 local Utils = require "autojoin/utils"
@@ -104,7 +107,9 @@ end
 -- @tparam string password Server password
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
-    JoinServer(server, password)
+    if not self.devtoolssubmenu.is_fake_auto_joining then
+        JoinServer(server, password)
+    end
 end
 
 --- Overrides global functions.
@@ -187,6 +192,12 @@ function AutoJoin:GetIndicatorOnClickFn(cancel_cb)
     end
 end
 
+--- Gets indicators.
+-- @treturn table
+function AutoJoin:GetIndicators()
+    return self.indicators
+end
+
 --- Creates and adds an indicator.
 --
 -- Creates a corner indicator and adds it to the table where all indicators are stored.
@@ -195,6 +206,7 @@ end
 -- @treturn widgets.Indicator
 function AutoJoin:AddIndicator(root)
     local indicator = root:AddChild(Indicator(
+        self,
         self.server,
         self:GetIndicatorOnClickFn(),
         self:GetBtnIsActiveFn(),
@@ -233,6 +245,8 @@ function AutoJoin:RemoveAllIndicators()
     self.indicators = {}
 end
 
+--- Sets indicators seconds.
+-- @tparam number seconds
 function AutoJoin:SetIndicatorsSeconds(seconds)
     for _, v in ipairs(self.indicators) do
         if v.inst:IsValid() then
@@ -385,11 +399,9 @@ function AutoJoin:StartAutoJoinThread(server, password)
         return
     end
 
-    local default_refresh_seconds = 30
-    local default_seconds = self.config.waiting_time
     local is_server_not_listed = false
-    local refresh_seconds = default_refresh_seconds
-    local seconds = default_seconds
+    local refresh_seconds = self.default_refresh_seconds
+    local seconds = self.default_seconds
 
     self.auto_join_thread = Utils.Thread.Start(_AUTO_JOIN_THREAD_ID, function()
         if not is_server_not_listed
@@ -405,7 +417,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
                 and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
                 and not IsServerListed(server.guid)
             then
-                refresh_seconds = 30 + 1
+                refresh_seconds = self.default_refresh_seconds + 1
                 is_server_not_listed = false
                 self:DebugString("Refreshing the server listing...")
                 TheNet:SearchServers()
@@ -419,7 +431,7 @@ function AutoJoin:StartAutoJoinThread(server, password)
         self:SetIndicatorsSeconds(seconds)
 
         if seconds < 1 then
-            seconds = default_seconds + 1
+            seconds = self.default_seconds + 1
             self:Join(server, password)
         end
 
@@ -459,6 +471,10 @@ end
 function AutoJoin:DoInit()
     Utils.Debug.AddMethods(self)
 
+    -- general
+    self.default_refresh_seconds = 30
+    self.name = "AutoJoin"
+
     -- indicators
     self.indicators = {}
 
@@ -486,7 +502,13 @@ function AutoJoin:DoInit()
         waiting_time = 15,
     }
 
-    self:DebugInit("AutoJoin")
+    self.default_seconds = self.config.waiting_time
+
+    -- dev tools mod
+    self.devtoolssubmenu = DevToolsSubmenu(self)
+
+    -- self
+    self:DebugInit(self.name)
 end
 
 return AutoJoin
