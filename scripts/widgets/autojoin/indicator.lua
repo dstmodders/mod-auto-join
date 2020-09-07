@@ -50,45 +50,37 @@ local Indicator = Class(Button, function(
 
     Button._ctor(self, nil, on_click, { SIZE, SIZE })
 
-    -- fields
+    -- general
     self.is_active_fn = is_active_fn
+    self.padding = padding
+    self.screen_position = position
+    self.screen_scale = scale
     self.server = server
 
+    -- icon
     self.icon = self:AddChild(Icon())
     self.icon:SetScale(1.3)
     self.icon:Active()
 
-    -- general
-    local pos = ((SIZE / 2) + padding) * scale
-
-    self:SetHAnchor(ANCHOR_RIGHT)
-    self:SetPosition(-pos, -pos)
-    self:SetScale(scale)
-    self:SetVAnchor(ANCHOR_TOP)
-
-    if position == "br" then
-        self:SetHAnchor(ANCHOR_RIGHT)
-        self:SetVAnchor(ANCHOR_BOTTOM)
-        self:SetPosition(-pos, pos)
-    elseif position == "bl" then
-        self:SetHAnchor(ANCHOR_LEFT)
-        self:SetVAnchor(ANCHOR_BOTTOM)
-        self:SetPosition(pos, pos)
-    elseif position == "tl" then
-        self:SetHAnchor(ANCHOR_LEFT)
-        self:SetVAnchor(ANCHOR_TOP)
-        self:SetPosition(pos, -pos)
-    end
-
-    if is_active_fn and is_active_fn() then
-        self:Show()
-    else
-        self:Hide()
-    end
+    -- self
+    self:Update()
 end)
 
 --- General
 -- @section general
+
+--- Gets padding.
+-- @treturn number
+function Indicator:GetPadding()
+    return self.padding
+end
+
+--- Sets padding.
+-- @tparam number padding
+function Indicator:SetPadding(padding)
+    self.padding = padding
+    self:Update()
+end
 
 --- Gets icon seconds.
 -- @treturn number
@@ -100,6 +92,32 @@ end
 -- @tparam number seconds
 function Indicator:SetSeconds(seconds)
     self.icon:SetSeconds(seconds)
+end
+
+--- Gets screen position.
+-- @treturn number
+function Indicator:GetScreenPosition()
+    return self.screen_position
+end
+
+--- Sets screen position.
+-- @tparam string screen_position
+function Indicator:SetScreenPosition(screen_position)
+    self.screen_position = screen_position
+    self:Update()
+end
+
+--- Gets screen scale.
+-- @treturn number
+function Indicator:GetScreenScale()
+    return self.screen_scale
+end
+
+--- Sets screen scale.
+-- @tparam number screen_scale
+function Indicator:SetScreenScale(screen_scale)
+    self.screen_scale = screen_scale
+    self:Update()
 end
 
 --- States
@@ -123,6 +141,40 @@ function Indicator:OnLoseFocus()
     Button._base.OnLoseFocus(self)
     if self.is_active_fn and self.is_active_fn() then
         self.icon:HideCircleCross()
+    end
+end
+
+--- Update
+-- @section update
+
+--- Updates.
+function Indicator:Update()
+    -- general
+    local pos = ((SIZE / 2) + self.padding) * self.screen_scale
+
+    self:SetHAnchor(ANCHOR_RIGHT)
+    self:SetPosition(-pos, -pos)
+    self:SetScale(self.screen_scale)
+    self:SetVAnchor(ANCHOR_TOP)
+
+    if self.screen_position == "br" then
+        self:SetHAnchor(ANCHOR_RIGHT)
+        self:SetVAnchor(ANCHOR_BOTTOM)
+        self:SetPosition(-pos, pos)
+    elseif self.screen_position == "bl" then
+        self:SetHAnchor(ANCHOR_LEFT)
+        self:SetVAnchor(ANCHOR_BOTTOM)
+        self:SetPosition(pos, pos)
+    elseif self.screen_position == "tl" then
+        self:SetHAnchor(ANCHOR_LEFT)
+        self:SetVAnchor(ANCHOR_TOP)
+        self:SetPosition(pos, -pos)
+    end
+
+    if type(self.is_active_fn) == "function" and self.is_active_fn() then
+        self:Show()
+    else
+        self:Hide()
     end
 end
 
