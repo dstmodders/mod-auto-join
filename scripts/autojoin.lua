@@ -40,8 +40,9 @@ end)
 -- @section helpers
 
 -- an override for global `JoinServer` function from the networking module
-local function JoinServerOverride(server_listing, optional_password_override)
+local function JoinServerOverride(self, server_listing, optional_password_override)
     local function OnSuccess(password)
+        self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
         if TheNet:JoinServerResponse(false, server_listing.guid, password) then
             DisableAllDLC()
         end
@@ -49,6 +50,7 @@ local function JoinServerOverride(server_listing, optional_password_override)
     end
 
     local function OnCancel()
+        self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT, true)
         TheNet:JoinServerResponse(true)
         local screen = TheFrontEnd:GetActiveScreen()
         if screen ~= nil and screen.name == "ConnectingToGamePopup" then
@@ -111,9 +113,10 @@ end
 
 --- Sets state.
 -- @tparam number state
-function AutoJoin:SetState(state)
+-- @tparam boolean ignore_focus
+function AutoJoin:SetState(state, ignore_focus)
     self.state = state
-    self:UpdateButton()
+    self:UpdateButton(ignore_focus)
     self:UpdateIndicators()
 end
 
@@ -125,7 +128,7 @@ end
 -- @tparam string password Server password
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
-    self:SetState(MOD_AUTO_JOIN.STATE.CONNECT)
+    self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
 
     if not self.devtoolssubmenu.is_fake_auto_joining then
         JoinServer(server, password)
@@ -170,7 +173,9 @@ function AutoJoin:Override()
         return
     end
 
-    JoinServer = JoinServerOverride
+    JoinServer = function(...)
+        return JoinServerOverride(self, ...)
+    end
 
     OnNetworkDisconnect = function(message)
         self:DebugString("Disconnected:", message)
@@ -305,7 +310,6 @@ end
 function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
     local function OnJoin(server, password)
         self:StopAutoJoining()
-        self:UpdateButton(true)
 
         if not self:IsAutoJoining() then
             self:StartAutoJoining(server, password)
@@ -320,7 +324,6 @@ function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
 
     local function OnCancel(server)
         self:StopAutoJoining()
-        self:UpdateButton(true)
 
         if server then
             self.join_btn:Enable()
@@ -394,7 +397,7 @@ end
 -- functions by calling `OverrideRestore` and makes "Auto-Join" button inactive.
 function AutoJoin:StopAutoJoining()
     self:ClearAutoJoinThread()
-    self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT)
+    self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT, true)
 
     self.is_auto_joining = false
     self.seconds = self.default_seconds
@@ -470,7 +473,6 @@ function AutoJoin:StartAutoJoinThread(server, password)
         self.is_auto_joining = true
 
         self:Join(server, password)
-        self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
     end, function()
         self.is_auto_joining = false
     end)
