@@ -1,14 +1,14 @@
 ----
 -- Mod constants.
 --
--- **Source Code:** [https://github.com/victorpopkov/dst-mod-dev-tools](https://github.com/victorpopkov/dst-mod-dev-tools)
+-- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
 -- @module Constants
 --
 -- @author Victor Popkov
--- @copyright 2020
+-- @copyright 2019
 -- @license MIT
--- @release 0.2.0-alpha
+-- @release 0.6.0-alpha
 ----
 
 --- Mod constants.
