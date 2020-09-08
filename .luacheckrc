@@ -106,9 +106,12 @@ files["scripts/**/*.lua"] = {
     "IsMigrating",
     "KnownModIndex",
     "Profile",
+    "SavePersistentString",
     "TheFrontEnd",
     "TheNet",
     "TheSim",
+    "TheWorld",
+    "TrackedAssert",
 
     -- constants
     "ANCHOR_BOTTOM",
@@ -117,8 +120,10 @@ files["scripts/**/*.lua"] = {
     "ANCHOR_RIGHT",
     "ANCHOR_TOP",
     "BACK_BUTTON_Y",
+    "BRANCH",
     "CHATFONT",
     "CONTROL_ACCEPT",
+    "ENCODE_SAVES",
     "FRAMES",
     "HEADERFONT",
     "MOD_DEV_TOOLS",
@@ -128,6 +133,7 @@ files["scripts/**/*.lua"] = {
     "RESOLUTION_Y",
     "STRINGS",
     "UICOLOURS",
+    "USER_HISTORY_EXPIRY_TIME",
 
     -- threads
     "KillThreadsWithID",
@@ -150,6 +156,7 @@ files["spec/**/*.lua"] = {
     "Class",
     "ClassRegistry",
     "package",
+    "TheSim",
 
     -- project
     "AssertChainNil",
