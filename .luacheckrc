@@ -97,6 +97,7 @@ files["scripts/**/*.lua"] = {
 
     -- project
     "Debug",
+    "MOD_AUTO_JOIN",
   },
   read_globals = {
     -- general
