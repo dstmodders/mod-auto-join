@@ -126,6 +126,7 @@ end
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
     self:SetState(MOD_AUTO_JOIN.STATE.CONNECT)
+
     if not self.devtoolssubmenu.is_fake_auto_joining then
         JoinServer(server, password)
     else
@@ -304,6 +305,7 @@ end
 function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
     local function OnJoin(server, password)
         self:StopAutoJoining()
+        self:UpdateButton(true)
 
         if not self:IsAutoJoining() then
             self:StartAutoJoining(server, password)
@@ -318,6 +320,7 @@ function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
 
     local function OnCancel(server)
         self:StopAutoJoining()
+        self:UpdateButton(true)
 
         if server then
             self.join_btn:Enable()
@@ -391,16 +394,15 @@ end
 -- functions by calling `OverrideRestore` and makes "Auto-Join" button inactive.
 function AutoJoin:StopAutoJoining()
     self:ClearAutoJoinThread()
+    self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT)
 
     self.is_auto_joining = false
+    self.seconds = self.default_seconds
+
     TheNet:JoinServerResponse(true)
 
     if self.is_ui_disabled then
         self:OverrideRestore()
-    end
-
-    if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
-        self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT)
     end
 end
 
@@ -485,9 +487,10 @@ end
 -- @section update
 
 --- Updates auto-join button.
-function AutoJoin:UpdateButton()
+-- @tparam boolean ignore_focus
+function AutoJoin:UpdateButton(ignore_focus)
     if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
-        self.auto_join_btn:SetState(self.state)
+        self.auto_join_btn:SetState(self.state, ignore_focus)
         self.auto_join_btn:SetSeconds(self.seconds)
     end
 end

@@ -70,8 +70,9 @@ end)
 
 --- Sets state.
 -- @tparam number state
-function AutoJoinButton:SetState(state)
-    if self.icon and not self.focus then
+-- @tparam boolean ignore_focus
+function AutoJoinButton:SetState(state, ignore_focus)
+    if self.icon and (not self.focus or ignore_focus) then
         self.icon:SetState(state)
     end
 end
