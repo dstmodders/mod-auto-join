@@ -25,8 +25,12 @@ local TheNet = _G.TheNet
 -- @section assets
 
 Assets = {
+    -- icons
     Asset("ATLAS", "images/auto_join_icons.xml"),
     Asset("IMAGE", "images/auto_join_icons.tex"),
+
+    -- states
+    Asset("ANIM", "anim/auto_join_states.zip"),
 }
 
 --- Debugging
