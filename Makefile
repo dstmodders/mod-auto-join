@@ -8,6 +8,7 @@ check_defined = $(strip $(foreach 1,$1, $(call __check_defined,$1,$(strip $(valu
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
 	@echo "   assets          to pack assets (images and/or animations)"
+	@echo "   assetsclean     to clean up already packed assets"
 	@echo "   citest          to run Busted tests for CI"
 	@echo "   dev             to run reinstall + ldoc + lint + test"
 	@echo "   gitrelease      to commit modinfo.lua and CHANGELOG.md + add a new tag"
@@ -26,9 +27,12 @@ help:
 	@echo "   workshopclean   to clean up Steam Workshop directory + archive"
 
 assets:
-	@:$(call check_defined, DS_KTOOLS_KTECH)
-	@${DS_KTOOLS_KTECH} images/auto_join_icons/* . --atlas images/auto_join_icons.xml
-	@prettier --xml-whitespace-sensitivity='ignore' --write './images/*.xml'
+	@:$(call check_defined, DS_TOOLS_SCML)
+	@${DS_TOOLS_SCML} exported/auto_join_states/auto_join_states.scml .
+
+assetsclean:
+	@rm -Rf anim/
+	@rm -f exported/**/*.zip
 
 citest:
 	@busted .; \
