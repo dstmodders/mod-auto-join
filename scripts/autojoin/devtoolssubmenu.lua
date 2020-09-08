@@ -19,6 +19,25 @@ local _API
 --- Helpers
 -- @section helpers
 
+local function ToggleIndicatorVisibility(self, name)
+    return {
+        type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
+        options = {
+            label = name,
+            on_get_fn = function()
+                return self.indicator_visibility
+            end,
+            on_set_fn = function(_, _, value)
+                self.indicator_visibility = value
+                local indicators = self.autojoin:GetIndicators()
+                for _, indicator in pairs(indicators) do
+                    indicator:Update()
+                end
+            end,
+        },
+    }
+end
+
 local function Add(self)
     _API:AddSubmenu({
         label = "Auto Join",
@@ -27,31 +46,16 @@ local function Add(self)
             {
                 type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
                 options = {
-                    label = "Toggle Fake Auto-Joining",
+                    label = "Toggle Fake Joining",
                     on_get_fn = function()
-                        return self.is_fake_auto_joining
+                        return self.is_fake_joining
                     end,
                     on_set_fn = function(_, _, value)
-                        self.is_fake_auto_joining = value
+                        self.is_fake_joining = value
                     end,
                 },
             },
-            {
-                type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
-                options = {
-                    label = "Toggle Indicator Visibility",
-                    on_get_fn = function()
-                        return self.indicator_visibility
-                    end,
-                    on_set_fn = function(_, _, value)
-                        self.indicator_visibility = value
-                        local indicators = self.autojoin:GetIndicators()
-                        for _, indicator in pairs(indicators) do
-                            indicator:Update()
-                        end
-                    end,
-                },
-            },
+            ToggleIndicatorVisibility(self, "Toggle Indicator Visibility"),
             { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
             {
                 type = MOD_DEV_TOOLS.OPTION.CHOICES,
@@ -118,22 +122,7 @@ local function Add(self)
                     label = "Indicator", -- label in the menu will be: "Your submenu..."
                     options = function()
                         return {
-                            {
-                                type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
-                                options = {
-                                    label = "Toggle Visibility",
-                                    on_get_fn = function()
-                                        return self.indicator_visibility
-                                    end,
-                                    on_set_fn = function(_, _, value)
-                                        self.indicator_visibility = value
-                                        local indicators = self.autojoin:GetIndicators()
-                                        for _, indicator in pairs(indicators) do
-                                            indicator:Update()
-                                        end
-                                    end,
-                                },
-                            },
+                            ToggleIndicatorVisibility(self, "Toggle Visibility"),
                             { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
                             {
                                 type = MOD_DEV_TOOLS.OPTION.NUMERIC,
@@ -236,7 +225,7 @@ local DevToolsSubmenu = Class(function(self, autojoin)
     self.default_refresh_seconds = self.autojoin.default_refresh_seconds
     self.default_seconds = self.autojoin.default_seconds
     self.default_state = self.autojoin.state
-    self.is_fake_auto_joining = false
+    self.is_fake_joining = false
 
     -- indicator
     self.default_indicator_padding = self.autojoin.config.indicator_padding
