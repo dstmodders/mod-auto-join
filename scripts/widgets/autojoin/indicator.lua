@@ -38,7 +38,7 @@ local SIZE = 60
 -- @usage local indicator = Indicator()
 local Indicator = Class(Button, function(
     self,
-    devtools,
+    autojoin,
     server,
     on_click,
     is_active_fn,
@@ -52,7 +52,7 @@ local Indicator = Class(Button, function(
     Button._ctor(self, nil, on_click, { SIZE, SIZE })
 
     -- general
-    self.devtools = devtools
+    self.autojoin = autojoin
     self.is_active_fn = is_active_fn
     self.padding = padding
     self.screen_position = position
@@ -62,10 +62,9 @@ local Indicator = Class(Button, function(
     -- icon
     self.icon = self:AddChild(Icon())
     self.icon:SetScale(1.3)
-    self.icon:Active()
 
     -- devtoolssubmenu
-    local devtoolssubmenu = self.devtools.devtoolssubmenu
+    local devtoolssubmenu = self.autojoin.devtoolssubmenu
     if devtoolssubmenu then
         self.padding = devtoolssubmenu.indicator_padding
         self.screen_position = devtoolssubmenu.indicator_position
@@ -102,6 +101,14 @@ end
 -- @tparam number seconds
 function Indicator:SetSeconds(seconds)
     self.icon:SetSeconds(seconds)
+end
+
+--- Sets state.
+-- @tparam number state
+function Indicator:SetState(state)
+    if self.icon and not self.focus then
+        self.icon:SetState(state)
+    end
 end
 
 --- Gets screen position.
@@ -141,16 +148,30 @@ end
 --- State when the focus is gained.
 function Indicator:OnGainFocus()
     Button._base.OnGainFocus(self)
-    if self.is_active_fn and self.is_active_fn() then
-        self.icon:ShowCircleCross()
+    if self:IsEnabled() and self.icon then
+        local state = self.icon:GetState()
+        if state == MOD_AUTO_JOIN.STATE.DEFAULT then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.DEFAULT_FOCUS)
+        elseif state == MOD_AUTO_JOIN.STATE.COUNTDOWN then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN_FOCUS)
+        elseif state == MOD_AUTO_JOIN.STATE.CONNECT then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.CONNECT_FOCUS)
+        end
     end
 end
 
 --- State when the focus is lost.
 function Indicator:OnLoseFocus()
     Button._base.OnLoseFocus(self)
-    if self.is_active_fn and self.is_active_fn() then
-        self.icon:HideCircleCross()
+    if self:IsEnabled() and self.icon then
+        local state = self.icon:GetState()
+        if state == MOD_AUTO_JOIN.STATE.DEFAULT_FOCUS then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.DEFAULT)
+        elseif state == MOD_AUTO_JOIN.STATE.COUNTDOWN_FOCUS then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
+        elseif state == MOD_AUTO_JOIN.STATE.CONNECT_FOCUS then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.CONNECT)
+        end
     end
 end
 
@@ -159,7 +180,6 @@ end
 
 --- Updates.
 function Indicator:Update()
-    -- general
     local pos = ((SIZE / 2) + self.padding) * self.screen_scale
 
     self:SetHAnchor(ANCHOR_RIGHT)
@@ -181,8 +201,11 @@ function Indicator:Update()
         self:SetPosition(pos, -pos)
     end
 
+    self:SetSeconds(self.autojoin.seconds)
+    self:SetState(self.autojoin.state)
+
     if (type(self.is_active_fn) == "function" and self.is_active_fn())
-        or self.devtools.devtoolssubmenu.indicator_visibility
+        or self.autojoin.devtoolssubmenu.indicator_visibility
     then
         self:Show()
     else

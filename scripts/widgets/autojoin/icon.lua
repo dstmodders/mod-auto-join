@@ -14,11 +14,11 @@
 -- @license MIT
 -- @release 0.6.0-alpha
 ----
-local Image = require "widgets/image"
-local Text = require "widgets/text"
-local Widget = require "widgets/widget"
+require "autojoin/constants"
 
-local SIZE = 28
+local Text = require "widgets/text"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 
 --- Lifecycle
 -- @section lifecycle
@@ -31,24 +31,30 @@ local Icon = Class(Widget, function(self)
 
     -- fields
     self.seconds = 0
+    self.state = MOD_AUTO_JOIN.STATE.DEFAULT
 
+    -- circle
+    self.circle = self:AddChild(UIAnim())
+    self.circle:GetAnimState():SetBank("auto_join_states")
+    self.circle:GetAnimState():SetBuild("auto_join_states")
+    self.circle:GetAnimState():PlayAnimation("clock_idle")
+    self.circle:SetScale(.3)
+
+    -- icon
+    self.icon = self:AddChild(UIAnim())
+    self.icon:GetAnimState():SetBank("auto_join_states")
+    self.icon:GetAnimState():SetBuild("auto_join_states")
+    self.icon:GetAnimState():PlayAnimation("circle_idle")
+    self.icon:SetScale(.3)
+
+    -- text
     self.text = self:AddChild(Text(HEADERFONT, 18))
     self.text:SetColour({ 0, 0, 0, 1 })
     self.text:SetPosition(.5, -.5)
     self.text:SetVAlign(ANCHOR_MIDDLE)
 
-    self.icon = self:AddChild(Image("images/auto_join_icons.xml", "clock.tex"))
-    self.icon:ScaleToSize(SIZE, SIZE)
-    self.icon:SetPosition(.5, 0)
-
-    self.circle = self:AddChild(Image("images/auto_join_icons.xml", "circle.tex"))
-    self.circle:ScaleToSize(SIZE, SIZE)
-    self.circle:SetPosition(.5, 0)
-
-    self.circle_cross = self:AddChild(Image("images/auto_join_icons.xml", "circle_cross.tex"))
-    self.circle_cross:ScaleToSize(SIZE, SIZE)
-    self.circle_cross:SetPosition(.5, 0)
-    self.circle_cross:Hide()
+    -- self
+    self:Update()
 end)
 
 --- General
@@ -63,40 +69,72 @@ end
 --- Sets seconds.
 -- @tparam number seconds
 function Icon:SetSeconds(seconds)
-    self.seconds = seconds
-    self.text:SetSize(seconds > 9 and 14 or 18)
-    self.text:SetString(seconds)
+    if type(seconds) == "number" and seconds >= 0 then
+        self.seconds = seconds
+        self.text:SetSize(seconds > 9 and 14 or 18)
+        self.text:SetString(seconds)
+    elseif type(seconds) == "nil" then
+        self.text:SetString(nil)
+    end
 end
 
---- States
--- @section states
+--- Gets state.
+-- @treturn number
+function Icon:GetState()
+    return self.state
+end
 
---- Changes to an active state.
-function Icon:Active()
+--- Sets state.
+-- @tparam number state
+function Icon:SetState(state)
+    self.state = state
+    self:Update()
+end
+
+--- Update
+-- @section update
+
+local function UpdateCircleAnim(self, name)
     self.circle:Show()
-    self.circle_cross:Hide()
-    self.icon:Hide()
-    self:SetSeconds(self.seconds)
+    if not self.circle:GetAnimState():IsCurrentAnimation(name) then
+        self.circle:GetAnimState():PlayAnimation(name, true)
+    end
 end
 
---- Changes to an inactive state.
-function Icon:Inactive()
-    self.circle:Hide()
-    self.circle_cross:Hide()
+local function UpdateIconAnim(self, name)
     self.icon:Show()
-    self.text:SetString(nil)
+    if not self.icon:GetAnimState():IsCurrentAnimation(name) then
+        self.icon:GetAnimState():PlayAnimation(name, true)
+    end
 end
 
---- Changes a circle to the state with cross.
-function Icon:ShowCircleCross()
-    self.circle:Hide()
-    self.circle_cross:Show()
-end
-
---- Changes a circle to the state without cross.
-function Icon:HideCircleCross()
-    self.circle:Show()
-    self.circle_cross:Hide()
+--- Updates.
+function Icon:Update()
+    if self.state == MOD_AUTO_JOIN.STATE.DEFAULT then
+        UpdateCircleAnim(self, "circle_idle")
+        UpdateIconAnim(self, "clock_idle")
+        self.text:Hide()
+    elseif self.state == MOD_AUTO_JOIN.STATE.DEFAULT_FOCUS then
+        UpdateCircleAnim(self, "circle_idle")
+        UpdateIconAnim(self, "clock")
+        self.text:Hide()
+    elseif self.state == MOD_AUTO_JOIN.STATE.COUNTDOWN then
+        UpdateCircleAnim(self, "circle_loading")
+        UpdateIconAnim(self, "countdown")
+        self.text:Show()
+    elseif self.state == MOD_AUTO_JOIN.STATE.COUNTDOWN_FOCUS then
+        UpdateCircleAnim(self, "circle_cross_idle")
+        self.icon:Hide()
+        self.text:Show()
+    elseif self.state == MOD_AUTO_JOIN.STATE.CONNECT then
+        UpdateCircleAnim(self, "circle_loading")
+        UpdateIconAnim(self, "connect")
+        self.text:Hide()
+    elseif self.state == MOD_AUTO_JOIN.STATE.CONNECT_FOCUS then
+        UpdateCircleAnim(self, "circle_cross_idle")
+        UpdateIconAnim(self, "connect")
+        self.text:Hide()
+    end
 end
 
 return Icon

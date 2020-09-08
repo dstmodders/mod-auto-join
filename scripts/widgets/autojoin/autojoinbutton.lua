@@ -14,6 +14,8 @@
 -- @license MIT
 -- @release 0.6.0-alpha
 ----
+require "autojoin/constants"
+
 local Button = require "widgets/autojoin/button"
 local Icon = require "widgets/autojoin/icon"
 
@@ -39,10 +41,11 @@ end
 -- @tparam[opt] function on_click Function triggered on click
 -- @tparam[opt] boolean is_active_fn Function to check active state
 -- @usage local autojoinbutton = AutoJoinButton()
-local AutoJoinButton = Class(Button, function(self, on_click, is_active_fn)
+local AutoJoinButton = Class(Button, function(self, autojoin, on_click, is_active_fn)
     Button._ctor(self, nil, on_click, { SIZE, SIZE })
 
     -- fields
+    self.autojoin = autojoin
     self.icon = self:AddChild(Icon())
     self.is_active_fn = is_active_fn
 
@@ -59,17 +62,19 @@ local AutoJoinButton = Class(Button, function(self, on_click, is_active_fn)
     })
 
     -- states
-    if is_active_fn() then
-        self:Active()
-        self:Enable()
-    else
-        self:Inactive()
-        self:Disable()
-    end
+    self:Update()
 end)
 
 --- General
 -- @section general
+
+--- Sets state.
+-- @tparam number state
+function AutoJoinButton:SetState(state)
+    if self.icon and not self.focus then
+        self.icon:SetState(state)
+    end
+end
 
 --- Gets icon seconds.
 -- @treturn number
@@ -103,16 +108,45 @@ end
 --- State when the focus is gained.
 function AutoJoinButton:OnGainFocus()
     Button._base.OnGainFocus(self)
-    if self.is_active_fn and self.is_active_fn() then
-        self.icon:ShowCircleCross()
+    if self:IsEnabled() and self.icon then
+        local state = self.icon:GetState()
+        if state == MOD_AUTO_JOIN.STATE.DEFAULT then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.DEFAULT_FOCUS)
+        elseif state == MOD_AUTO_JOIN.STATE.COUNTDOWN then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN_FOCUS)
+        elseif state == MOD_AUTO_JOIN.STATE.CONNECT then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.CONNECT_FOCUS)
+        end
     end
 end
 
 --- State when the focus is lost.
 function AutoJoinButton:OnLoseFocus()
     Button._base.OnLoseFocus(self)
+    if self:IsEnabled() and self.icon then
+        local state = self.icon:GetState()
+        if state == MOD_AUTO_JOIN.STATE.DEFAULT_FOCUS then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.DEFAULT)
+        elseif state == MOD_AUTO_JOIN.STATE.COUNTDOWN_FOCUS then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
+        elseif state == MOD_AUTO_JOIN.STATE.CONNECT_FOCUS then
+            self.icon:SetState(MOD_AUTO_JOIN.STATE.CONNECT)
+        end
+    end
+end
+
+--- Update
+-- @section update
+
+--- Updates.
+function AutoJoinButton:Update()
+    self:SetState(self.autojoin.state)
+    self:SetSeconds(self.autojoin.seconds)
+
     if self.is_active_fn and self.is_active_fn() then
-        self.icon:HideCircleCross()
+        self:Enable()
+    else
+        self:Disable()
     end
 end
 

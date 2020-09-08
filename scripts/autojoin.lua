@@ -15,6 +15,7 @@
 -- @license MIT
 -- @release 0.6.0-alpha
 ----
+require "autojoin/constants"
 require "class"
 
 local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
@@ -35,8 +36,8 @@ local AutoJoin = Class(function(self)
     self:DoInit()
 end)
 
---- General
--- @section general
+--- Helpers
+-- @section helpers
 
 -- an override for global `JoinServer` function from the networking module
 local function JoinServerOverride(server_listing, optional_password_override)
@@ -99,6 +100,23 @@ local function JoinServerOverride(server_listing, optional_password_override)
     end
 end
 
+--- General
+-- @section general
+
+--- Gets state.
+-- @treturn number
+function AutoJoin:GetState()
+    return self.state
+end
+
+--- Sets state.
+-- @tparam number state
+function AutoJoin:SetState(state)
+    self.state = state
+    self:UpdateButton()
+    self:UpdateIndicators()
+end
+
 --- Joins a server.
 --
 -- Just a convenience wrapper for `JoinServer`.
@@ -107,8 +125,21 @@ end
 -- @tparam string password Server password
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
+    self:SetState(MOD_AUTO_JOIN.STATE.CONNECT)
     if not self.devtoolssubmenu.is_fake_auto_joining then
         JoinServer(server, password)
+    else
+        if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
+            self.auto_join_btn.inst:DoTaskInTime(2, function()
+                self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
+            end)
+        else
+            for _, v in ipairs(self.indicators) do
+                v.inst:DoTaskInTime(2, function()
+                    self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
+                end)
+            end
+        end
     end
 end
 
@@ -142,6 +173,7 @@ function AutoJoin:Override()
 
     OnNetworkDisconnect = function(message)
         self:DebugString("Disconnected:", message)
+        self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
         return false
     end
 
@@ -243,16 +275,6 @@ function AutoJoin:RemoveAllIndicators()
         v:Kill()
     end
     self.indicators = {}
-end
-
---- Sets indicators seconds.
--- @tparam number seconds
-function AutoJoin:SetIndicatorsSeconds(seconds)
-    for _, v in ipairs(self.indicators) do
-        if v.inst:IsValid() then
-            v:SetSeconds(seconds)
-        end
-    end
 end
 
 --- Server listing screen
@@ -378,7 +400,7 @@ function AutoJoin:StopAutoJoining()
     end
 
     if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
-        self.auto_join_btn:Inactive()
+        self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT)
     end
 end
 
@@ -401,7 +423,6 @@ function AutoJoin:StartAutoJoinThread(server, password)
 
     local is_server_not_listed = false
     local refresh_seconds = self.default_refresh_seconds
-    local seconds = self.default_seconds
 
     self.auto_join_thread = Utils.Thread.Start(_AUTO_JOIN_THREAD_ID, function()
         if not is_server_not_listed
@@ -424,34 +445,30 @@ function AutoJoin:StartAutoJoinThread(server, password)
             end
         end
 
-        if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
-            self.auto_join_btn:SetSeconds(seconds)
+        if self.state == MOD_AUTO_JOIN.STATE.COUNTDOWN then
+            self.seconds = self.seconds - 1
+            refresh_seconds = refresh_seconds - 1
+
+            if self.seconds < 1 then
+                self.seconds = self.default_seconds
+                self:Join(server, password)
+            end
+
+            self:UpdateButton()
+            self:UpdateIndicators()
         end
 
-        self:SetIndicatorsSeconds(seconds)
-
-        if seconds < 1 then
-            seconds = self.default_seconds + 1
-            self:Join(server, password)
-        end
-
-        seconds = seconds - 1
-        refresh_seconds = refresh_seconds - 1
-
-        Sleep(FRAMES / FRAMES * 1)
+        Sleep(1)
     end, function()
         return self.is_auto_joining
     end, function()
-        self:DebugString(string.format("Auto-joining every %d seconds...", seconds))
+        self:DebugString(string.format("Auto-joining every %d seconds...", self.seconds))
         self:DebugString(string.format("Refreshing every %d seconds...", refresh_seconds))
 
         self.is_auto_joining = true
 
-        if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
-            self.auto_join_btn:Active()
-        end
-
         self:Join(server, password)
+        self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
     end, function()
         self.is_auto_joining = false
     end)
@@ -464,6 +481,27 @@ function AutoJoin:ClearAutoJoinThread()
     return Utils.Thread.Clear(self.auto_join_thread)
 end
 
+--- Update
+-- @section update
+
+--- Updates auto-join button.
+function AutoJoin:UpdateButton()
+    if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
+        self.auto_join_btn:SetState(self.state)
+        self.auto_join_btn:SetSeconds(self.seconds)
+    end
+end
+
+--- Updates indicators.
+function AutoJoin:UpdateIndicators()
+    for _, v in ipairs(self.indicators) do
+        if v.inst:IsValid() then
+            v:SetState(self.state)
+            v:SetSeconds(self.seconds)
+        end
+    end
+end
+
 --- Lifecycle
 -- @section lifecycle
 
@@ -474,6 +512,7 @@ function AutoJoin:DoInit()
     -- general
     self.default_refresh_seconds = 30
     self.name = "AutoJoin"
+    self.state = MOD_AUTO_JOIN.STATE.DEFAULT
 
     -- indicators
     self.indicators = {}
@@ -503,6 +542,7 @@ function AutoJoin:DoInit()
     }
 
     self.default_seconds = self.config.waiting_time
+    self.seconds = self.default_seconds
 
     -- dev tools mod
     self.devtoolssubmenu = DevToolsSubmenu(self)

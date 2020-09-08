@@ -113,6 +113,7 @@ local function ServerListingScreenPostInit(_self)
 
     AutoJoin.join_btn = _self.side_panel:AddChild(JoinButton(OnJoinClick))
     AutoJoin.auto_join_btn = _self.side_panel:AddChild(AutoJoinButton(
+        AutoJoin,
         AutoJoin:GetBtnOnClickFn(server_fn, OnAutoJoinSuccess, OnAutoJoinCancel),
         AutoJoin:GetBtnIsActiveFn()
     ))

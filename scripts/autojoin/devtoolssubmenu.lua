@@ -5,6 +5,8 @@
 --
 -- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
 --
+-- @classmod DevToolsSubmenu
+--
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
@@ -31,6 +33,46 @@ local function Add(self)
                     end,
                     on_set_fn = function(_, _, value)
                         self.is_fake_auto_joining = value
+                    end,
+                },
+            },
+            {
+                type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
+                options = {
+                    label = "Toggle Indicator Visibility",
+                    on_get_fn = function()
+                        return self.indicator_visibility
+                    end,
+                    on_set_fn = function(_, _, value)
+                        self.indicator_visibility = value
+                        local indicators = self.autojoin:GetIndicators()
+                        for _, indicator in pairs(indicators) do
+                            indicator:Update()
+                        end
+                    end,
+                },
+            },
+            { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
+            {
+                type = MOD_DEV_TOOLS.OPTION.CHOICES,
+                options = {
+                    label = "State",
+                    choices = {
+                        { name = "Default", value = MOD_AUTO_JOIN.STATE.DEFAULT },
+                        { name = "Default (Focus)", value = MOD_AUTO_JOIN.STATE.DEFAULT_FOCUS },
+                        { name = "Countdown", value = MOD_AUTO_JOIN.STATE.COUNTDOWN },
+                        { name = "Countdown (Focus)", value = MOD_AUTO_JOIN.STATE.COUNTDOWN_FOCUS },
+                        { name = "Connect", value = MOD_AUTO_JOIN.STATE.CONNECT },
+                        { name = "Connect (Focus)", value = MOD_AUTO_JOIN.STATE.CONNECT_FOCUS },
+                    },
+                    on_accept_fn = function()
+                        self.autojoin:SetState(self.default_state)
+                    end,
+                    on_get_fn = function()
+                        return self.autojoin:GetState()
+                    end,
+                    on_set_fn = function(_, _, value)
+                        self.autojoin:SetState(value)
                     end,
                 },
             },
@@ -186,12 +228,14 @@ end
 
 --- Constructor.
 -- @function _ctor
--- @usage local devtools = DevTools()
+-- @tparam AutoJoin autojoin
+-- @usage local devtoolssubmenu = DevToolsSubmenu(autojoin)
 local DevToolsSubmenu = Class(function(self, autojoin)
     -- general
     self.autojoin = autojoin
     self.default_refresh_seconds = self.autojoin.default_refresh_seconds
     self.default_seconds = self.autojoin.default_seconds
+    self.default_state = self.autojoin.state
     self.is_fake_auto_joining = false
 
     -- indicator
