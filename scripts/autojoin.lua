@@ -154,7 +154,7 @@ end
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
     self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
-    if not self.devtoolssubmenu.is_fake_auto_joining then
+    if not self.devtoolssubmenu.is_fake_joining then
         JoinServer(server, password)
     else
         if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
