@@ -55,6 +55,21 @@ local function Add(self)
                     end,
                 },
             },
+            {
+                type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
+                options = {
+                    label = "Toggle Global AutoJoin",
+                    on_get_fn = function()
+                        return self.is_global_autojoin
+                    end,
+                    on_set_fn = function(_, _, value)
+                        self.is_global_autojoin = value
+                        __STRICT = false
+                        _G.AutoJoin = value and self.autojoin or nil
+                        __STRICT = true
+                    end,
+                },
+            },
             ToggleIndicatorVisibility(self, "Toggle Indicator Visibility"),
             { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
             {
@@ -208,6 +223,16 @@ local function Add(self)
                     end,
                 },
             },
+            { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
+            {
+                type = MOD_DEV_TOOLS.OPTION.ACTION,
+                options = {
+                    label = "Dump Last Join Server",
+                    on_accept_fn = function()
+                        dumptable(self.autojoin.last_join_server)
+                    end,
+                },
+            },
         },
     })
 end
@@ -226,6 +251,7 @@ local DevToolsSubmenu = Class(function(self, autojoin)
     self.default_seconds = self.autojoin.default_seconds
     self.default_state = self.autojoin.state
     self.is_fake_joining = false
+    self.is_global_autojoin = false
 
     -- indicator
     self.default_indicator_padding = self.autojoin.config.indicator_padding

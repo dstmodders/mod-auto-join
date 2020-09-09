@@ -90,7 +90,9 @@ files["scripts/**/*.lua"] = {
   -- globals
   globals = {
     -- general
+    "__STRICT",
     "_G",
+    "dumptable",
     "JoinServer",
     "OnNetworkDisconnect",
     "ShowConnectingToGamePopup",
