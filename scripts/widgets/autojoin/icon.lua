@@ -8,6 +8,7 @@
 -- @classmod widgets.Icon
 -- @see widgets.AutoJoinButton
 -- @see widgets.Indicator
+-- @see widgets.RejoinButton
 --
 -- @author Victor Popkov
 -- @copyright 2019
