@@ -24,10 +24,10 @@ local ImageButton = require "widgets/imagebutton"
 --- Constructor.
 -- @function _ctor
 -- @tparam[opt] string text Text
--- @tparam[opt] function on_click Function triggered on click
+-- @tparam[opt] function on_click_fn Function triggered on click
 -- @tparam[opt] table size Size (table with width and height)
 -- @usage local button = Button("Join")
-local Button = Class(ImageButton, function(self, text, on_click, size)
+local Button = Class(ImageButton, function(self, text, on_click_fn, size)
     local prefix = "button_carny_long"
     if size and #size == 2 then
         local ratio = size[1] / size[2]
@@ -49,7 +49,7 @@ local Button = Class(ImageButton, function(self, text, on_click, size)
 
     self:SetDisabledFont(CHATFONT)
     self:SetFont(CHATFONT)
-    self:SetOnClick(on_click)
+    self:SetOnClick(on_click_fn)
     self:SetText(text)
 
     if size then

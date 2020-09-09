@@ -140,11 +140,6 @@ end
 --- States
 -- @section states
 
---- State when becomes visible.
-function Indicator:Show()
-    Button._base.Show(self)
-end
-
 --- State when the focus is gained.
 function Indicator:OnGainFocus()
     Button._base.OnGainFocus(self)

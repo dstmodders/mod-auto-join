@@ -38,11 +38,11 @@ end
 
 --- Constructor.
 -- @function _ctor
--- @tparam[opt] function on_click Function triggered on click
+-- @tparam[opt] function on_click_fn Function triggered on click
 -- @tparam[opt] boolean is_active_fn Function to check active state
 -- @usage local autojoinbutton = AutoJoinButton()
-local AutoJoinButton = Class(Button, function(self, autojoin, on_click, is_active_fn)
-    Button._ctor(self, nil, on_click, { SIZE, SIZE })
+local AutoJoinButton = Class(Button, function(self, autojoin, on_click_fn, is_active_fn)
+    Button._ctor(self, nil, on_click_fn, { SIZE, SIZE })
 
     -- fields
     self.autojoin = autojoin
@@ -68,15 +68,6 @@ end)
 --- General
 -- @section general
 
---- Sets state.
--- @tparam number state
--- @tparam boolean ignore_focus
-function AutoJoinButton:SetState(state, ignore_focus)
-    if self.icon and (not self.focus or ignore_focus) then
-        self.icon:SetState(state)
-    end
-end
-
 --- Gets icon seconds.
 -- @treturn number
 function AutoJoinButton:GetSeconds()
@@ -92,18 +83,13 @@ end
 --- States
 -- @section states
 
---- Changes to an active state.
-function AutoJoinButton:Active()
-    self.icon:Active()
-    self:SetHoverText("Disable")
-    self:Enable()
-end
-
---- Changes to an inactive state.
-function AutoJoinButton:Inactive()
-    self.icon:Inactive()
-    self:SetHoverText("Auto-Join")
-    self:Enable()
+--- Sets state.
+-- @tparam number state
+-- @tparam boolean ignore_focus
+function AutoJoinButton:SetState(state, ignore_focus)
+    if self.icon and (not self.focus or ignore_focus) then
+        self.icon:SetState(state)
+    end
 end
 
 --- State when the focus is gained.
