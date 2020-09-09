@@ -28,6 +28,9 @@ local _SERVER_EXPIRE_TIME = USER_HISTORY_EXPIRY_TIME
 --- Lifecycle
 -- @section lifecycle
 
+--- Constructor.
+-- @function _ctor
+-- @usage local data = Data(modname)
 local Data = Class(function(self, modname)
     Utils.Debug.AddMethods(self)
 
@@ -221,7 +224,7 @@ function Data:GeneralSet(key, value)
         self.persist_data.general = {}
     end
     DebugString(self, "[set]", key .. ":", value)
-    self.persist_data[key] = value
+    self.persist_data.general[key] = value
     self.dirty = true
     return true
 end
