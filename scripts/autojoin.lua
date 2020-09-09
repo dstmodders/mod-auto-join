@@ -524,6 +524,11 @@ function AutoJoin:UpdateButton(ignore_focus)
         self.auto_join_btn:SetState(self.state, ignore_focus)
         self.auto_join_btn:SetSeconds(self.seconds)
     end
+
+    if self.rejoin_btn and self.rejoin_btn.inst:IsValid() then
+        self.rejoin_btn:SetState(self.state, ignore_focus)
+        self.rejoin_btn:SetSeconds(self.seconds)
+    end
 end
 
 --- Updates indicators.
@@ -546,9 +551,10 @@ function AutoJoin:DoInit(modname)
     -- general
     self.data = Data(modname)
     self.default_refresh_seconds = 30
-    self.name = "AutoJoin"
-    self.state = MOD_AUTO_JOIN.STATE.DEFAULT
     self.last_join_server = nil
+    self.name = "AutoJoin"
+    self.rejoin_btn = nil
+    self.state = MOD_AUTO_JOIN.STATE.DEFAULT
 
     -- indicators
     self.indicators = {}
