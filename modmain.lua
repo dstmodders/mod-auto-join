@@ -53,7 +53,7 @@ end
 --- Initialization
 -- @section initialization
 
-AutoJoin:DoInit()
+AutoJoin:DoInit(modname)
 
 -- GetModConfigData
 local configs = {
@@ -161,15 +161,15 @@ AddClassPostConstruct("screens/redux/serverlistingscreen", ServerListingScreenPo
 --- Indicator
 -- @section indicator
 
-local function IndicatorScreenPostInit(_self)
-    _self.mod_auto_join_indicator = nil
-    if not _self.mod_auto_join_indicator then
-        _self.mod_auto_join_indicator = AutoJoin:AddIndicator(_self)
+local function IndicatorScreenPostInit(screen)
+    screen.mod_auto_join_indicator = nil
+    if not screen.mod_auto_join_indicator then
+        screen.mod_auto_join_indicator = AutoJoin:AddIndicator(screen)
     end
 
     -- overrides Screen:OnDestroy()
-    local OldOnDestroy = _self.OnDestroy
-    _self.OnDestroy = function(self)
+    local OldOnDestroy = screen.OnDestroy
+    screen.OnDestroy = function(self)
         DebugString(self.name, "destroyed")
         OldOnDestroy(self)
         if self.mod_auto_join_indicator then
@@ -178,15 +178,16 @@ local function IndicatorScreenPostInit(_self)
         end
     end
 
-    DebugInit(_self.name)
+    -- self
+    DebugInit(screen.name)
 end
 
-local function MultiplayerMainScreenPostInit(_self)
-    _self.mod_auto_join_indicator = nil
+local function MultiplayerMainScreenPostInit(multiplayermainscreen)
+    multiplayermainscreen.mod_auto_join_indicator = nil
 
     -- overrides MultiplayerMainScreen:OnHide()
-    local OldOnHide = _self.OnHide
-    _self.OnHide = function(self)
+    local OldOnHide = multiplayermainscreen.OnHide
+    multiplayermainscreen.OnHide = function(self)
         DebugString(self.name, "is hidden")
         OldOnHide(self)
         if self.mod_auto_join_indicator then
@@ -196,8 +197,8 @@ local function MultiplayerMainScreenPostInit(_self)
     end
 
     -- overrides MultiplayerMainScreen:OnShow()
-    local OldOnShow = _self.OnShow
-    _self.OnShow = function(self)
+    local OldOnShow = multiplayermainscreen.OnShow
+    multiplayermainscreen.OnShow = function(self)
         DebugString(self.name, "is shown")
         OldOnShow(self)
         if not self.mod_auto_join_indicator then
@@ -207,7 +208,8 @@ local function MultiplayerMainScreenPostInit(_self)
         end
     end
 
-    DebugInit(_self.name)
+    -- self
+    DebugInit(multiplayermainscreen.name)
 end
 
 if GetModConfigData("indicator") then

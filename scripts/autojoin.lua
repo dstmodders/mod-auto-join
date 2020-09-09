@@ -19,6 +19,7 @@ require "autojoin/constants"
 require "class"
 
 local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
+local Data = require "autojoin/data"
 local DevToolsSubmenu = require "autojoin/devtoolssubmenu"
 local Indicator = require "widgets/autojoin/indicator"
 local PopupDialogScreen = require "screens/redux/popupdialog"
@@ -31,9 +32,9 @@ local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
 
 --- Constructor.
 -- @function _ctor
--- @usage local autojoin = AutoJoin()
-local AutoJoin = Class(function(self)
-    self:DoInit()
+-- @usage local autojoin = AutoJoin(modname)
+local AutoJoin = Class(function(self, modname)
+    self:DoInit(modname)
 end)
 
 --- Helpers
@@ -42,10 +43,19 @@ end)
 -- an override for global `JoinServer` function from the networking module
 local function JoinServerOverride(self, server_listing, optional_password_override)
     local function OnSuccess(password)
+        local last_join_server = {
+            server_listing = server_listing,
+            optional_password_override = optional_password_override,
+        }
+
         self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
+        self.data:GeneralSet("last_join_server", last_join_server)
+        self.data:Save()
+
         if TheNet:JoinServerResponse(false, server_listing.guid, password) then
             DisableAllDLC()
         end
+
         ShowConnectingToGamePopup()
     end
 
@@ -102,6 +112,21 @@ local function JoinServerOverride(self, server_listing, optional_password_overri
     end
 end
 
+--- Overrides
+-- @section overrides
+
+local OldJoinServer = JoinServer
+JoinServer = function(server_listing, optional_password_override)
+    local last_join_server = {
+        server_listing = server_listing,
+        optional_password_override = optional_password_override,
+    }
+
+    AutoJoin.data:GeneralSet("last_join_server", last_join_server)
+    AutoJoin.data:Save()
+    OldJoinServer(server_listing, optional_password_override)
+end
+
 --- General
 -- @section general
 
@@ -129,7 +154,6 @@ end
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
     self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
-
     if not self.devtoolssubmenu.is_fake_auto_joining then
         JoinServer(server, password)
     else
@@ -388,6 +412,11 @@ function AutoJoin:StartAutoJoining(server, password)
     if not self.is_ui_disabled then
         self:Override()
     end
+
+    if self.is_auto_joining then
+        self:ClearAutoJoinThread()
+    end
+
     self:StartAutoJoinThread(server, password)
 end
 
@@ -511,13 +540,15 @@ end
 -- @section lifecycle
 
 --- Initializes.
-function AutoJoin:DoInit()
+function AutoJoin:DoInit(modname)
     Utils.Debug.AddMethods(self)
 
     -- general
+    self.data = Data(modname)
     self.default_refresh_seconds = 30
     self.name = "AutoJoin"
     self.state = MOD_AUTO_JOIN.STATE.DEFAULT
+    self.last_join_server = nil
 
     -- indicators
     self.indicators = {}
@@ -551,6 +582,9 @@ function AutoJoin:DoInit()
 
     -- dev tools mod
     self.devtoolssubmenu = DevToolsSubmenu(self)
+
+    -- data
+    self.data:GeneralGet("last_join_server", self, "last_join_server")
 
     -- self
     self:DebugInit(self.name)
