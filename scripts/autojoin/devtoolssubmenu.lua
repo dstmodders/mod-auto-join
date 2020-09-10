@@ -246,7 +246,7 @@ local function Add(self)
                 options = {
                     label = "Dump Last Join Server",
                     on_accept_fn = function()
-                        dumptable(self.autojoin.last_join_server)
+                        dumptable(self.autojoin:GetLastJoinServer())
                     end,
                 },
             },

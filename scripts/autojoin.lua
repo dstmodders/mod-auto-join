@@ -29,6 +29,7 @@ local RejoinButton = require "widgets/autojoin/rejoinbutton"
 local Utils = require "autojoin/utils"
 
 local _AUTO_JOIN_THREAD_ID = "mod_auto_join_thread"
+local _LAST_JOIN_SERVER
 
 --- Lifecycle
 -- @section lifecycle
@@ -46,13 +47,13 @@ end)
 -- an override for global `JoinServer` function from the networking module
 local function JoinServerOverride(self, server_listing, optional_password_override)
     local function OnSuccess(password)
-        local last_join_server = {
+        _LAST_JOIN_SERVER = {
             server_listing = server_listing,
             optional_password_override = optional_password_override,
         }
 
         self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
-        self.data:GeneralSet("last_join_server", last_join_server)
+        self.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
         self.data:Save()
 
         if TheNet:JoinServerResponse(false, server_listing.guid, password) then
@@ -127,18 +128,24 @@ end
 
 local OldJoinServer = JoinServer
 JoinServer = function(server_listing, optional_password_override)
-    local last_join_server = {
+    _LAST_JOIN_SERVER = {
         server_listing = server_listing,
         optional_password_override = optional_password_override,
     }
 
-    AutoJoin.data:GeneralSet("last_join_server", last_join_server)
+    AutoJoin.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
     AutoJoin.data:Save()
     OldJoinServer(server_listing, optional_password_override)
 end
 
 --- General
 -- @section general
+
+--- Gets last join server.
+-- @treturn table
+function AutoJoin:GetLastJoinServer() -- luacheck: only
+    return _LAST_JOIN_SERVER
+end
 
 --- Gets state.
 -- @treturn number
@@ -249,9 +256,9 @@ end
 --- Rejoins the last server.
 -- @tparam[opt] MultiplayerMainScreen multiplayermainscreen
 function AutoJoin:Rejoin(multiplayermainscreen)
-    local server_listing = Utils.Chain.Get(self.last_join_server, "server_listing")
+    local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
     local optional_password_override = Utils.Chain.Get(
-        self.last_join_server,
+        _LAST_JOIN_SERVER,
         "optional_password_override"
     )
 
@@ -553,14 +560,19 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     local total = multiplayermainscreen.menu:GetNumberOfItems()
     local previous_menu_item_name = multiplayermainscreen.menu.items[total].name
     local previous_menu_item_on_click = multiplayermainscreen.menu.items[total].onclick
-    local server_listing = Utils.Chain.Get(self.last_join_server, "server_listing")
 
     if self.config.main_screen_button then
         -- overrides MultiplayerMainScreen:MakeSubMenu()
         multiplayermainscreen.MakeSubMenu = function()
-            if server_listing then
-                local btn
+            local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+            local btn = multiplayermainscreen.mod_auto_join_rejoin
 
+            if btn then
+                btn:Kill()
+                table.remove(multiplayermainscreen.submenu.items, btn.index)
+            end
+
+            if server_listing then
                 btn = RejoinButton(self, function()
                     self:Rejoin(multiplayermainscreen)
                 end, function()
@@ -579,6 +591,8 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
                 btn.image:SetHoverText(server_listing.name, hover_text_options)
 
                 multiplayermainscreen.submenu:AddCustomItem(btn)
+                multiplayermainscreen.mod_auto_join_rejoin = btn
+                btn.index = multiplayermainscreen.submenu:GetNumberOfItems()
             end
         end
     end
@@ -588,6 +602,7 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     multiplayermainscreen.OnHide = function()
         self:DebugString(multiplayermainscreen.name, "is hidden")
         OldOnHide(multiplayermainscreen)
+
         if multiplayermainscreen.mod_auto_join_indicator then
             self:RemoveIndicator(multiplayermainscreen.mod_auto_join_indicator)
             multiplayermainscreen.mod_auto_join_indicator = nil
@@ -599,6 +614,7 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     multiplayermainscreen.OnShow = function()
         self:DebugString(multiplayermainscreen.name, "is shown")
         OldOnShow(multiplayermainscreen)
+
         if not multiplayermainscreen.mod_auto_join_indicator then
             multiplayermainscreen.mod_auto_join_indicator = self:AddIndicator(
                 multiplayermainscreen.fixed_root,
@@ -606,6 +622,10 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
                     return multiplayermainscreen.mod_auto_join_indicator
                 end
             )
+        end
+
+        if self.config.main_screen_button then
+            multiplayermainscreen:MakeSubMenu()
         end
     end
 
@@ -631,10 +651,6 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
 
     -- initialize
     multiplayermainscreen.mod_auto_join_indicator = nil
-
-    if self.config.main_screen_button then
-        multiplayermainscreen:MakeSubMenu()
-    end
 
     -- debug
     self:DebugInit(multiplayermainscreen.name)
@@ -826,7 +842,6 @@ function AutoJoin:DoInit(modname)
     self.server = nil
 
     -- rejoin
-    self.last_join_server = nil
     self.rejoin_btn = nil
 
     -- overrides
@@ -856,7 +871,7 @@ function AutoJoin:DoInit(modname)
     self.devtoolssubmenu = DevToolsSubmenu(self)
 
     -- data
-    self.data:GeneralGet("last_join_server", self, "last_join_server")
+    _LAST_JOIN_SERVER = self.data:GeneralGet("last_join_server")
 
     -- self
     self:DebugInit(self.name)
