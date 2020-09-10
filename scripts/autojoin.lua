@@ -23,6 +23,7 @@ local Data = require "autojoin/data"
 local DevToolsSubmenu = require "autojoin/devtoolssubmenu"
 local Indicator = require "widgets/autojoin/indicator"
 local PopupDialogScreen = require "screens/redux/popupdialog"
+local RejoinButton = require "widgets/autojoin/rejoinbutton"
 local Utils = require "autojoin/utils"
 
 local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
@@ -233,6 +234,54 @@ function AutoJoin:OverrideRestore()
     self:DebugString("ShowConnectingToGamePopup restored")
 end
 
+--- Rejoin
+-- @section rejoin
+
+--- Rejoins the last server.
+-- @tparam[opt] MultiplayerMainScreen multiplayermainscreen
+function AutoJoin:Rejoin(multiplayermainscreen)
+    local server_listing = Utils.Chain.Get(self.last_join_server, "server_listing")
+    local optional_password_override = Utils.Chain.Get(
+        self.last_join_server,
+        "optional_password_override"
+    )
+
+    if not server_listing then
+        self:DebugError("[rejoin]")
+    end
+
+    -- rejoin
+    self:DebugString("[rejoin]", "Rejoining the last server...")
+    self:CancelRejoin(multiplayermainscreen)
+    self:StartAutoJoining(server_listing, optional_password_override)
+
+    -- multiplayer main screen
+    if multiplayermainscreen then
+        if multiplayermainscreen.mod_auto_join_indicator then
+            self:RemoveIndicator(multiplayermainscreen.mod_auto_join_indicator)
+        end
+
+        multiplayermainscreen.mod_auto_join_indicator = AutoJoin:AddIndicator(
+            multiplayermainscreen.fixed_root,
+            function()
+                return multiplayermainscreen.mod_auto_join_indicator
+            end
+        )
+
+        multiplayermainscreen.mod_auto_join_indicator:Show()
+    end
+end
+
+--- Cancels rejoin.
+-- @tparam[opt] MultiplayerMainScreen multiplayermainscreen
+function AutoJoin:CancelRejoin(multiplayermainscreen)
+    self:DebugString("[rejoin]", "Stopping rejoining...")
+    self:StopAutoJoining()
+    if multiplayermainscreen and multiplayermainscreen.mod_auto_join_indicator then
+        AutoJoin:RemoveIndicator(multiplayermainscreen.mod_auto_join_indicator)
+    end
+end
+
 --- Indicators
 -- @section indicators
 
@@ -307,86 +356,7 @@ function AutoJoin:RemoveAllIndicators()
     self.indicators = {}
 end
 
---- Server listing screen
--- @section server-listing-screen
-
---- Gets an auto-joining state function.
---
--- Returns a function for checking if auto-joining is active or not.
---
--- @treturn function
-function AutoJoin:GetBtnIsActiveFn()
-    return function()
-        return self:IsAutoJoining()
-    end
-end
-
---- Gets a button on-click function.
---
--- Returns a function for the "Auto-Join" button on-click action for both joining and cancelling.
--- Creates an `screens.AutoJoinPasswordScreen` screen and prompts for password if the server has
--- one.
---
--- @tparam function server_fn Function to return a server table
--- @tparam[opt] function success_cb Callback function on success
--- @tparam[opt] function cancel_cb Callback function on cancel
--- @treturn function
-function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
-    local function OnJoin(server, password)
-        self:StopAutoJoining()
-
-        if not self:IsAutoJoining() then
-            self:StartAutoJoining(server, password)
-        end
-
-        self.join_btn:Enable()
-
-        if success_cb then
-            success_cb(self)
-        end
-    end
-
-    local function OnCancel(server)
-        self:StopAutoJoining()
-
-        if server then
-            self.join_btn:Enable()
-            self.auto_join_btn:Enable()
-        else
-            self.join_btn:Disable()
-            self.auto_join_btn:Disable()
-        end
-
-        if cancel_cb then
-            cancel_cb(self)
-        end
-    end
-
-    return function()
-        if not self.join_btn then
-            self:DebugError("AutoJoin.join_btn is required")
-            return
-        end
-
-        local server = server_fn()
-        if server and server.has_password and not self:IsAutoJoining() then
-            self:DebugString("Auto-joining the password-protected server:", server.name)
-            self:DebugString("Prompting password...")
-            local screen = AutoJoinPasswordScreen(server, OnJoin, OnCancel)
-            TheFrontEnd:PushScreen(screen)
-            screen:ForceInput()
-        elseif server and not self:IsAutoJoining() then
-            self:DebugString("Auto-joining the server:", server.name)
-            OnCancel(server)
-            OnJoin(server)
-        elseif self:IsAutoJoining() then
-            self:DebugString("Auto-joining has been cancelled")
-            OnCancel(server)
-        end
-    end
-end
-
---- Auto-joining
+--- Auto-Joining
 -- @section auto-joining
 
 local function IsServerListed(guid)
@@ -537,6 +507,180 @@ function AutoJoin:UpdateIndicators()
         if v.inst:IsValid() then
             v:SetState(self.state)
             v:SetSeconds(self.seconds)
+        end
+    end
+end
+
+--- Multiplayer Main Screen
+-- @section multiplayer-main-screen
+
+--- Overrides multiplayer main screen.
+-- @tparam MultiplayerMainScreen multiplayermainscreen
+function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
+    local total = multiplayermainscreen.menu:GetNumberOfItems()
+    local previous_menu_item_name = multiplayermainscreen.menu.items[total].name
+    local previous_menu_item_on_click = multiplayermainscreen.menu.items[total].onclick
+    local server_listing = Utils.Chain.Get(self.last_join_server, "server_listing")
+
+    -- overrides MultiplayerMainScreen:MakeSubMenu()
+    multiplayermainscreen.MakeSubMenu = function()
+        if server_listing then
+            local btn
+
+            btn = RejoinButton(self, function()
+                self:Rejoin(multiplayermainscreen)
+            end, function()
+                self:CancelRejoin(multiplayermainscreen)
+            end)
+
+            local hover_text_options = {
+                colour = UICOLOURS.WHITE,
+                font = NEWFONT_OUTLINE,
+                offset_x = 0,
+                offset_y = 80,
+            }
+
+            btn:SetHoverText(server_listing.name, hover_text_options)
+            btn.icon:SetHoverText(server_listing.name, hover_text_options)
+            btn.image:SetHoverText(server_listing.name, hover_text_options)
+
+            multiplayermainscreen.submenu:AddCustomItem(btn)
+        end
+    end
+
+    -- overrides MultiplayerMainScreen:OnHide()
+    local OldOnHide = multiplayermainscreen.OnHide
+    multiplayermainscreen.OnHide = function()
+        self:DebugString(multiplayermainscreen.name, "is hidden")
+        OldOnHide(multiplayermainscreen)
+
+        if multiplayermainscreen.mod_auto_join_indicator then
+            self:RemoveIndicator(multiplayermainscreen.mod_auto_join_indicator)
+            multiplayermainscreen.mod_auto_join_indicator = nil
+        end
+    end
+
+    -- overrides MultiplayerMainScreen:OnShow()
+    local OldOnShow = multiplayermainscreen.OnShow
+    multiplayermainscreen.OnShow = function()
+        self:DebugString(multiplayermainscreen.name, "is shown")
+        OldOnShow(multiplayermainscreen)
+
+        if not multiplayermainscreen.mod_auto_join_indicator then
+            multiplayermainscreen.mod_auto_join_indicator = self:AddIndicator(
+                multiplayermainscreen.fixed_root,
+                function()
+                    return multiplayermainscreen.mod_auto_join_indicator
+                end
+            )
+        end
+
+        TheNet:SearchLANServers(multiplayermainscreen.offline)
+        TheNet:SearchServers()
+    end
+
+    -- overrides MultiplayerMainScreen:OnRawKey()
+    local OldOnRawKey = multiplayermainscreen.OnRawKey
+    multiplayermainscreen.OnRawKey = function(_, key, down)
+        if key == KEY_CTRL or key == KEY_LCTRL or key == KEY_RCTRL then
+            if down then
+                total = multiplayermainscreen.menu:GetNumberOfItems()
+                multiplayermainscreen.menu:EditItem(total, nil, nil, function()
+                    self:Rejoin(multiplayermainscreen)
+                end)
+                multiplayermainscreen.menu.items[total]:SetText("Rejoin", true)
+            else
+                total = multiplayermainscreen.menu:GetNumberOfItems()
+                multiplayermainscreen.menu:EditItem(total, nil, nil, previous_menu_item_on_click)
+                multiplayermainscreen.menu.items[total]:SetText(previous_menu_item_name, true)
+            end
+        end
+        OldOnRawKey(multiplayermainscreen, key, down)
+    end
+
+    -- initialize
+    multiplayermainscreen.mod_auto_join_indicator = nil
+    multiplayermainscreen:MakeSubMenu()
+
+    -- debug
+    self:DebugInit(multiplayermainscreen.name)
+end
+
+--- Server Listing Screen
+-- @section server-listing-screen
+
+--- Gets an auto-joining state function.
+--
+-- Returns a function for checking if auto-joining is active or not.
+--
+-- @treturn function
+function AutoJoin:GetBtnIsActiveFn()
+    return function()
+        return self:IsAutoJoining()
+    end
+end
+
+--- Gets a button on-click function.
+--
+-- Returns a function for the "Auto-Join" button on-click action for both joining and cancelling.
+-- Creates an `screens.AutoJoinPasswordScreen` screen and prompts for password if the server has
+-- one.
+--
+-- @tparam function server_fn Function to return a server table
+-- @tparam[opt] function success_cb Callback function on success
+-- @tparam[opt] function cancel_cb Callback function on cancel
+-- @treturn function
+function AutoJoin:GetBtnOnClickFn(server_fn, success_cb, cancel_cb)
+    local function OnJoin(server, password)
+        self:StopAutoJoining()
+
+        if not self:IsAutoJoining() then
+            self:StartAutoJoining(server, password)
+        end
+
+        self.join_btn:Enable()
+
+        if success_cb then
+            success_cb(self)
+        end
+    end
+
+    local function OnCancel(server)
+        self:StopAutoJoining()
+
+        if server then
+            self.join_btn:Enable()
+            self.auto_join_btn:Enable()
+        else
+            self.join_btn:Disable()
+            self.auto_join_btn:Disable()
+        end
+
+        if cancel_cb then
+            cancel_cb(self)
+        end
+    end
+
+    return function()
+        if not self.join_btn then
+            self:DebugError("AutoJoin.join_btn is required")
+            return
+        end
+
+        local server = server_fn()
+        if server and server.has_password and not self:IsAutoJoining() then
+            self:DebugString("Auto-joining the password-protected server:", server.name)
+            self:DebugString("Prompting password...")
+            local screen = AutoJoinPasswordScreen(server, OnJoin, OnCancel)
+            TheFrontEnd:PushScreen(screen)
+            screen:ForceInput()
+        elseif server and not self:IsAutoJoining() then
+            self:DebugString("Auto-joining the server:", server.name)
+            OnCancel(server)
+            OnJoin(server)
+        elseif self:IsAutoJoining() then
+            self:DebugString("Auto-joining has been cancelled")
+            OnCancel(server)
         end
     end
 end

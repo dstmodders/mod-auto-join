@@ -14,7 +14,6 @@ local require = _G.require
 local AutoJoin = require "autojoin"
 local AutoJoinButton = require "widgets/autojoin/autojoinbutton"
 local JoinButton = require "widgets/autojoin/joinbutton"
-local RejoinButton = require "widgets/autojoin/rejoinbutton"
 local Utils = require "autojoin/utils"
 
 --- Globals
@@ -122,95 +121,7 @@ end
 -- @section multiplayer-main-screen
 
 AddClassPostConstruct("screens/redux/multiplayermainscreen", function(multiplayermainscreen)
-    local NEWFONT_OUTLINE = _G.NEWFONT_OUTLINE
-    local UICOLOURS = _G.UICOLOURS
-
-    -- overrides MultiplayerMainScreen:MakeSubMenu()
-    multiplayermainscreen.MakeSubMenu = function(self)
-        local server_listing = Utils.Chain.Get(AutoJoin, "last_join_server", "server_listing")
-        local optional_password_override = Utils.Chain.Get(
-            AutoJoin,
-            "last_join_server",
-            "optional_password_override"
-        )
-
-        if server_listing then
-            local btn
-
-            btn = RejoinButton(AutoJoin, function()
-                -- start
-                AutoJoin:StartAutoJoining(server_listing, optional_password_override)
-
-                -- indicator
-                if self.mod_auto_join_indicator then
-                    AutoJoin:RemoveIndicator(self.mod_auto_join_indicator)
-                end
-
-                self.mod_auto_join_indicator = AutoJoin:AddIndicator(
-                    self.fixed_root,
-                    function()
-                        return self.mod_auto_join_indicator
-                    end
-                )
-
-                self.mod_auto_join_indicator:Show()
-            end, function()
-                -- stop
-                AutoJoin:StopAutoJoining()
-
-                -- indicator
-                if self.mod_auto_join_indicator then
-                    AutoJoin:RemoveIndicator(self.mod_auto_join_indicator)
-                end
-            end)
-
-            local hover_text_options = {
-                colour = UICOLOURS.WHITE,
-                font = NEWFONT_OUTLINE,
-                offset_x = 0,
-                offset_y = 80,
-            }
-
-            btn:SetHoverText(server_listing.name, hover_text_options)
-            btn.icon:SetHoverText(server_listing.name, hover_text_options)
-            btn.image:SetHoverText(server_listing.name, hover_text_options)
-
-            self.submenu:AddCustomItem(btn)
-        end
-    end
-
-    -- overrides MultiplayerMainScreen:OnHide()
-    local OldOnHide = multiplayermainscreen.OnHide
-    multiplayermainscreen.OnHide = function(self)
-        DebugString(self.name, "is hidden")
-        OldOnHide(self)
-        if self.mod_auto_join_indicator then
-            AutoJoin:RemoveIndicator(self.mod_auto_join_indicator)
-            self.mod_auto_join_indicator = nil
-        end
-    end
-
-    -- overrides MultiplayerMainScreen:OnShow()
-    local OldOnShow = multiplayermainscreen.OnShow
-    multiplayermainscreen.OnShow = function(self)
-        DebugString(self.name, "is shown")
-        OldOnShow(self)
-
-        if not self.mod_auto_join_indicator then
-            self.mod_auto_join_indicator = AutoJoin:AddIndicator(self.fixed_root, function()
-                return self.mod_auto_join_indicator
-            end)
-        end
-
-        TheNet:SearchLANServers(false)
-        TheNet:SearchServers()
-    end
-
-    -- self
-    multiplayermainscreen.mod_auto_join_indicator = nil
-    multiplayermainscreen:MakeSubMenu()
-
-    DebugInit(multiplayermainscreen.name)
+    AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
 end)
 
 --- Server Listing Screen
