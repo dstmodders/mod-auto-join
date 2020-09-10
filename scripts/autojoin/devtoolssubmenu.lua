@@ -274,9 +274,7 @@ local DevToolsSubmenu = Class(function(self, autojoin)
     }
 
     -- api
-    if KnownModIndex:IsModEnabledAny("dst-mod-dev-tools")
-        or KnownModIndex:IsModEnabledAny("workshop-2220506640")
-    then
+    if getmetatable(_G).__declared.DevToolsAPI then
         _API = _G.DevToolsAPI
         if _API and _API:GetAPIVersion() < 1 then
             Add(self)
