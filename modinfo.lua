@@ -124,8 +124,8 @@ end
 local key_list = CreateKeyList()
 
 local boolean = {
-    { description = "Yes", data = true },
-    { description = "No", data = false },
+    { description = "Enabled", data = true },
+    { description = "Disabled", data = false },
 }
 
 local indicator_padding = {
@@ -179,17 +179,17 @@ configuration_options = {
     AddConfig("Waiting time", "waiting_time", waiting_time, 15, "The time between reconnection attempts"),
 
     AddSection("Indicator"),
-    AddConfig("Indicator", "indicator", boolean, true, "Should the corner indicator be visible?"),
+    AddConfig("Indicator", "indicator", boolean, true, "When enabled, adds a corner indicator on the supported screens"),
     AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "Indicator position on the screen"),
     AddConfig("Indicator padding", "indicator_padding", indicator_padding, 10, "Indicator padding from the screen edges"),
     AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "Indicator scale on the screen"),
 
     AddSection("Rejoin"),
-    AddConfig("Rejoin key", "key_rejoin", key_list, "KEY_CTRL", "Key used for toggling rejoin functionality.\nAvailable on the main screen"),
-    AddConfig("Rejoin initial wait", "rejoin_initial_wait", rejoin_initial_wait, 3, "Initial wait in seconds before rejoining to retrieve the list of servers.\nChange based on your network speed"),
-    AddConfig("Main screen button", "main_screen_button", boolean, true, "Should the main screen button be enabled?"),
+    AddConfig("Rejoin key", "key_rejoin", key_list, "KEY_CTRL", "Key used for toggling rejoin functionality.\nAvailable on the multiplayer main screen"),
+    AddConfig("Rejoin initial wait", "rejoin_initial_wait", rejoin_initial_wait, 3, "Initial wait in seconds to retrieve a list of servers before rejoining.\nChange based on your network speed"),
+    AddConfig("Main screen button", "main_screen_button", boolean, true, 'When enabled, shows the "Rejoin" button in the multiplayer main screen'),
 
     AddSection("Other"),
-    AddConfig("Hide changelog", "hide_changelog", boolean, true, "Should the changelog in the mod description be hidden?\nMods should be reloaded to take effect"),
-    AddConfig("Debug", "debug", boolean, false, "Should the debug mode be enabled?"),
+    AddConfig("Hide changelog", "hide_changelog", boolean, true, "When enabled, hides the changelog in the mod description.\nMods should be reloaded to take effect"),
+    AddConfig("Debug", "debug", boolean, false, "When enabled, displays debug data in the console.\nUsed mainly for development"),
 }
