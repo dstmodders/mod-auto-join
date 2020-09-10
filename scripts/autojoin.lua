@@ -572,6 +572,14 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
                 table.remove(multiplayermainscreen.submenu.items, btn.index)
             end
 
+            total = multiplayermainscreen.submenu:GetNumberOfItems()
+            if total >= 4 then
+                if multiplayermainscreen.submenu.items[total] then
+                    multiplayermainscreen.submenu.items[total]:Kill()
+                    table.remove(multiplayermainscreen.submenu.items, total)
+                end
+            end
+
             if server_listing then
                 btn = RejoinButton(self, function()
                     self:Rejoin(multiplayermainscreen)
@@ -632,8 +640,11 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     -- overrides MultiplayerMainScreen:OnRawKey()
     local OldOnRawKey = multiplayermainscreen.OnRawKey
     multiplayermainscreen.OnRawKey = function(_, key, down)
+        OldOnRawKey(multiplayermainscreen, key, down)
         key = NormalizeKey(key)
-        if key == self.config.key_rejoin then
+        if key == self.config.key_rejoin
+            and Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+        then
             if down then
                 total = multiplayermainscreen.menu:GetNumberOfItems()
                 multiplayermainscreen.menu:EditItem(total, nil, nil, function()
@@ -646,7 +657,6 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
                 multiplayermainscreen.menu.items[total]:SetText(previous_menu_item_name, true)
             end
         end
-        OldOnRawKey(multiplayermainscreen, key, down)
     end
 
     -- initialize
