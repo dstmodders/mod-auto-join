@@ -50,6 +50,14 @@ local function DebugInit(...)
     return Debug and Debug:DebugInit(...)
 end
 
+--- Helpers
+-- @section helpers
+
+local function GetKeyFromConfig(config)
+    local key = GetModConfigData(config)
+    return key and (type(key) == "number" and key or _G[key]) or -1
+end
+
 --- Initialization
 -- @section initialization
 
@@ -61,12 +69,15 @@ local configs = {
     "indicator_padding",
     "indicator_position",
     "indicator_scale",
+    "main_screen_button",
     "waiting_time",
 }
 
 for _, config in ipairs(configs) do
     AutoJoin.config[config] = GetModConfigData(config)
 end
+
+AutoJoin.config["key_rejoin"] = GetKeyFromConfig("key_rejoin")
 
 --- Indicator
 -- @section indicator

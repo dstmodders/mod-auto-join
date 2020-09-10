@@ -5,6 +5,7 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
     [[- Added button states animations]] .. "\n" ..
     [[- Added support for "Rejoin" main screen button]] .. "\n" ..
+    [[- Added support for rejoin configurations]] .. "\n" ..
     [[- Added support for the "Dev Tools" mod submenu]]
 author = "Demonblink"
 api_version = 10
@@ -39,9 +40,88 @@ local function AddSection(title)
     return AddConfig(title, "", { { description = "", data = 0 } }, 0)
 end
 
+local function CreateKeyList()
+    -- helpers
+    local function AddDisabled(t)
+        t[#t + 1] = { description = "Disabled", data = false }
+    end
+
+    local function AddKey(t, key)
+        t[#t + 1] = { description = key, data = "KEY_" .. key:gsub(" ", ""):upper() }
+    end
+
+    local function AddKeysByName(t, names)
+        for i = 1, #names do
+            AddKey(t, names[i])
+        end
+    end
+
+    local function AddAlphabetKeys(t)
+        local string = ""
+        for i = 1, 26 do
+            AddKey(t, string.char(64 + i))
+        end
+    end
+
+    local function AddTypewriterNumberKeys(t)
+        for i = 1, 10 do
+            AddKey(t, "" .. (i % 10))
+        end
+    end
+
+    local function AddTypewriterModifierKeys(t)
+        AddKeysByName(t, { "Alt", "Ctrl", "Shift" })
+    end
+
+    local function AddTypewriterKeys(t)
+        AddAlphabetKeys(t)
+        AddKeysByName(t, {
+            "Slash",
+            "Backslash",
+            "Period",
+            "Semicolon",
+            "Left Bracket",
+            "Right Bracket",
+        })
+        AddKeysByName(t, { "Space", "Tab", "Backspace", "Enter" })
+        AddTypewriterModifierKeys(t)
+        AddKeysByName(t, { "Tilde" })
+        AddTypewriterNumberKeys(t)
+        AddKeysByName(t, { "Minus", "Equals" })
+    end
+
+    local function AddFunctionKeys(t)
+        for i = 1, 12 do
+            AddKey(t, "F" .. i)
+        end
+    end
+
+    local function AddArrowKeys(t)
+        AddKeysByName(t, { "Up", "Down", "Left", "Right" })
+    end
+
+    local function AddNavigationKeys(t)
+        AddKeysByName(t, { "Insert", "Delete", "Home", "End", "Page Up", "Page Down" })
+    end
+
+    -- key list
+    local list = {}
+
+    AddDisabled(list)
+    AddArrowKeys(list)
+    AddFunctionKeys(list)
+    AddTypewriterKeys(list)
+    AddNavigationKeys(list)
+    AddKeysByName(list, { "Escape", "Pause", "Print" })
+
+    return list
+end
+
 --
 -- Configuration
 --
+
+local key_list = CreateKeyList()
 
 local boolean = {
     { description = "Yes", data = true },
@@ -95,6 +175,10 @@ configuration_options = {
     AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "Indicator position on the screen"),
     AddConfig("Indicator padding", "indicator_padding", indicator_padding, 10, "Indicator padding from the screen edges"),
     AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "Indicator scale on the screen"),
+
+    AddSection("Rejoin"),
+    AddConfig("Rejoin key", "key_rejoin", key_list, "KEY_CTRL", "Key used for toggling rejoin functionality.\nAvailable on the main screen"),
+    AddConfig("Main screen button", "main_screen_button", boolean, true, "Should the main screen button be enabled?"),
 
     AddSection("Other"),
     AddConfig("Hide changelog", "hide_changelog", boolean, true, "Should the changelog in the mod description be hidden?\nMods should be reloaded to take effect"),

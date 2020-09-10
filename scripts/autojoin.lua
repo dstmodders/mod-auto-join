@@ -113,6 +113,13 @@ local function JoinServerOverride(self, server_listing, optional_password_overri
     end
 end
 
+local function NormalizeKey(key)
+    key = (key == KEY_LALT or key == KEY_RALT) and KEY_ALT or key
+    key = (key == KEY_LCTRL or key == KEY_RCTRL) and KEY_CTRL or key
+    key = (key == KEY_LSHIFT or key == KEY_RSHIFT) and KEY_SHIFT or key
+    return key
+end
+
 --- Overrides
 -- @section overrides
 
@@ -522,29 +529,31 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     local previous_menu_item_on_click = multiplayermainscreen.menu.items[total].onclick
     local server_listing = Utils.Chain.Get(self.last_join_server, "server_listing")
 
-    -- overrides MultiplayerMainScreen:MakeSubMenu()
-    multiplayermainscreen.MakeSubMenu = function()
-        if server_listing then
-            local btn
+    if self.config.main_screen_button then
+        -- overrides MultiplayerMainScreen:MakeSubMenu()
+        multiplayermainscreen.MakeSubMenu = function()
+            if server_listing then
+                local btn
 
-            btn = RejoinButton(self, function()
-                self:Rejoin(multiplayermainscreen)
-            end, function()
-                self:CancelRejoin(multiplayermainscreen)
-            end)
+                btn = RejoinButton(self, function()
+                    self:Rejoin(multiplayermainscreen)
+                end, function()
+                    self:CancelRejoin(multiplayermainscreen)
+                end)
 
-            local hover_text_options = {
-                colour = UICOLOURS.WHITE,
-                font = NEWFONT_OUTLINE,
-                offset_x = 0,
-                offset_y = 80,
-            }
+                local hover_text_options = {
+                    colour = UICOLOURS.WHITE,
+                    font = NEWFONT_OUTLINE,
+                    offset_x = 0,
+                    offset_y = 80,
+                }
 
-            btn:SetHoverText(server_listing.name, hover_text_options)
-            btn.icon:SetHoverText(server_listing.name, hover_text_options)
-            btn.image:SetHoverText(server_listing.name, hover_text_options)
+                btn:SetHoverText(server_listing.name, hover_text_options)
+                btn.icon:SetHoverText(server_listing.name, hover_text_options)
+                btn.image:SetHoverText(server_listing.name, hover_text_options)
 
-            multiplayermainscreen.submenu:AddCustomItem(btn)
+                multiplayermainscreen.submenu:AddCustomItem(btn)
+            end
         end
     end
 
@@ -582,7 +591,8 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     -- overrides MultiplayerMainScreen:OnRawKey()
     local OldOnRawKey = multiplayermainscreen.OnRawKey
     multiplayermainscreen.OnRawKey = function(_, key, down)
-        if key == KEY_CTRL or key == KEY_LCTRL or key == KEY_RCTRL then
+        key = NormalizeKey(key)
+        if key == self.config.key_rejoin then
             if down then
                 total = multiplayermainscreen.menu:GetNumberOfItems()
                 multiplayermainscreen.menu:EditItem(total, nil, nil, function()
@@ -600,7 +610,10 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
 
     -- initialize
     multiplayermainscreen.mod_auto_join_indicator = nil
-    multiplayermainscreen:MakeSubMenu()
+
+    if self.config.main_screen_button then
+        multiplayermainscreen:MakeSubMenu()
+    end
 
     -- debug
     self:DebugInit(multiplayermainscreen.name)
@@ -724,6 +737,8 @@ function AutoJoin:DoInit(modname)
         indicator_padding = 10,
         indicator_position = "tr",
         indicator_scale = 1.3,
+        key_rejoin = KEY_CTRL,
+        main_screen_button = true,
         waiting_time = 15,
     }
 
