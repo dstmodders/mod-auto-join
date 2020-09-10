@@ -185,9 +185,9 @@ configuration_options = {
     AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "Indicator scale on the screen"),
 
     AddSection("Rejoin"),
-    AddConfig("Rejoin key", "key_rejoin", key_list, "KEY_CTRL", "Key used for toggling rejoin functionality.\nAvailable on the multiplayer main screen"),
+    AddConfig("Rejoin key", "key_rejoin", key_list, "KEY_CTRL", "Key used for toggling the rejoin functionality.\nAvailable on the multiplayer main screen"),
     AddConfig("Rejoin initial wait", "rejoin_initial_wait", rejoin_initial_wait, 3, "Initial wait in seconds to retrieve a list of servers before rejoining.\nChange based on your network speed"),
-    AddConfig("Main screen button", "main_screen_button", boolean, true, 'When enabled, shows the "Rejoin" button in the multiplayer main screen'),
+    AddConfig("Rejoin main screen button", "rejoin_main_screen_button", boolean, true, 'When enabled, adds "Rejoin" button in the multiplayer main screen'),
 
     AddSection("Other"),
     AddConfig("Hide changelog", "hide_changelog", boolean, true, "When enabled, hides the changelog in the mod description.\nMods should be reloaded to take effect"),

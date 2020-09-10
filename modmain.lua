@@ -62,8 +62,8 @@ local configs = {
     "indicator_padding",
     "indicator_position",
     "indicator_scale",
-    "main_screen_button",
     "rejoin_initial_wait",
+    "rejoin_main_screen_button",
     "waiting_time",
 }
 

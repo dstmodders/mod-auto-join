@@ -561,7 +561,7 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     local previous_menu_item_name = multiplayermainscreen.menu.items[total].name
     local previous_menu_item_on_click = multiplayermainscreen.menu.items[total].onclick
 
-    if self.config.main_screen_button then
+    if self.config.rejoin_main_screen_button then
         -- overrides MultiplayerMainScreen:MakeSubMenu()
         multiplayermainscreen.MakeSubMenu = function()
             local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
@@ -624,7 +624,7 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
             )
         end
 
-        if self.config.main_screen_button then
+        if self.config.rejoin_main_screen_button then
             multiplayermainscreen:MakeSubMenu()
         end
     end
@@ -856,8 +856,8 @@ function AutoJoin:DoInit(modname)
         indicator_position = "tr",
         indicator_scale = 1.3,
         key_rejoin = KEY_CTRL,
-        main_screen_button = true,
         rejoin_initial_wait = 3,
+        rejoin_main_screen_button = true,
         waiting_time = 15,
     }
 
