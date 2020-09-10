@@ -109,6 +109,7 @@ files["scripts/**/*.lua"] = {
     "KnownModIndex",
     "Profile",
     "SavePersistentString",
+    "ServerPreferences",
     "TheFrontEnd",
     "TheNet",
     "TheSim",

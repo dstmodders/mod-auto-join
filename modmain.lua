@@ -12,14 +12,7 @@ local _G = GLOBAL
 local require = _G.require
 
 local AutoJoin = require "autojoin"
-local AutoJoinButton = require "widgets/autojoin/autojoinbutton"
-local JoinButton = require "widgets/autojoin/joinbutton"
 local Utils = require "autojoin/utils"
-
---- Globals
--- @section globals
-
-local TheNet = _G.TheNet
 
 --- Assets
 -- @section assets
@@ -139,91 +132,7 @@ end)
 -- @section server-listing-screen
 
 AddClassPostConstruct("screens/redux/serverlistingscreen", function(serverlistingscreen)
-    local ServerPreferences = _G.ServerPreferences
-
-    --
-    -- Buttons
-    --
-
-    local server_fn = function()
-        return serverlistingscreen.selected_server
-    end
-
-    local function OnJoinClick()
-        local server = server_fn()
-        if server then
-            if server.has_password then
-                DebugString("Joining the password-protected server:", server.name)
-            else
-                DebugString("Joining the server:", server.name)
-            end
-
-            AutoJoin:StopAutoJoining()
-            serverlistingscreen:Join(false)
-        end
-    end
-
-    local function OnAutoJoinSuccess(self)
-        self.server = server_fn()
-        serverlistingscreen.servers_scroll_list:RefreshView()
-    end
-
-    local function OnAutoJoinCancel(self)
-        self.server = nil
-        serverlistingscreen.servers_scroll_list:RefreshView()
-    end
-
-    AutoJoin.join_btn = serverlistingscreen.side_panel:AddChild(JoinButton(OnJoinClick))
-    AutoJoin.auto_join_btn = serverlistingscreen.side_panel:AddChild(AutoJoinButton(
-        AutoJoin,
-        AutoJoin:GetBtnOnClickFn(server_fn, OnAutoJoinSuccess, OnAutoJoinCancel),
-        AutoJoin:GetBtnIsActiveFn()
-    ))
-
-    serverlistingscreen.auto_join_join_btn = AutoJoin.join_btn
-    serverlistingscreen.auto_join_auto_join_btn = AutoJoin.auto_join_btn
-    serverlistingscreen.join_button:Hide()
-
-    --
-    -- Overrides
-    --
-
-    -- overrides ServerListingScreen:SetRowColour()
-    local OldSetRowColour = serverlistingscreen.SetRowColour
-    serverlistingscreen.SetRowColour = function(self, row_widget, colour)
-        OldSetRowColour(self, row_widget, colour)
-
-        local server = self.servers[row_widget.unfiltered_index]
-        local auto_join_server = AutoJoin.server
-
-        if server and auto_join_server then
-            if self.servers[row_widget.unfiltered_index].guid == auto_join_server.guid then
-                OldSetRowColour(self, row_widget, _G.UICOLOURS.GOLD)
-            end
-        end
-    end
-
-    -- overrides ServerListingScreen:UpdateServerData()
-    local OldUpdateServerData = serverlistingscreen.UpdateServerData
-    serverlistingscreen.UpdateServerData = function(self, selected_index_actual)
-        OldUpdateServerData(self, selected_index_actual)
-
-        local selected_server = TheNet:GetServerListingFromActualIndex(selected_index_actual)
-        local is_name_and_description_hidden = selected_server
-            and ServerPreferences:IsNameAndDescriptionHidden(selected_server)
-            or false
-
-        if selected_server
-            and (Utils.Table.Compare(selected_server, self.selected_server) == false
-            or self.details_hidden_name ~= is_name_and_description_hidden)
-        then
-            serverlistingscreen.auto_join_join_btn:Enable()
-            serverlistingscreen.auto_join_auto_join_btn:Enable()
-        end
-    end
-
-    -- self
-    DebugInit(serverlistingscreen.name)
+    AutoJoin:OverrideServerListingScreen(serverlistingscreen)
 end)
 
 --- KnownModIndex
