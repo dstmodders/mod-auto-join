@@ -63,14 +63,6 @@ local Indicator = Class(Button, function(
     self.icon = self:AddChild(Icon())
     self.icon:SetScale(1.3)
 
-    -- devtoolssubmenu
-    local devtoolssubmenu = self.autojoin.devtoolssubmenu
-    if devtoolssubmenu then
-        self.padding = devtoolssubmenu.indicator_padding
-        self.screen_position = devtoolssubmenu.indicator_position
-        self.screen_scale = devtoolssubmenu.indicator_scale
-    end
-
     -- self
     self:Update()
 end)

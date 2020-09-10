@@ -95,6 +95,7 @@ files["scripts/**/*.lua"] = {
     "dumptable",
     "JoinServer",
     "OnNetworkDisconnect",
+    "shallowcopy",
     "ShowConnectingToGamePopup",
 
     -- project

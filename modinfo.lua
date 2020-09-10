@@ -166,6 +166,14 @@ local waiting_time = {
     { description = "1m", data = 60 },
 }
 
+local rejoin_initial_wait = {
+    { description = "1s", data = 1 },
+    { description = "2s", data = 2 },
+    { description = "3s", data = 3 },
+    { description = "5s", data = 5 },
+    { description = "10s", data = 10 },
+}
+
 configuration_options = {
     AddSection("General"),
     AddConfig("Waiting time", "waiting_time", waiting_time, 15, "The time between reconnection attempts"),
@@ -178,6 +186,7 @@ configuration_options = {
 
     AddSection("Rejoin"),
     AddConfig("Rejoin key", "key_rejoin", key_list, "KEY_CTRL", "Key used for toggling rejoin functionality.\nAvailable on the main screen"),
+    AddConfig("Rejoin initial wait", "rejoin_initial_wait", rejoin_initial_wait, 3, "Initial wait in seconds before rejoining to retrieve the list of servers.\nChange based on your network speed"),
     AddConfig("Main screen button", "main_screen_button", boolean, true, "Should the main screen button be enabled?"),
 
     AddSection("Other"),

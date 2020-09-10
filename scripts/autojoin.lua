@@ -28,7 +28,7 @@ local PopupDialogScreen = require "screens/redux/popupdialog"
 local RejoinButton = require "widgets/autojoin/rejoinbutton"
 local Utils = require "autojoin/utils"
 
-local _AUTO_JOIN_THREAD_ID = "auto_join_thread"
+local _AUTO_JOIN_THREAD_ID = "mod_auto_join_thread"
 
 --- Lifecycle
 -- @section lifecycle
@@ -164,7 +164,7 @@ end
 function AutoJoin:Join(server, password)
     self:DebugString("Joining server...")
     self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
-    if not self.devtoolssubmenu.is_fake_joining then
+    if not self.is_fake_joining then
         JoinServer(server, password)
     else
         if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
@@ -262,7 +262,15 @@ function AutoJoin:Rejoin(multiplayermainscreen)
     -- rejoin
     self:DebugString("[rejoin]", "Rejoining the last server...")
     self:CancelRejoin(multiplayermainscreen)
-    self:StartAutoJoining(server_listing, optional_password_override)
+
+    TheNet:SearchLANServers(multiplayermainscreen.offline)
+    TheNet:SearchServers()
+
+    self:StartAutoJoining(
+        server_listing,
+        optional_password_override,
+        self.config.rejoin_initial_wait
+    )
 
     -- multiplayer main screen
     if multiplayermainscreen then
@@ -387,7 +395,8 @@ end
 --
 -- @tparam table server Server data
 -- @tparam[opt] string password Server password
-function AutoJoin:StartAutoJoining(server, password)
+-- @tparam[opt] number initial_wait Initial wait in seconds
+function AutoJoin:StartAutoJoining(server, password, initial_wait)
     if not self.is_ui_disabled then
         self:Override()
     end
@@ -396,7 +405,7 @@ function AutoJoin:StartAutoJoining(server, password)
         self:ClearAutoJoinThread()
     end
 
-    self:StartAutoJoinThread(server, password)
+    self:StartAutoJoinThread(server, password, initial_wait)
 end
 
 --- Stops auto-joining a server.
@@ -408,7 +417,7 @@ function AutoJoin:StopAutoJoining()
     self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT, true)
 
     self.is_auto_joining = false
-    self.seconds = self.default_seconds
+    self.seconds = self.config.waiting_time
 
     TheNet:JoinServerResponse(true)
 
@@ -429,58 +438,73 @@ end
 --
 -- @tparam table server Server data
 -- @tparam[opt] string password Server password
-function AutoJoin:StartAutoJoinThread(server, password)
+-- @tparam[opt] number initial_wait Initial wait in seconds
+function AutoJoin:StartAutoJoinThread(server, password, initial_wait)
+    initial_wait = initial_wait ~= nil and initial_wait or 0
+
     if not server then
         return
     end
 
+    local is_initial_join_fired = false
     local is_server_not_listed = false
     local refresh_seconds = self.default_refresh_seconds
 
     self.auto_join_thread = Utils.Thread.Start(_AUTO_JOIN_THREAD_ID, function()
-        if not is_server_not_listed
-            and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
-            and not IsServerListed(server.guid)
-        then
-            is_server_not_listed = true
-            self:DebugString("Server is not listed")
-        end
-
-        if refresh_seconds <= 0 then
-            if is_server_not_listed
-                and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
-                and not IsServerListed(server.guid)
-            then
-                refresh_seconds = self.default_refresh_seconds + 1
-                is_server_not_listed = false
-                self:DebugString("Refreshing the server listing...")
-                TheNet:SearchServers()
-            end
-        end
-
-        if self.state == MOD_AUTO_JOIN.STATE.COUNTDOWN then
-            self.seconds = self.seconds - 1
-            refresh_seconds = refresh_seconds - 1
-
-            if self.seconds < 1 then
-                self.seconds = self.default_seconds
+        if self.elapsed_seconds >= initial_wait then
+            if not is_initial_join_fired then
+                is_initial_join_fired = true
                 self:Join(server, password)
             end
 
-            self:UpdateButton()
-            self:UpdateIndicators()
-        end
+            if not is_server_not_listed
+                and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
+                and not IsServerListed(server.guid)
+            then
+                is_server_not_listed = true
+                self:DebugString("Server is not listed")
+            end
 
+            if refresh_seconds <= 0 then
+                if is_server_not_listed
+                    and not TheNet:IsSearchingServers(PLATFORM ~= "WIN32_RAIL")
+                    and not IsServerListed(server.guid)
+                then
+                    refresh_seconds = self.default_refresh_seconds + 1
+                    is_server_not_listed = false
+                    self:DebugString("Refreshing the server listing...")
+                    TheNet:SearchServers()
+                end
+            end
+
+            if self.state == MOD_AUTO_JOIN.STATE.COUNTDOWN then
+                self.seconds = self.seconds - 1
+                refresh_seconds = refresh_seconds - 1
+
+                if self.seconds < 1 then
+                    self.seconds = self.config.waiting_time
+                    self:Join(server, password)
+                end
+
+                self:UpdateButton()
+                self:UpdateIndicators()
+            end
+        end
+        self.elapsed_seconds = self.elapsed_seconds + 1
         Sleep(1)
     end, function()
         return self.is_auto_joining
     end, function()
+        self.elapsed_seconds = 0
+        self.is_auto_joining = true
+
+        self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
         self:DebugString(string.format("Auto-joining every %d seconds...", self.seconds))
         self:DebugString(string.format("Refreshing every %d seconds...", refresh_seconds))
 
-        self.is_auto_joining = true
-
-        self:Join(server, password)
+        if initial_wait > 0 then
+            self:DebugString(string.format("Waiting %d seconds before starting...", initial_wait))
+        end
     end, function()
         self.is_auto_joining = false
     end)
@@ -564,7 +588,6 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     multiplayermainscreen.OnHide = function()
         self:DebugString(multiplayermainscreen.name, "is hidden")
         OldOnHide(multiplayermainscreen)
-
         if multiplayermainscreen.mod_auto_join_indicator then
             self:RemoveIndicator(multiplayermainscreen.mod_auto_join_indicator)
             multiplayermainscreen.mod_auto_join_indicator = nil
@@ -576,7 +599,6 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     multiplayermainscreen.OnShow = function()
         self:DebugString(multiplayermainscreen.name, "is shown")
         OldOnShow(multiplayermainscreen)
-
         if not multiplayermainscreen.mod_auto_join_indicator then
             multiplayermainscreen.mod_auto_join_indicator = self:AddIndicator(
                 multiplayermainscreen.fixed_root,
@@ -585,9 +607,6 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
                 end
             )
         end
-
-        TheNet:SearchLANServers(multiplayermainscreen.offline)
-        TheNet:SearchServers()
     end
 
     -- overrides MultiplayerMainScreen:OnRawKey()
@@ -788,10 +807,8 @@ function AutoJoin:DoInit(modname)
 
     -- general
     self.data = Data(modname)
-    self.default_refresh_seconds = 30
-    self.last_join_server = nil
+    self.elapsed_seconds = 0
     self.name = "AutoJoin"
-    self.rejoin_btn = nil
     self.state = MOD_AUTO_JOIN.STATE.DEFAULT
 
     -- indicators
@@ -804,8 +821,13 @@ function AutoJoin:DoInit(modname)
     -- auto-joining
     self.auto_join_thread = nil
     self.is_auto_joining = nil
+    self.is_fake_joining = false
     self.is_ui_disabled = false
     self.server = nil
+
+    -- rejoin
+    self.last_join_server = nil
+    self.rejoin_btn = nil
 
     -- overrides
     self.old_join_server_fn = nil
@@ -820,11 +842,15 @@ function AutoJoin:DoInit(modname)
         indicator_scale = 1.3,
         key_rejoin = KEY_CTRL,
         main_screen_button = true,
+        rejoin_initial_wait = 3,
         waiting_time = 15,
     }
 
-    self.default_seconds = self.config.waiting_time
-    self.seconds = self.default_seconds
+    self.config_default = shallowcopy(self.config)
+    self.seconds = self.config.waiting_time
+
+    -- defaults
+    self.default_refresh_seconds = 30
 
     -- dev tools mod
     self.devtoolssubmenu = DevToolsSubmenu(self)

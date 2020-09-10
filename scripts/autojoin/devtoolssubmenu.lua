@@ -19,6 +19,24 @@ local _API
 --- Helpers
 -- @section helpers
 
+local function ToggleAutoJoinCheckbox(self, name, field)
+    return {
+        type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
+        options = {
+            label = "Toggle " .. name,
+            on_accept_fn = function()
+                return self.defaults[field]
+            end,
+            on_get_fn = function()
+                return self.autojoin[field]
+            end,
+            on_set_fn = function(_, _, value)
+                self.autojoin[field] = value
+            end,
+        },
+    }
+end
+
 local function ToggleIndicatorVisibility(self, name)
     return {
         type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
@@ -38,23 +56,64 @@ local function ToggleIndicatorVisibility(self, name)
     }
 end
 
+local function NumericConfigOption(self, name, min, max, field)
+    return {
+        type = MOD_DEV_TOOLS.OPTION.NUMERIC,
+        options = {
+            label = name,
+            min = min,
+            max = max,
+            on_accept_fn = function()
+                local value = self.autojoin.config_default[field]
+                self.autojoin.config[field] = value
+            end,
+            on_get_fn = function()
+                return self.autojoin.config[field]
+            end,
+            on_set_fn = function(_, _, value)
+                self.autojoin.config[field] = value
+            end,
+        },
+    }
+end
+
+local function NumericIndicatorConfigOption(self, name, min, max, step, field, setter_name)
+    return {
+        type = MOD_DEV_TOOLS.OPTION.NUMERIC,
+        options = {
+            label = name,
+            min = min,
+            max = max,
+            step = step,
+            on_accept_fn = function()
+                local value = self.autojoin.config_default[field]
+                print(self.autojoin.config[field], value)
+                self.autojoin.config[field] = value
+                local indicators = self.autojoin:GetIndicators()
+                for _, indicator in pairs(indicators) do
+                    indicator[setter_name](indicator, self.autojoin.config[field])
+                end
+            end,
+            on_get_fn = function()
+                return self.autojoin.config[field]
+            end,
+            on_set_fn = function(_, _, value)
+                self.autojoin.config[field] = value
+                local indicators = self.autojoin:GetIndicators()
+                for _, indicator in pairs(indicators) do
+                    indicator[setter_name](indicator, value)
+                end
+            end,
+        },
+    }
+end
+
 local function Add(self)
     _API:AddSubmenu({
         label = "Auto Join",
         name = "AutoJoinSubmenu",
         options = {
-            {
-                type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
-                options = {
-                    label = "Toggle Fake Joining",
-                    on_get_fn = function()
-                        return self.is_fake_joining
-                    end,
-                    on_set_fn = function(_, _, value)
-                        self.is_fake_joining = value
-                    end,
-                },
-            },
+            ToggleAutoJoinCheckbox(self, "Fake Joining", "is_fake_joining"),
             {
                 type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
                 options = {
@@ -85,7 +144,7 @@ local function Add(self)
                         { name = "Connect (Focus)", value = MOD_AUTO_JOIN.STATE.CONNECT_FOCUS },
                     },
                     on_accept_fn = function()
-                        self.autojoin:SetState(self.default_state)
+                        self.autojoin:SetState(self.defaults.state)
                     end,
                     on_get_fn = function()
                         return self.autojoin:GetState()
@@ -103,7 +162,8 @@ local function Add(self)
                     min = 1,
                     max = 120,
                     on_accept_fn = function()
-                        self.autojoin.default_refresh_seconds = self.default_refresh_seconds
+                        local value = self.defaults.default_refresh_seconds
+                        self.autojoin.default_refresh_seconds = value
                     end,
                     on_get_fn = function()
                         return self.autojoin.default_refresh_seconds
@@ -113,23 +173,8 @@ local function Add(self)
                     end,
                 },
             },
-            {
-                type = MOD_DEV_TOOLS.OPTION.NUMERIC,
-                options = {
-                    label = "Default Seconds",
-                    min = 0,
-                    max = 99,
-                    on_accept_fn = function()
-                        self.autojoin.default_seconds = self.default_seconds
-                    end,
-                    on_get_fn = function()
-                        return self.autojoin.default_seconds
-                    end,
-                    on_set_fn = function(_, _, value)
-                        self.autojoin.default_seconds = value
-                    end,
-                },
-            },
+            NumericConfigOption(self, "Default Rejoin Initial Wait", 0, 15, "rejoin_initial_wait"),
+            NumericConfigOption(self, "Default Waiting Time", 0, 99, "waiting_time"),
             { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
             {
                 type = MOD_DEV_TOOLS.OPTION.SUBMENU,
@@ -139,31 +184,15 @@ local function Add(self)
                         return {
                             ToggleIndicatorVisibility(self, "Toggle Visibility"),
                             { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
-                            {
-                                type = MOD_DEV_TOOLS.OPTION.NUMERIC,
-                                options = {
-                                    label = "Padding",
-                                    min = 0,
-                                    max = 100,
-                                    on_accept_fn = function()
-                                        self.indicator_padding = self.default_indicator_padding
-                                        local indicators = self.autojoin:GetIndicators()
-                                        for _, indicator in pairs(indicators) do
-                                            indicator:SetPadding(self.indicator_padding)
-                                        end
-                                    end,
-                                    on_get_fn = function()
-                                        return self.indicator_padding
-                                    end,
-                                    on_set_fn = function(_, _, value)
-                                        self.indicator_padding = value
-                                        local indicators = self.autojoin:GetIndicators()
-                                        for _, indicator in pairs(indicators) do
-                                            indicator:SetPadding(value)
-                                        end
-                                    end,
-                                },
-                            },
+                            NumericIndicatorConfigOption(
+                                self,
+                                "Padding",
+                                0,
+                                100,
+                                1,
+                                "indicator_padding",
+                                "SetPadding"
+                            ),
                             {
                                 type = MOD_DEV_TOOLS.OPTION.CHOICES,
                                 options = {
@@ -175,50 +204,38 @@ local function Add(self)
                                         { name = "Bottom Left", value = "bl" },
                                     },
                                     on_accept_fn = function()
-                                        self.indicator_position = self.default_indicator_position
+                                        local v = self.autojoin.config_default.indicator_position
+                                        self.autojoin.config.indicator_position = v
                                         local indicators = self.autojoin:GetIndicators()
                                         for _, indicator in pairs(indicators) do
-                                            indicator:SetScreenPosition(self.indicator_position)
+                                            indicator:SetScreenPosition(
+                                                self.autojoin.config.indicator_position
+                                            )
                                         end
                                     end,
                                     on_get_fn = function()
-                                        return self.indicator_position
+                                        return self.autojoin.config.indicator_position
                                     end,
                                     on_set_fn = function(_, _, value)
-                                        self.indicator_position = value
+                                        self.autojoin.config.indicator_position = value
                                         local indicators = self.autojoin:GetIndicators()
                                         for _, indicator in pairs(indicators) do
-                                            indicator:SetScreenPosition(self.indicator_position)
+                                            indicator:SetScreenPosition(
+                                                self.autojoin.config.indicator_position
+                                            )
                                         end
                                     end,
                                 },
                             },
-                            {
-                                type = MOD_DEV_TOOLS.OPTION.NUMERIC,
-                                options = {
-                                    label = "Scale",
-                                    min = 0.5,
-                                    max = 5,
-                                    step = 0.1,
-                                    on_accept_fn = function()
-                                        self.indicator_scale = self.default_indicator_scale
-                                        local indicators = self.autojoin:GetIndicators()
-                                        for _, indicator in pairs(indicators) do
-                                            indicator:SetScreenScale(self.indicator_scale)
-                                        end
-                                    end,
-                                    on_get_fn = function()
-                                        return self.indicator_scale
-                                    end,
-                                    on_set_fn = function(_, _, value)
-                                        self.indicator_scale = value
-                                        local indicators = self.autojoin:GetIndicators()
-                                        for _, indicator in pairs(indicators) do
-                                            indicator:SetScreenScale(self.indicator_scale)
-                                        end
-                                    end,
-                                },
-                            },
+                            NumericIndicatorConfigOption(
+                                self,
+                                "Scale",
+                                0.5,
+                                5,
+                                0.1,
+                                "indicator_scale",
+                                "SetScreenScale"
+                            ),
                         }
                     end,
                 },
@@ -247,20 +264,14 @@ end
 local DevToolsSubmenu = Class(function(self, autojoin)
     -- general
     self.autojoin = autojoin
-    self.default_refresh_seconds = self.autojoin.default_refresh_seconds
-    self.default_seconds = self.autojoin.default_seconds
-    self.default_state = self.autojoin.state
-    self.is_fake_joining = false
     self.is_global_autojoin = false
 
-    -- indicator
-    self.default_indicator_padding = self.autojoin.config.indicator_padding
-    self.default_indicator_position = self.autojoin.config.indicator_position
-    self.default_indicator_scale = self.autojoin.config.indicator_scale
-    self.indicator_padding = self.autojoin.config.indicator_padding
-    self.indicator_position = self.autojoin.config.indicator_position
-    self.indicator_scale = self.autojoin.config.indicator_scale
-    self.indicator_visibility = false
+    -- defaults
+    self.defaults = {
+        default_refresh_seconds = self.autojoin.default_refresh_seconds,
+        is_fake_joining = self.autojoin.is_fake_joining,
+        state = self.autojoin.state,
+    }
 
     -- api
     if KnownModIndex:IsModEnabledAny("dst-mod-dev-tools")
