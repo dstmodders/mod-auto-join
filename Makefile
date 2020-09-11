@@ -72,7 +72,7 @@ install:
 		--exclude 'CONTRIBUTING.md' \
 		--exclude 'description.txt*' \
 		--exclude 'doc/' \
-		--exclude 'images/auto_join_icons/' \
+		--exclude 'exported/' \
 		--exclude 'lcov.info' \
 		--exclude 'luacov*' \
 		--exclude 'Makefile' \
@@ -81,6 +81,7 @@ install:
 		--exclude 'README.md' \
 		--exclude 'readme/' \
 		--exclude 'spec/' \
+		--exclude 'steam-workshop.zip' \
 		--exclude 'workshop*' \
 		. \
 		"${DST_MODS}/dst-mod-auto-join/"
@@ -133,9 +134,8 @@ uninstall:
 
 workshop:
 	@rm -Rf ./workshop*
-	@mkdir -p ./workshop/images/
-	@cp -R ./images/auto_join_icons.tex ./workshop/images/auto_join_icons.tex
-	@cp -R ./images/auto_join_icons.xml ./workshop/images/auto_join_icons.xml
+	@mkdir -p ./workshop/anim/
+	@cp -R ./anim/ ./workshop/
 	@cp -R ./LICENSE ./workshop/LICENSE
 	@cp -R ./modicon.tex ./workshop/
 	@cp -R ./modicon.xml ./workshop/
