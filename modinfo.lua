@@ -6,7 +6,8 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[- Added button states animations]] .. "\n" ..
     [[- Added support for "Rejoin" main screen button]] .. "\n" ..
     [[- Added support for rejoin configurations]] .. "\n" ..
-    [[- Added support for the "Dev Tools" mod submenu]]
+    [[- Added support for the "Dev Tools" mod submenu]] .. "\n" ..
+    [[- Changed some configurations]]
 author = "Demonblink"
 api_version = 10
 forumthread = ""
