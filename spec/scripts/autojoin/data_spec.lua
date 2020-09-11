@@ -418,6 +418,7 @@ describe("Data", function()
                 end)
 
                 it("should set the original_persist_data field", function()
+                    data.original_persist_data = {}
                     local before = data.original_persist_data
                     assert.is_equal(before, data.original_persist_data)
                     data:OnLoad(str)
@@ -425,6 +426,7 @@ describe("Data", function()
                 end)
 
                 it("should set the persist data field", function()
+                    data.persist_data = {}
                     local before = data.persist_data
                     assert.is_equal(before, data.persist_data)
                     data:OnLoad(str)

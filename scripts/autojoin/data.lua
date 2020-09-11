@@ -196,7 +196,13 @@ function Data:OnLoad(str, cb)
             str
         )
 
-        self.dirty = false
+        if not persist_data then
+            self.dirty = true
+            persist_data = _DEFAULT_PERSIST_DATA
+        else
+            self.dirty = false
+        end
+
         self.original_persist_data = persist_data
         self.persist_data = persist_data
 
