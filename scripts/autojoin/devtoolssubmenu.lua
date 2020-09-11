@@ -250,6 +250,29 @@ local function Add(self)
                     end,
                 },
             },
+            {
+                type = MOD_DEV_TOOLS.OPTION.ACTION,
+                options = {
+                    label = "Dump Stored Data",
+                    on_accept_fn = function()
+                        dumptable(self.autojoin.data:GetPersistData())
+                    end,
+                },
+            },
+            { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
+            {
+                type = MOD_DEV_TOOLS.OPTION.ACTION,
+                options = {
+                    label = "Clear Stored Data",
+                    on_accept_fn = function()
+                        local data = self.autojoin.data
+                        data.original_persist_data = nil
+                        data.persist_data = nil
+                        data.dirty = true
+                        data:Save()
+                    end,
+                },
+            },
         },
     })
 end
