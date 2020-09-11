@@ -6,7 +6,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.6.0-alpha
+-- @release 0.6.0
 ----
 local _G = GLOBAL
 local require = _G.require
