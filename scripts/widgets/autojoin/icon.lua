@@ -121,7 +121,7 @@ function Icon:Update()
         self.text:Hide()
     elseif self.state == MOD_AUTO_JOIN.STATE.COUNTDOWN then
         UpdateCircleAnim(self, "circle_loading")
-        UpdateIconAnim(self, "countdown")
+        self.icon:Hide()
         self.text:Show()
     elseif self.state == MOD_AUTO_JOIN.STATE.COUNTDOWN_FOCUS then
         UpdateCircleAnim(self, "circle_cross_idle")
