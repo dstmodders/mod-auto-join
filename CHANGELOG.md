@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+### Added
+
+- Button states animations
+- Support for "Rejoin" main screen button
+- Support for rejoin configurations
+- Support for the "Dev Tools" mod submenu
+
+### Changed
+
+- Some configurations
+
 ## [0.5.0][] - 2020-08-24
 
 ### Added
