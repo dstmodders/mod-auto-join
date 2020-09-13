@@ -47,14 +47,17 @@ end)
 -- an override for global `JoinServer` function from the networking module
 local function JoinServerOverride(self, server_listing, optional_password_override)
     local function OnSuccess(password)
-        _LAST_JOIN_SERVER = {
-            server_listing = server_listing,
-            optional_password_override = optional_password_override,
-        }
+        if server_listing.world_gen_data and server_listing._processed_world_gen_data then
+            _LAST_JOIN_SERVER = {
+                server_listing = server_listing,
+                optional_password_override = optional_password_override,
+            }
+
+            self.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
+            self.data:Save()
+        end
 
         self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
-        self.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
-        self.data:Save()
 
         if TheNet:JoinServerResponse(false, server_listing.guid, password) then
             DisableAllDLC()
@@ -128,13 +131,15 @@ end
 
 local OldJoinServer = JoinServer
 JoinServer = function(server_listing, optional_password_override)
-    _LAST_JOIN_SERVER = {
-        server_listing = server_listing,
-        optional_password_override = optional_password_override,
-    }
+    if server_listing.world_gen_data and server_listing._processed_world_gen_data then
+        _LAST_JOIN_SERVER = {
+            server_listing = server_listing,
+            optional_password_override = optional_password_override,
+        }
 
-    AutoJoin.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
-    AutoJoin.data:Save()
+        AutoJoin.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
+        AutoJoin.data:Save()
+    end
     OldJoinServer(server_listing, optional_password_override)
 end
 
