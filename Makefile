@@ -27,12 +27,17 @@ help:
 	@echo "   workshopclean   to clean up Steam Workshop directory + archive"
 
 assets:
+	@:$(call check_defined, DS_KTOOLS_KTECH)
+	@${DS_KTOOLS_KTECH} images/auto_join_statuses/* . --atlas images/auto_join_statuses.xml
+	@prettier --xml-whitespace-sensitivity='ignore' --write './images/*.xml'
+
 	@:$(call check_defined, DS_TOOLS_SCML)
 	@${DS_TOOLS_SCML} exported/auto_join_states/auto_join_states.scml .
 
 assetsclean:
 	@rm -Rf anim/
 	@rm -f exported/**/*.zip
+	@rm -f images/*.xml images/*.tex
 
 citest:
 	@busted .; \
@@ -73,6 +78,7 @@ install:
 		--exclude 'description.txt*' \
 		--exclude 'doc/' \
 		--exclude 'exported/' \
+		--exclude 'images/auto_join_statuses/' \
 		--exclude 'lcov.info' \
 		--exclude 'luacov*' \
 		--exclude 'Makefile' \
@@ -135,7 +141,10 @@ uninstall:
 workshop:
 	@rm -Rf ./workshop*
 	@mkdir -p ./workshop/anim/
+	@mkdir -p ./workshop/images/
 	@cp -R ./anim/ ./workshop/
+	@cp -R ./images/*.tex ./workshop/images/
+	@cp -R ./images/*.xml ./workshop/images/
 	@cp -R ./LICENSE ./workshop/LICENSE
 	@cp -R ./modicon.tex ./workshop/
 	@cp -R ./modicon.xml ./workshop/
