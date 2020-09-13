@@ -112,7 +112,6 @@ local function Add(self)
     _API:AddSubmenu({
         label = "Auto Join",
         name = "AutoJoinSubmenu",
-        on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
         options = {
             ToggleAutoJoinCheckbox(self, "Fake Joining", "is_fake_joining"),
             {
