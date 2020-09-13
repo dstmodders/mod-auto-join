@@ -22,18 +22,19 @@ reconnect to the selected server until joining. Now you can finally stop
 Don't like the default behaviour? Choose your own configuration to match your
 needs:
 
-| Configuration                 | Default     | Description                                                            |
-| ----------------------------- | ----------- | ---------------------------------------------------------------------- |
-| **Waiting time**              | _15s_       | The time between reconnection attempts                                 |
-| **Indicator**                 | _Enabled_   | When enabled, adds a corner indicator on the supported screens         |
-| **Indicator position**        | _Top Right_ | Indicator position on the screen                                       |
-| **Indicator padding**         | _10_        | Indicator padding from the screen edges                                |
-| **Indicator scale**           | _1.3_       | Indicator scale on the screen                                          |
-| **Rejoin key**                | _Ctrl_      | Key used for toggling the rejoin functionality                         |
-| **Rejoin initial wait**       | _3s_        | Initial wait in seconds to retrieve a list of servers before rejoining |
-| **Rejoin main screen button** | _Enabled_   | When enabled, adds "Rejoin" button in the multiplayer main screen      |
-| **Hide changelog**            | _Enabled_   | When enabled, hides the changelog in the mod description               |
-| **Debug**                     | _Disabled_  | When enabled, displays debug data in the console                       |
+| Configuration                  | Default     | Description                                                            |
+| ------------------------------ | ----------- | ---------------------------------------------------------------------- |
+| **Waiting time**               | _15s_       | The time between reconnection attempts                                 |
+| **Indicator**                  | _Enabled_   | When enabled, adds a corner indicator on the supported screens         |
+| **Indicator position**         | _Top Right_ | Indicator position on the screen                                       |
+| **Indicator padding**          | _10_        | Indicator padding from the screen edges                                |
+| **Indicator scale**            | _1.3_       | Indicator scale on the screen                                          |
+| **Rejoin key**                 | _Ctrl_      | Key used for toggling the rejoin functionality                         |
+| **Rejoin initial wait**        | _3s_        | Initial wait in seconds to retrieve a list of servers before rejoining |
+| **Rejoin main screen button**  | _Enabled_   | When enabled, adds "Rejoin" button in the multiplayer main screen      |
+| **Rejoin pause screen button** | _Enabled_   | When enabled, adds "Rejoin" button in the pause screen                 |
+| **Hide changelog**             | _Enabled_   | When enabled, hides the changelog in the mod description               |
+| **Debug**                      | _Disabled_  | When enabled, displays debug data in the console                       |
 
 ## Documentation
 
