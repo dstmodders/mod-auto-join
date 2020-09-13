@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<Atlas>
+    <Texture filename="auto_join_statuses.tex" />
+    <Elements>
+        <Element
+            name="full.tex"
+            u1="0.00195312"
+            u2="0.248047"
+            v1="0.0078125"
+            v2="0.992188"
+        />
+        <Element
+            name="invalid_password.tex"
+            u1="0.251953"
+            u2="0.498047"
+            v1="0.0078125"
+            v2="0.992188"
+        />
+        <Element
+            name="not_responding.tex"
+            u1="0.501953"
+            u2="0.748047"
+            v1="0.0078125"
+            v2="0.992188"
+        />
+        <Element
+            name="unknown.tex"
+            u1="0.751953"
+            u2="0.998047"
+            v1="0.0078125"
+            v2="0.992188"
+        />
+    </Elements>
+</Atlas>
