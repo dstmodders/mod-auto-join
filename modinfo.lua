@@ -3,11 +3,7 @@ version = "0.7.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
-    [[- Added button states animations]] .. "\n" ..
-    [[- Added support for "Rejoin" main screen button]] .. "\n" ..
-    [[- Added support for rejoin configurations]] .. "\n" ..
-    [[- Added support for the "Dev Tools" mod submenu]] .. "\n" ..
-    [[- Changed some configurations]]
+    [[- Added support for the last connection status]]
 author = "Demonblink"
 api_version = 10
 forumthread = ""
