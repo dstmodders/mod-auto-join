@@ -18,7 +18,12 @@ local Utils = require "autojoin/utils"
 -- @section assets
 
 Assets = {
+    -- animations
     Asset("ANIM", "anim/auto_join_states.zip"),
+
+    -- images
+    Asset("ATLAS", "images/auto_join_statuses.xml"),
+    Asset("IMAGE", "images/auto_join_statuses.tex"),
 }
 
 --- Debugging
