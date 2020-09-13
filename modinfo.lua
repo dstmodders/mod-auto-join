@@ -5,6 +5,7 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
     [[- Added support for "Rejoin" pause screen button]] .. "\n" ..
     [[- Added support for the last connection status]] .. "\n" ..
+    [[- Added support for the rejoin pause screen button configuration]] .. "\n" ..
     [[- Fixed issue with rejoining a non-master shard]]
 author = "Demonblink"
 api_version = 10
@@ -187,6 +188,7 @@ configuration_options = {
     AddConfig("Rejoin key", "key_rejoin", key_list, "KEY_CTRL", "Key used for toggling the rejoin functionality.\nAvailable on the multiplayer main screen"),
     AddConfig("Rejoin initial wait", "rejoin_initial_wait", rejoin_initial_wait, 3, "Initial wait in seconds to retrieve a list of servers before rejoining.\nChange based on your network speed"),
     AddConfig("Rejoin main screen button", "rejoin_main_screen_button", boolean, true, 'When enabled, adds "Rejoin" button in the multiplayer main screen.\nOn Windows, replaces the last "Games" button'),
+    AddConfig("Rejoin pause screen button", "rejoin_pause_screen_button", boolean, true, 'When enabled, adds "Rejoin" button in the pause screen.\nReplaces "Disconnect" while holding the rejoin key'),
 
     AddSection("Other"),
     AddConfig("Hide changelog", "hide_changelog", boolean, true, "When enabled, hides the changelog in the mod description.\nMods should be reloaded to take effect"),

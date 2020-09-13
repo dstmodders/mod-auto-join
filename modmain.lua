@@ -69,6 +69,7 @@ local configs = {
     "indicator_scale",
     "rejoin_initial_wait",
     "rejoin_main_screen_button",
+    "rejoin_pause_screen_button",
     "waiting_time",
 }
 

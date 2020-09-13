@@ -733,27 +733,29 @@ function AutoJoin:OverridePauseScreen(pausescreen)
     local previous_menu_item_name = pausescreen.menu.items[total - 1].name
     local previous_menu_item_on_click = pausescreen.menu.items[total - 1].onclick
 
-    -- overrides PauseScreen:OnRawKey()
-    local OldOnRawKey = pausescreen.OnRawKey
-    pausescreen.OnRawKey = function(_, key, down)
-        OldOnRawKey(pausescreen, key, down)
-        key = NormalizeKey(key)
-        if key == self.config.key_rejoin
-            and Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
-        then
-            if down then
-                total = pausescreen.menu:GetNumberOfItems()
-                pausescreen.menu:EditItem(total - 1, "Rejoin", nil, function()
-                    self:Rejoin(nil, 3)
-                end)
-            else
-                total = pausescreen.menu:GetNumberOfItems()
-                pausescreen.menu:EditItem(
-                    total - 1,
-                    previous_menu_item_name,
-                    nil,
-                    previous_menu_item_on_click
-                )
+    if self.config.rejoin_pause_screen_button then
+        -- overrides PauseScreen:OnRawKey()
+        local OldOnRawKey = pausescreen.OnRawKey
+        pausescreen.OnRawKey = function(_, key, down)
+            OldOnRawKey(pausescreen, key, down)
+            key = NormalizeKey(key)
+            if key == self.config.key_rejoin
+                and Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+            then
+                if down then
+                    total = pausescreen.menu:GetNumberOfItems()
+                    pausescreen.menu:EditItem(total - 1, "Rejoin", nil, function()
+                        self:Rejoin(nil, 3)
+                    end)
+                else
+                    total = pausescreen.menu:GetNumberOfItems()
+                    pausescreen.menu:EditItem(
+                        total - 1,
+                        previous_menu_item_name,
+                        nil,
+                        previous_menu_item_on_click
+                    )
+                end
             end
         end
     end
@@ -966,6 +968,7 @@ function AutoJoin:DoInit(modname)
         key_rejoin = KEY_CTRL,
         rejoin_initial_wait = 3,
         rejoin_main_screen_button = true,
+        rejoin_pause_screen_button = true,
         waiting_time = 15,
     }
 
