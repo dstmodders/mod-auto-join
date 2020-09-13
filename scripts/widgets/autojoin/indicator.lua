@@ -20,15 +20,17 @@
 local Button = require "widgets/autojoin/button"
 local Icon = require "widgets/autojoin/icon"
 
-local DEFAULT_PADDING = 10
-local DEFAULT_SCALE = 1.3
-local SIZE = 60
+local _DEFAULT_PADDING = 10
+local _DEFAULT_SCALE = 1.3
+local _SIZE = 60
+local _STATUS_OFFSET = 22
 
 --- Lifecycle
 -- @section lifecycle
 
 --- Constructor.
 -- @function _ctor
+-- @tparam[opt] AutoJoin autojoin AutoJoin instance
 -- @tparam[opt] table server Server data
 -- @tparam[opt] function on_click Function triggered on click
 -- @tparam[opt] boolean is_active_fn Function to check active state
@@ -46,10 +48,10 @@ local Indicator = Class(Button, function(
     padding,
     scale
 )
-    padding = padding ~= nil and padding or DEFAULT_PADDING
-    scale = scale ~= nil and scale or DEFAULT_SCALE
+    padding = padding ~= nil and padding or _DEFAULT_PADDING
+    scale = scale ~= nil and scale or _DEFAULT_SCALE
 
-    Button._ctor(self, nil, on_click, { SIZE, SIZE })
+    Button._ctor(self, autojoin, nil, on_click, { _SIZE, _SIZE })
 
     -- general
     self.autojoin = autojoin
@@ -83,26 +85,6 @@ function Indicator:SetPadding(padding)
     self:Update()
 end
 
---- Gets icon seconds.
--- @treturn number
-function Indicator:GetSeconds()
-    return self.icon:GetSeconds()
-end
-
---- Sets icon seconds.
--- @tparam number seconds
-function Indicator:SetSeconds(seconds)
-    self.icon:SetSeconds(seconds)
-end
-
---- Sets state.
--- @tparam number state
-function Indicator:SetState(state)
-    if self.icon and not self.focus then
-        self.icon:SetState(state)
-    end
-end
-
 --- Gets screen position.
 -- @treturn number
 function Indicator:GetScreenPosition()
@@ -129,8 +111,28 @@ function Indicator:SetScreenScale(screen_scale)
     self:Update()
 end
 
+--- Gets icon seconds.
+-- @treturn number
+function Indicator:GetSeconds()
+    return self.icon:GetSeconds()
+end
+
+--- Sets icon seconds.
+-- @tparam number seconds
+function Indicator:SetSeconds(seconds)
+    self.icon:SetSeconds(seconds)
+end
+
 --- States
 -- @section states
+
+--- Sets state.
+-- @tparam number state
+function Indicator:SetState(state)
+    if self.icon and not self.focus then
+        self.icon:SetState(state)
+    end
+end
 
 --- State when the focus is gained.
 function Indicator:OnGainFocus()
@@ -167,25 +169,33 @@ end
 
 --- Updates.
 function Indicator:Update()
-    local pos = ((SIZE / 2) + self.padding) * self.screen_scale
+    local pos = ((_SIZE / 2) + self.padding) * self.screen_scale
 
     self:SetHAnchor(ANCHOR_RIGHT)
+    self:SetVAnchor(ANCHOR_TOP)
     self:SetPosition(-pos, -pos)
     self:SetScale(self.screen_scale)
-    self:SetVAnchor(ANCHOR_TOP)
+    self.status:SetPosition(-_STATUS_OFFSET, -_STATUS_OFFSET)
+    self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.TOP_RIGHT)
 
     if self.screen_position == "br" then
         self:SetHAnchor(ANCHOR_RIGHT)
         self:SetVAnchor(ANCHOR_BOTTOM)
         self:SetPosition(-pos, pos)
+        self.status:SetPosition(-_STATUS_OFFSET, _STATUS_OFFSET)
+        self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.BOTTOM_RIGHT)
     elseif self.screen_position == "bl" then
         self:SetHAnchor(ANCHOR_LEFT)
         self:SetVAnchor(ANCHOR_BOTTOM)
         self:SetPosition(pos, pos)
+        self.status:SetPosition(_STATUS_OFFSET, _STATUS_OFFSET)
+        self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.BOTTOM_LEFT)
     elseif self.screen_position == "tl" then
         self:SetHAnchor(ANCHOR_LEFT)
         self:SetVAnchor(ANCHOR_TOP)
         self:SetPosition(pos, -pos)
+        self.status:SetPosition(_STATUS_OFFSET, -_STATUS_OFFSET)
+        self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.TOP_LEFT)
     end
 
     self:SetSeconds(self.autojoin.seconds)

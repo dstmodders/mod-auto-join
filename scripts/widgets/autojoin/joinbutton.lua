@@ -30,7 +30,7 @@ local WIDTH = 240
 local JoinButton = Class(Button, function(self, on_click)
     local sx = WIDTH - AUTO_JOIN_ICON_BUTTON_SIZE - SPACING
     local sy = AUTO_JOIN_ICON_BUTTON_SIZE
-    Button._ctor(self, STRINGS.UI.SERVERLISTINGSCREEN.JOIN, on_click, { sx, sy })
+    Button._ctor(self, nil, STRINGS.UI.SERVERLISTINGSCREEN.JOIN, on_click, { sx, sy })
 
     -- general
     self:SetScale(1.45)

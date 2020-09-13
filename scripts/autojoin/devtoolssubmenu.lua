@@ -155,6 +155,29 @@ local function Add(self)
                     end,
                 },
             },
+            {
+                type = MOD_DEV_TOOLS.OPTION.CHOICES,
+                options = {
+                    label = "Status",
+                    choices = {
+                        { name = "Default", value = "nil" },
+                        { name = "Unknown", value = MOD_AUTO_JOIN.STATUS.UNKNOWN },
+                        { name = "Not Responding", value = MOD_AUTO_JOIN.STATUS.NOT_RESPONDING },
+                        {
+                            name = "Invalid Password",
+                            value = MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD,
+                        },
+                        { name = "Full", value = MOD_AUTO_JOIN.STATUS.FULL },
+                    },
+                    on_get_fn = function()
+                        local value = self.autojoin:GetStatus()
+                        return value == nil and "nil" or value
+                    end,
+                    on_set_fn = function(_, _, value)
+                        self.autojoin:SetStatus(value)
+                    end,
+                },
+            },
             { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
             {
                 type = MOD_DEV_TOOLS.OPTION.NUMERIC,

@@ -28,7 +28,7 @@ local Widget = require "widgets/widget"
 -- @function _ctor
 -- @usage local icon = Icon()
 local Icon = Class(Widget, function(self)
-    Widget._ctor(self)
+    Widget._ctor(self, "Icon")
 
     -- fields
     self.seconds = 0

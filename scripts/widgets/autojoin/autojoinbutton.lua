@@ -38,21 +38,28 @@ end
 
 --- Constructor.
 -- @function _ctor
+-- @tparam[opt] AutoJoin autojoin AutoJoin instance
 -- @tparam[opt] function on_click_fn Function triggered on click
 -- @tparam[opt] boolean is_active_fn Function to check active state
 -- @usage local autojoinbutton = AutoJoinButton()
 local AutoJoinButton = Class(Button, function(self, autojoin, on_click_fn, is_active_fn)
-    Button._ctor(self, nil, on_click_fn, { SIZE, SIZE })
+    Button._ctor(self, autojoin, nil, on_click_fn, { SIZE, SIZE })
 
     -- fields
-    self.autojoin = autojoin
     self.icon = self:AddChild(Icon())
     self.is_active_fn = is_active_fn
 
-    -- general
+    -- status
+    self.status:SetHoverTextOffset(40)
+    self.status:SetScaleFocus(1.1, .8)
+    self.status:SetPosition(-20, -20)
+    self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.BOTTOM_RIGHT)
+
+    -- self
     local sx, sy = GetScreenSize()
     self:SetPosition(120, -RESOLUTION_Y * .5 + BACK_BUTTON_Y - 15)
     self:SetScale(1.4)
+    self:Update()
     self:SetHoverText("Auto-Join", {
         bg = nil,
         colour = UICOLOURS.WHITE,
@@ -60,9 +67,6 @@ local AutoJoinButton = Class(Button, function(self, autojoin, on_click_fn, is_ac
         offset_x = 0 * sx / SCREEN_X,
         offset_y = 70 * sy / SCREEN_Y,
     })
-
-    -- states
-    self:Update()
 end)
 
 --- General

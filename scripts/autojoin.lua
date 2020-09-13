@@ -162,6 +162,24 @@ function AutoJoin:SetState(state, ignore_focus)
     self:UpdateIndicators()
 end
 
+--- Gets status.
+-- @treturn number
+function AutoJoin:GetStatus()
+    return self.status
+end
+
+--- Sets status.
+-- @tparam number status
+-- @tparam[opt] string message
+function AutoJoin:SetStatus(status, message)
+    self.status = status
+    if message then
+        self.status_message = message
+    end
+    self:UpdateButtonStatus()
+    self:UpdateIndicatorsStatus()
+end
+
 --- Joins a server.
 --
 -- Just a convenience wrapper for `JoinServer`.
@@ -214,13 +232,23 @@ function AutoJoin:Override()
         return
     end
 
-    JoinServer = function(...)
-        return JoinServerOverride(self, ...)
+    JoinServer = function(server_listing, optional_password_override)
+        return JoinServerOverride(self, server_listing, optional_password_override)
     end
 
     OnNetworkDisconnect = function(message)
         self:DebugString("Disconnected:", message)
         self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
+        self:SetStatus(MOD_AUTO_JOIN.STATUS.UNKNOWN, message)
+
+        if message == "ID_INVALID_PASSWORD" then
+            self:SetStatus(MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD)
+        elseif message == "ID_CONNECTION_ATTEMPT_FAILED" then
+            self:SetStatus(MOD_AUTO_JOIN.STATUS.NOT_RESPONDING)
+        elseif message == "ID_DST_NO_FREE_PLAYER_SLOTS" then
+            self:SetStatus(MOD_AUTO_JOIN.STATUS.FULL)
+        end
+
         return false
     end
 
@@ -422,6 +450,7 @@ end
 function AutoJoin:StopAutoJoining()
     self:ClearAutoJoinThread()
     self:SetState(MOD_AUTO_JOIN.STATE.DEFAULT, true)
+    self:SetStatus(nil)
 
     self.is_auto_joining = false
     self.seconds = self.config.waiting_time
@@ -541,12 +570,32 @@ function AutoJoin:UpdateButton(ignore_focus)
     end
 end
 
+--- Updates auto-join button.
+function AutoJoin:UpdateButtonStatus()
+    if self.auto_join_btn and self.auto_join_btn.inst:IsValid() then
+        self.auto_join_btn:SetStatus(self.status, self.status_message)
+    end
+
+    if self.rejoin_btn and self.rejoin_btn.inst:IsValid() then
+        self.rejoin_btn:SetStatus(self.status, self.status_message)
+    end
+end
+
 --- Updates indicators.
 function AutoJoin:UpdateIndicators()
     for _, v in ipairs(self.indicators) do
         if v.inst:IsValid() then
             v:SetState(self.state)
             v:SetSeconds(self.seconds)
+        end
+    end
+end
+
+--- Updates indicators.
+function AutoJoin:UpdateIndicatorsStatus()
+    for _, v in ipairs(self.indicators) do
+        if v.inst:IsValid() then
+            v:SetStatus(self.status, self.status_message)
         end
     end
 end
@@ -836,6 +885,8 @@ function AutoJoin:DoInit(modname)
     self.elapsed_seconds = 0
     self.name = "AutoJoin"
     self.state = MOD_AUTO_JOIN.STATE.DEFAULT
+    self.status = nil
+    self.status_message = nil
 
     -- indicators
     self.indicators = {}

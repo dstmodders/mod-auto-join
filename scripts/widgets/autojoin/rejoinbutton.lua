@@ -24,33 +24,33 @@ local Icon = require "widgets/autojoin/icon"
 
 --- Constructor.
 -- @function _ctor
--- @tparam AutoJoin autojoin AutoJoin instance
+-- @tparam[opt] AutoJoin autojoin AutoJoin instance
 -- @tparam[opt] function on_click_fn Function triggered on click
 -- @usage local rejoinbutton = RejoinButton()
 local RejoinButton = Class(Button, function(self, autojoin, rejoin_cb, cancel_cb)
-    Button._ctor(self, nil, nil, { 70, 70 })
+    Button._ctor(self, autojoin, nil, nil, { 70, 70 })
 
     -- general
     self.cancel_cb = cancel_cb
     self.rejoin_cb = rejoin_cb
 
     -- autojoin
-    self.autojoin = autojoin
     if autojoin then
         autojoin.rejoin_btn = self
     end
 
-    -- self
-    self:SetFont(NEWFONT_OUTLINE)
-    self:SetTextColour(UICOLOURS.GOLD_CLICKABLE)
-    self:SetTextFocusColour(UICOLOURS.GOLD_FOCUS)
-    self:SetTextSize(25)
+    -- status
+    self.status:SetPosition(25, 25)
 
     -- icon
     self.icon = self:AddChild(Icon())
     self.icon:SetScale(1.4)
 
     -- self
+    self:SetFont(NEWFONT_OUTLINE)
+    self:SetTextColour(UICOLOURS.GOLD_CLICKABLE)
+    self:SetTextFocusColour(UICOLOURS.GOLD_FOCUS)
+    self:SetTextSize(25)
     self:Update()
 end)
 
@@ -111,7 +111,6 @@ function RejoinButton:OnLoseFocus()
         end
     end
 end
-
 
 --- Update
 -- @section update
