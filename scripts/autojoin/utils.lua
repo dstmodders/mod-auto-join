@@ -20,7 +20,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.6.0
+-- @release 0.7.0-alpha
 ----
 local Utils = {}
 
