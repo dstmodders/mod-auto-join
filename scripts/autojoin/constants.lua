@@ -12,31 +12,28 @@
 ----
 
 --- Mod constants.
--- @see MOD_AUTO_JOIN.INDICATOR
+-- @see MOD_AUTO_JOIN.ANCHOR
 -- @see MOD_AUTO_JOIN.STATE
+-- @see MOD_AUTO_JOIN.STATUS
 -- @table MOD_AUTO_JOIN
--- @tfield table INDICATOR
+-- @tfield table ANCHOR
 -- @tfield table STATE
+-- @tfield table STATUS
 MOD_AUTO_JOIN = {
     --- General
     -- @section general
 
-    --- Indicator constants.
-    -- @table MOD_AUTO_JOIN.INDICATOR
-    -- @tfield table ANCHOR
-    INDICATOR = {
-        --- Indicator anchor constants.
-        -- @table MOD_AUTO_JOIN.INDICATOR.ANCHOR
-        -- @tfield number TOP_LEFT
-        -- @tfield number TOP_RIGHT
-        -- @tfield number BOTTOM_RIGHT
-        -- @tfield number BOTTOM_LEFT
-        ANCHOR = {
-            TOP_LEFT = 1,
-            TOP_RIGHT = 2,
-            BOTTOM_RIGHT = 3,
-            BOTTOM_LEFT = 4,
-        },
+    --- Anchor constants.
+    -- @table MOD_AUTO_JOIN.ANCHOR
+    -- @tfield number TOP_LEFT
+    -- @tfield number TOP_RIGHT
+    -- @tfield number BOTTOM_RIGHT
+    -- @tfield number BOTTOM_LEFT
+    ANCHOR = {
+        TOP_LEFT = 1,
+        TOP_RIGHT = 2,
+        BOTTOM_RIGHT = 3,
+        BOTTOM_LEFT = 4,
     },
 
     --- State constants.
@@ -54,5 +51,18 @@ MOD_AUTO_JOIN = {
         COUNTDOWN_FOCUS = 4,
         CONNECT = 5,
         CONNECT_FOCUS = 6,
+    },
+
+    --- Status constants.
+    -- @table MOD_AUTO_JOIN.STATUS
+    -- @tfield number UNKNOWN
+    -- @tfield number INVALID_PASSWORD
+    -- @tfield number NOT_RESPONDING
+    -- @tfield number FULL
+    STATUS = {
+        UNKNOWN = 1,
+        INVALID_PASSWORD = 2,
+        NOT_RESPONDING = 3,
+        FULL = 4,
     },
 }
