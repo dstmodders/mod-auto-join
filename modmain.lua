@@ -134,6 +134,13 @@ AddClassPostConstruct("screens/redux/multiplayermainscreen", function(multiplaye
     AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
 end)
 
+--- Pause Screen
+-- @section pause-screen
+
+AddClassPostConstruct("screens/redux/pausescreen", function(pausescreen)
+    AutoJoin:OverridePauseScreen(pausescreen)
+end)
+
 --- Server Listing Screen
 -- @section server-listing-screen
 

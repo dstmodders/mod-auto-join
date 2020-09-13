@@ -288,7 +288,8 @@ end
 
 --- Rejoins the last server.
 -- @tparam[opt] MultiplayerMainScreen multiplayermainscreen
-function AutoJoin:Rejoin(multiplayermainscreen)
+-- @tparam[opt] number wait
+function AutoJoin:Rejoin(multiplayermainscreen, wait)
     local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
     local optional_password_override = Utils.Chain.Get(
         _LAST_JOIN_SERVER,
@@ -299,21 +300,15 @@ function AutoJoin:Rejoin(multiplayermainscreen)
         self:DebugError("[rejoin]")
     end
 
-    -- rejoin
-    self:DebugString("[rejoin]", "Rejoining the last server...")
-    self:CancelRejoin(multiplayermainscreen)
-
-    TheNet:SearchLANServers(multiplayermainscreen.offline)
+    -- disconnect and search servers
+    TheNet:Disconnect(false)
+    TheNet:SearchLANServers(TheNet:IsOnlineMode())
     TheNet:SearchServers()
-
-    self:StartAutoJoining(
-        server_listing,
-        optional_password_override,
-        self.config.rejoin_initial_wait
-    )
 
     -- multiplayer main screen
     if multiplayermainscreen then
+        self:CancelRejoin(multiplayermainscreen)
+
         if multiplayermainscreen.mod_auto_join_indicator then
             self:RemoveIndicator(multiplayermainscreen.mod_auto_join_indicator)
         end
@@ -327,6 +322,10 @@ function AutoJoin:Rejoin(multiplayermainscreen)
 
         multiplayermainscreen.mod_auto_join_indicator:Show()
     end
+
+    -- start
+    self:DebugString("[rejoin]", "Rejoining the last server...")
+    self:StartAutoJoining(server_listing, optional_password_override, nil, wait)
 end
 
 --- Cancels rejoin.
@@ -436,7 +435,8 @@ end
 -- @tparam table server Server data
 -- @tparam[opt] string password Server password
 -- @tparam[opt] number initial_wait Initial wait in seconds
-function AutoJoin:StartAutoJoining(server, password, initial_wait)
+-- @tparam[opt] number wait Wait in seconds
+function AutoJoin:StartAutoJoining(server, password, initial_wait, wait)
     if not self.is_ui_disabled then
         self:Override()
     end
@@ -445,7 +445,7 @@ function AutoJoin:StartAutoJoining(server, password, initial_wait)
         self:ClearAutoJoinThread()
     end
 
-    self:StartAutoJoinThread(server, password, initial_wait)
+    self:StartAutoJoinThread(server, password, initial_wait, wait)
 end
 
 --- Stops auto-joining a server.
@@ -479,9 +479,11 @@ end
 --
 -- @tparam table server Server data
 -- @tparam[opt] string password Server password
--- @tparam[opt] number initial_wait Initial wait in seconds
-function AutoJoin:StartAutoJoinThread(server, password, initial_wait)
-    initial_wait = initial_wait ~= nil and initial_wait or 0
+-- @tparam[opt] number initial_wait Initial wait in seconds [default: 3 (from configs)]
+-- @tparam[opt] number wait Wait in seconds (default: 15 (from configs))
+function AutoJoin:StartAutoJoinThread(server, password, initial_wait, wait)
+    initial_wait = initial_wait ~= nil and initial_wait or self.config.rejoin_initial_wait
+    wait = wait ~= nil and wait or self.config.waiting_time
 
     if not server then
         return
@@ -523,7 +525,7 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait)
                 refresh_seconds = refresh_seconds - 1
 
                 if self.seconds < 1 then
-                    self.seconds = self.config.waiting_time
+                    self.seconds = wait
                     self:Join(server, password)
                 end
 
@@ -538,6 +540,7 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait)
     end, function()
         self.elapsed_seconds = 0
         self.is_auto_joining = true
+        self.seconds = wait
 
         self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
         self:DebugString(string.format("Auto-joining every %d seconds...", self.seconds))
@@ -718,6 +721,45 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
 
     -- debug
     self:DebugInit(multiplayermainscreen.name)
+end
+
+--- Pause Screen
+-- @section pause-screen
+
+--- Overrides pause screen.
+-- @tparam PauseScreen pausescreen
+function AutoJoin:OverridePauseScreen(pausescreen)
+    local total = pausescreen.menu:GetNumberOfItems()
+    local previous_menu_item_name = pausescreen.menu.items[total - 1].name
+    local previous_menu_item_on_click = pausescreen.menu.items[total - 1].onclick
+
+    -- overrides PauseScreen:OnRawKey()
+    local OldOnRawKey = pausescreen.OnRawKey
+    pausescreen.OnRawKey = function(_, key, down)
+        OldOnRawKey(pausescreen, key, down)
+        key = NormalizeKey(key)
+        if key == self.config.key_rejoin
+            and Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+        then
+            if down then
+                total = pausescreen.menu:GetNumberOfItems()
+                pausescreen.menu:EditItem(total - 1, "Rejoin", nil, function()
+                    self:Rejoin(nil, 3)
+                end)
+            else
+                total = pausescreen.menu:GetNumberOfItems()
+                pausescreen.menu:EditItem(
+                    total - 1,
+                    previous_menu_item_name,
+                    nil,
+                    previous_menu_item_on_click
+                )
+            end
+        end
+    end
+
+    -- debug
+    self:DebugInit(pausescreen.name)
 end
 
 --- Server Listing Screen

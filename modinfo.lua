@@ -3,6 +3,7 @@ version = "0.7.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
+    [[- Added support for "Rejoin" pause screen button]] .. "\n" ..
     [[- Added support for the last connection status]] .. "\n" ..
     [[- Fixed issue with rejoining a non-master shard]]
 author = "Demonblink"
