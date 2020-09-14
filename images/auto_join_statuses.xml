@@ -3,30 +3,37 @@
     <Texture filename="auto_join_statuses.tex" />
     <Elements>
         <Element
+            name="already_connected.tex"
+            u1="0.000976562"
+            u2="0.124023"
+            v1="0.0078125"
+            v2="0.992188"
+        />
+        <Element
             name="full.tex"
-            u1="0.00195312"
-            u2="0.248047"
+            u1="0.125977"
+            u2="0.249023"
             v1="0.0078125"
             v2="0.992188"
         />
         <Element
             name="invalid_password.tex"
-            u1="0.251953"
-            u2="0.498047"
+            u1="0.250977"
+            u2="0.374023"
             v1="0.0078125"
             v2="0.992188"
         />
         <Element
             name="not_responding.tex"
-            u1="0.501953"
-            u2="0.748047"
+            u1="0.375977"
+            u2="0.499023"
             v1="0.0078125"
             v2="0.992188"
         />
         <Element
             name="unknown.tex"
-            u1="0.751953"
-            u2="0.998047"
+            u1="0.500977"
+            u2="0.624023"
             v1="0.0078125"
             v2="0.992188"
         />

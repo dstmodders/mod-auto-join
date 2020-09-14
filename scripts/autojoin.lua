@@ -246,12 +246,14 @@ function AutoJoin:Override()
         self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
         self:SetStatus(MOD_AUTO_JOIN.STATUS.UNKNOWN, message)
 
-        if message == "ID_INVALID_PASSWORD" then
+        if message == "ID_ALREADY_CONNECTED" then
+            self:SetStatus(MOD_AUTO_JOIN.STATUS.ALREADY_CONNECTED)
+        elseif message == "ID_DST_NO_FREE_PLAYER_SLOTS" then
+            self:SetStatus(MOD_AUTO_JOIN.STATUS.FULL)
+        elseif message == "ID_INVALID_PASSWORD" then
             self:SetStatus(MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD)
         elseif message == "ID_CONNECTION_ATTEMPT_FAILED" then
             self:SetStatus(MOD_AUTO_JOIN.STATUS.NOT_RESPONDING)
-        elseif message == "ID_DST_NO_FREE_PLAYER_SLOTS" then
-            self:SetStatus(MOD_AUTO_JOIN.STATUS.FULL)
         end
 
         return false

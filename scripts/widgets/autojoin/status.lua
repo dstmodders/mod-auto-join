@@ -141,14 +141,16 @@ function Status:Update()
     else
         -- icon
         self.icon:Show()
-        if self.value == MOD_AUTO_JOIN.STATUS.UNKNOWN then
-            self.icon:SetTexture(_IMAGE_ATLAS, "unknown.tex")
+        if self.value == MOD_AUTO_JOIN.STATUS.ALREADY_CONNECTED then
+            self.icon:SetTexture(_IMAGE_ATLAS, "already_connected.tex")
+        elseif self.value == MOD_AUTO_JOIN.STATUS.FULL then
+            self.icon:SetTexture(_IMAGE_ATLAS, "full.tex")
         elseif self.value == MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD then
             self.icon:SetTexture(_IMAGE_ATLAS, "invalid_password.tex")
         elseif self.value == MOD_AUTO_JOIN.STATUS.NOT_RESPONDING then
             self.icon:SetTexture(_IMAGE_ATLAS, "not_responding.tex")
-        elseif self.value == MOD_AUTO_JOIN.STATUS.FULL then
-            self.icon:SetTexture(_IMAGE_ATLAS, "full.tex")
+        elseif self.value == MOD_AUTO_JOIN.STATUS.UNKNOWN then
+            self.icon:SetTexture(_IMAGE_ATLAS, "unknown.tex")
         end
 
         -- hover text

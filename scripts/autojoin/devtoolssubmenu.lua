@@ -160,13 +160,17 @@ local function Add(self)
                     label = "Status",
                     choices = {
                         { name = "Default", value = "nil" },
-                        { name = "Unknown", value = MOD_AUTO_JOIN.STATUS.UNKNOWN },
-                        { name = "Not Responding", value = MOD_AUTO_JOIN.STATUS.NOT_RESPONDING },
+                        {
+                            name = "Already Connected",
+                            value = MOD_AUTO_JOIN.STATUS.ALREADY_CONNECTED,
+                        },
+                        { name = "Full", value = MOD_AUTO_JOIN.STATUS.FULL },
                         {
                             name = "Invalid Password",
                             value = MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD,
                         },
-                        { name = "Full", value = MOD_AUTO_JOIN.STATUS.FULL },
+                        { name = "Not Responding", value = MOD_AUTO_JOIN.STATUS.NOT_RESPONDING },
+                        { name = "Unknown", value = MOD_AUTO_JOIN.STATUS.UNKNOWN },
                     },
                     on_get_fn = function()
                         local value = self.autojoin:GetStatus()

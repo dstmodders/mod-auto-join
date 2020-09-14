@@ -55,14 +55,16 @@ MOD_AUTO_JOIN = {
 
     --- Status constants.
     -- @table MOD_AUTO_JOIN.STATUS
-    -- @tfield number UNKNOWN
+    -- @tfield number ALREADY_CONNECTED
+    -- @tfield number FULL
     -- @tfield number INVALID_PASSWORD
     -- @tfield number NOT_RESPONDING
-    -- @tfield number FULL
+    -- @tfield number UNKNOWN
     STATUS = {
-        UNKNOWN = 1,
-        INVALID_PASSWORD = 2,
-        NOT_RESPONDING = 3,
-        FULL = 4,
+        ALREADY_CONNECTED = 1,
+        FULL = 2,
+        INVALID_PASSWORD = 3,
+        NOT_RESPONDING = 4,
+        UNKNOWN = 5,
     },
 }
