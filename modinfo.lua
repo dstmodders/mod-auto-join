@@ -1,7 +1,8 @@
 name = "Auto-Join"
 version = "0.7.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
-    [[Adds an Auto-Join button to the server listing screen to continuously reconnect to the selected server until joining.]] .. "\n\n" ..
+    [[Adds "Auto-Join" and "Rejoin" buttons.]] .. "\n\n" ..
+    [[The first one allows continuous reconnections to the selected server until joining, and the second - rejoin the last server.]] .. "\n\n" ..
     [[v]] .. version .. [[:]] .. "\n" ..
     [[- Added support for "Rejoin" pause screen button]] .. "\n" ..
     [[- Added support for the last connection status]] .. "\n" ..
