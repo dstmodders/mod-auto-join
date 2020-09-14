@@ -34,7 +34,7 @@ local _STATUS_OFFSET = 22
 -- @tparam[opt] table server Server data
 -- @tparam[opt] function on_click Function triggered on click
 -- @tparam[opt] boolean is_active_fn Function to check active state
--- @tparam[opt] string position Position string from configurations
+-- @tparam[opt] number position Position
 -- @tparam[opt] number padding Padding
 -- @tparam[opt] number scale Scale
 -- @usage local indicator = Indicator()
@@ -92,7 +92,7 @@ function Indicator:GetScreenPosition()
 end
 
 --- Sets screen position.
--- @tparam string screen_position
+-- @tparam number screen_position
 function Indicator:SetScreenPosition(screen_position)
     self.screen_position = screen_position
     self:Update()
@@ -178,19 +178,19 @@ function Indicator:Update()
     self.status:SetPosition(-_STATUS_OFFSET, -_STATUS_OFFSET)
     self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.TOP_RIGHT)
 
-    if self.screen_position == "br" then
+    if self.screen_position == MOD_AUTO_JOIN.ANCHOR.BOTTOM_RIGHT then
         self:SetHAnchor(ANCHOR_RIGHT)
         self:SetVAnchor(ANCHOR_BOTTOM)
         self:SetPosition(-pos, pos)
         self.status:SetPosition(-_STATUS_OFFSET, _STATUS_OFFSET)
         self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.BOTTOM_RIGHT)
-    elseif self.screen_position == "bl" then
+    elseif self.screen_position == MOD_AUTO_JOIN.ANCHOR.BOTTOM_LEFT then
         self:SetHAnchor(ANCHOR_LEFT)
         self:SetVAnchor(ANCHOR_BOTTOM)
         self:SetPosition(pos, pos)
         self.status:SetPosition(_STATUS_OFFSET, _STATUS_OFFSET)
         self.status:SetScreenPosition(MOD_AUTO_JOIN.ANCHOR.BOTTOM_LEFT)
-    elseif self.screen_position == "tl" then
+    elseif self.screen_position == MOD_AUTO_JOIN.ANCHOR.TOP_LEFT then
         self:SetHAnchor(ANCHOR_LEFT)
         self:SetVAnchor(ANCHOR_TOP)
         self:SetPosition(pos, -pos)

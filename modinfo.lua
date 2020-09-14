@@ -6,6 +6,7 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[- Added support for "Rejoin" pause screen button]] .. "\n" ..
     [[- Added support for the last connection status]] .. "\n" ..
     [[- Added support for the rejoin pause screen button configuration]] .. "\n" ..
+    [[- Changed indicator position configuration]] .. "\n" ..
     [[- Fixed issue with rejoining a non-master shard]]
 author = "Demonblink"
 api_version = 10
@@ -136,10 +137,10 @@ local indicator_padding = {
 }
 
 local indicator_position = {
-    { description = "Top Left", data = "tl" },
-    { description = "Top Right", data = "tr" },
-    { description = "Bottom Right", data = "br" },
-    { description = "Bottom Left", data = "bl" },
+    { description = "Top Left", data = 1 },
+    { description = "Top Right", data = 2 },
+    { description = "Bottom Right", data = 3 },
+    { description = "Bottom Left", data = 4 },
 }
 
 local indicator_scale = {
@@ -180,7 +181,7 @@ configuration_options = {
 
     AddSection("Indicator"),
     AddConfig("Indicator", "indicator", boolean, true, "When enabled, adds a corner indicator on the supported screens"),
-    AddConfig("Indicator position", "indicator_position", indicator_position, "tr", "Indicator position on the screen"),
+    AddConfig("Indicator position", "indicator_position", indicator_position, 2, "Indicator position on the screen"),
     AddConfig("Indicator padding", "indicator_padding", indicator_padding, 10, "Indicator padding from the screen edges"),
     AddConfig("Indicator scale", "indicator_scale", indicator_scale, 1.3, "Indicator scale on the screen"),
 

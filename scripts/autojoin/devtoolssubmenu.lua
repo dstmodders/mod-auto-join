@@ -225,10 +225,10 @@ local function Add(self)
                                 options = {
                                     label = "Position",
                                     choices = {
-                                        { name = "Top Left", value = "tl" },
-                                        { name = "Top Right", value = "tr" },
-                                        { name = "Bottom Right", value = "br" },
-                                        { name = "Bottom Left", value = "bl" },
+                                        { name = "Top Left", value = 1 },
+                                        { name = "Top Right", value = 2 },
+                                        { name = "Bottom Right", value = 3 },
+                                        { name = "Bottom Left", value = 4 },
                                     },
                                     on_accept_fn = function()
                                         local v = self.autojoin.config_default.indicator_position

@@ -1013,7 +1013,7 @@ function AutoJoin:DoInit(modname)
     self.config = {
         indicator = true,
         indicator_padding = 10,
-        indicator_position = "tr",
+        indicator_position = MOD_AUTO_JOIN.ANCHOR.TOP_RIGHT,
         indicator_scale = 1.3,
         key_rejoin = KEY_CTRL,
         rejoin_initial_wait = 3,

@@ -10,6 +10,7 @@
 ----
 local _G = GLOBAL
 local require = _G.require
+local shallowcopy = _G.shallowcopy
 
 local AutoJoin = require "autojoin"
 local Utils = require "autojoin/utils"
@@ -78,6 +79,7 @@ for _, config in ipairs(configs) do
 end
 
 AutoJoin.config["key_rejoin"] = GetKeyFromConfig("key_rejoin")
+AutoJoin.config_default = shallowcopy(AutoJoin.config)
 
 --- Indicator
 -- @section indicator
