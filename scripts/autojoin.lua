@@ -975,6 +975,7 @@ end
 -- @section lifecycle
 
 --- Initializes.
+-- @tparam string modname
 function AutoJoin:DoInit(modname)
     Utils.Debug.AddMethods(self)
 
