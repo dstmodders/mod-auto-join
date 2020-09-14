@@ -106,6 +106,7 @@ files["scripts/**/*.lua"] = {
     -- general
     "AreAnyClientModsEnabled",
     "DisableAllDLC",
+    "DoRestart",
     "IsMigrating",
     "KnownModIndex",
     "Profile",

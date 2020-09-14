@@ -489,6 +489,7 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait, wait)
         return
     end
 
+    local dialog_body, dialog_body_text
     local is_initial_join_fired = false
     local is_server_not_listed = false
     local refresh_seconds = self.default_refresh_seconds
@@ -524,16 +525,41 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait, wait)
                 self.seconds = self.seconds - 1
                 refresh_seconds = refresh_seconds - 1
 
-                if self.seconds < 1 then
-                    self.seconds = wait
-                    self:Join(server, password)
+                if dialog_body then
+                    local message
+                    if self.status_message then
+                        message = Utils.Chain.Get(
+                            STRINGS,
+                            "UI",
+                            "NETWORKDISCONNECT",
+                            "TITLE",
+                            self.status_message
+                        )
+                        message = type(message) == "string" and message or "Error"
+                    end
+
+                    dialog_body:SetString(string.format(
+                        "%s%sAttempting to rejoin %s...",
+                        dialog_body_text,
+                        message and message .. ". " or "",
+                        self.seconds > 0 and "in " .. self.seconds or "now"
+                    ))
                 end
 
-                self:UpdateButton()
-                self:UpdateIndicators()
+                if self.seconds < 1 then
+                    self:Join(server, password)
+                    self:UpdateButton()
+                    self:UpdateIndicators()
+                    self.seconds = wait
+                else
+                    self:UpdateButton()
+                    self:UpdateIndicators()
+                end
             end
         end
+
         self.elapsed_seconds = self.elapsed_seconds + 1
+
         Sleep(1)
     end, function()
         return self.is_auto_joining
@@ -545,6 +571,12 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait, wait)
         self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
         self:DebugString(string.format("Auto-joining every %d seconds...", self.seconds))
         self:DebugString(string.format("Refreshing every %d seconds...", refresh_seconds))
+
+        dialog_body = Utils.Chain.Get(self.rejoin_dialog, "dialog", "body")
+        if dialog_body then
+            dialog_body_text = dialog_body:GetString()
+            dialog_body:SetString(dialog_body_text .. "Connecting...")
+        end
 
         if initial_wait > 0 then
             self:DebugString(string.format("Waiting %d seconds before starting...", initial_wait))
@@ -726,6 +758,21 @@ end
 --- Pause Screen
 -- @section pause-screen
 
+local function RejoinDialog(self, server_listing)
+    self.rejoin_dialog = PopupDialogScreen(
+        "Rejoining Server",
+        string.format('Rejoining "%s" server...\n', server_listing.name),
+        {
+            {
+                text = "Disconnect",
+                cb = function()
+                    DoRestart(true)
+                end,
+            },
+        })
+    TheFrontEnd:PushScreen(self.rejoin_dialog)
+end
+
 --- Overrides pause screen.
 -- @tparam PauseScreen pausescreen
 function AutoJoin:OverridePauseScreen(pausescreen)
@@ -733,19 +780,19 @@ function AutoJoin:OverridePauseScreen(pausescreen)
     local previous_menu_item_name = pausescreen.menu.items[total - 1].name
     local previous_menu_item_on_click = pausescreen.menu.items[total - 1].onclick
 
-    if self.config.rejoin_pause_screen_button then
+    if self.config.rejoin_pause_screen_button and not TheWorld.ismastersim then
         -- overrides PauseScreen:OnRawKey()
         local OldOnRawKey = pausescreen.OnRawKey
         pausescreen.OnRawKey = function(_, key, down)
             OldOnRawKey(pausescreen, key, down)
             key = NormalizeKey(key)
-            if key == self.config.key_rejoin
-                and Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
-            then
+            local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+            if key == self.config.key_rejoin and server_listing then
                 if down then
                     total = pausescreen.menu:GetNumberOfItems()
                     pausescreen.menu:EditItem(total - 1, "Rejoin", nil, function()
-                        self:Rejoin(nil, 3)
+                        RejoinDialog(self, server_listing)
+                        self:Rejoin(nil, 4)
                     end)
                 else
                     total = pausescreen.menu:GetNumberOfItems()
@@ -953,6 +1000,7 @@ function AutoJoin:DoInit(modname)
 
     -- rejoin
     self.rejoin_btn = nil
+    self.rejoin_dialog = nil
 
     -- overrides
     self.old_join_server_fn = nil
