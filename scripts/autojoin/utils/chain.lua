@@ -9,7 +9,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.7.0-alpha
+-- @release 0.7.0
 ----
 local Chain = {}
 
