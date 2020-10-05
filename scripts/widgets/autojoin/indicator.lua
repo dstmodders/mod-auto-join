@@ -15,7 +15,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.7.0
+-- @release 0.8.0-alpha
 ----
 local Button = require "widgets/autojoin/button"
 local Icon = require "widgets/autojoin/icon"

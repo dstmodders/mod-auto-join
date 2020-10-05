@@ -12,7 +12,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.7.0
+-- @release 0.8.0-alpha
 ----
 local InputDialogScreen = require "screens/redux/inputdialog"
 

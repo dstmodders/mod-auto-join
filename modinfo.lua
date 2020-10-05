@@ -1,5 +1,5 @@
 name = "Auto-Join"
-version = "0.7.0"
+version = "0.8.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds "Auto-Join" and "Rejoin" buttons.]] .. "\n\n" ..
     [[The first one allows continuous reconnections to the selected server until joining, and the second - rejoin the last server.]] .. "\n\n" ..
