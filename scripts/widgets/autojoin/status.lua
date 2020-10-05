@@ -10,7 +10,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.8.0-alpha
+-- @release 0.8.0
 ----
 require "autojoin/constants"
 

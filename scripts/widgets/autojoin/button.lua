@@ -14,7 +14,7 @@
 -- @author Victor Popkov
 -- @copyright 2019
 -- @license MIT
--- @release 0.8.0-alpha
+-- @release 0.8.0
 ----
 local ImageButton = require "widgets/imagebutton"
 local Status = require "widgets/autojoin/status"
