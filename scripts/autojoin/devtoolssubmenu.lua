@@ -40,6 +40,7 @@ end
 local function ToggleIndicatorVisibility(self, name)
     return {
         type = MOD_DEV_TOOLS.OPTION.CHECKBOX,
+        on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
         options = {
             label = name,
             on_get_fn = function()
@@ -56,9 +57,10 @@ local function ToggleIndicatorVisibility(self, name)
     }
 end
 
-local function NumericConfigOption(self, name, min, max, field)
+local function NumericConfigOption(self, name, min, max, field, on_add_to_root_fn)
     return {
         type = MOD_DEV_TOOLS.OPTION.NUMERIC,
+        on_add_to_root_fn = on_add_to_root_fn,
         options = {
             label = name,
             min = min,
@@ -130,9 +132,13 @@ local function Add(self)
                 },
             },
             ToggleIndicatorVisibility(self, "Toggle Indicator Visibility"),
-            { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
+            {
+                type = MOD_DEV_TOOLS.OPTION.DIVIDER,
+                on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
+            },
             {
                 type = MOD_DEV_TOOLS.OPTION.CHOICES,
+                on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
                 options = {
                     label = "State",
                     choices = {
@@ -156,6 +162,7 @@ local function Add(self)
             },
             {
                 type = MOD_DEV_TOOLS.OPTION.CHOICES,
+                on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
                 options = {
                     label = "Status",
                     choices = {
@@ -181,9 +188,13 @@ local function Add(self)
                     end,
                 },
             },
-            { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
+            {
+                type = MOD_DEV_TOOLS.OPTION.DIVIDER,
+                on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
+            },
             {
                 type = MOD_DEV_TOOLS.OPTION.NUMERIC,
+                on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
                 options = {
                     label = "Default Refresh Seconds",
                     min = 1,
@@ -200,13 +211,31 @@ local function Add(self)
                     end,
                 },
             },
-            NumericConfigOption(self, "Default Rejoin Initial Wait", 0, 15, "rejoin_initial_wait"),
-            NumericConfigOption(self, "Default Waiting Time", 0, 99, "waiting_time"),
-            { type = MOD_DEV_TOOLS.OPTION.DIVIDER },
+            NumericConfigOption(
+                self,
+                "Default Rejoin Initial Wait",
+                0,
+                15,
+                "rejoin_initial_wait",
+                MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD
+            ),
+            NumericConfigOption(
+                self,
+                "Default Waiting Time",
+                0,
+                99,
+                "waiting_time",
+                MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD
+            ),
+            {
+                type = MOD_DEV_TOOLS.OPTION.DIVIDER,
+                on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
+            },
             {
                 type = MOD_DEV_TOOLS.OPTION.SUBMENU,
                 options = {
                     label = "Indicator", -- label in the menu will be: "Your submenu..."
+                    on_add_to_root_fn = MOD_DEV_TOOLS.ON_ADD_TO_ROOT_FN.IS_NO_WORLD,
                     options = function()
                         return {
                             ToggleIndicatorVisibility(self, "Toggle Visibility"),

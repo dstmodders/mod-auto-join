@@ -8,6 +8,7 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[the second - rejoin the last server.]] .. "\n\n" ..
 
     [[v]] .. version .. [[:]] .. "\n" ..
+    [[- Improved the "Dev Tools" mod submenu]] .. "\n" ..
     [[- Refactored modinfo]]
 author = "Demonblink"
 api_version = 10
