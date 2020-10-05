@@ -10,30 +10,44 @@
             v2="0.992188"
         />
         <Element
-            name="full.tex"
+            name="banned.tex"
             u1="0.125977"
             u2="0.249023"
             v1="0.0078125"
             v2="0.992188"
         />
         <Element
-            name="invalid_password.tex"
+            name="full.tex"
             u1="0.250977"
             u2="0.374023"
             v1="0.0078125"
             v2="0.992188"
         />
         <Element
-            name="not_responding.tex"
+            name="invalid_password.tex"
             u1="0.375977"
             u2="0.499023"
             v1="0.0078125"
             v2="0.992188"
         />
         <Element
-            name="unknown.tex"
+            name="kicked.tex"
             u1="0.500977"
             u2="0.624023"
+            v1="0.0078125"
+            v2="0.992188"
+        />
+        <Element
+            name="not_responding.tex"
+            u1="0.625977"
+            u2="0.749023"
+            v1="0.0078125"
+            v2="0.992188"
+        />
+        <Element
+            name="unknown.tex"
+            u1="0.750977"
+            u2="0.874023"
             v1="0.0078125"
             v2="0.992188"
         />

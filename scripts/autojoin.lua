@@ -28,8 +28,17 @@ local PopupDialogScreen = require "screens/redux/popupdialog"
 local RejoinButton = require "widgets/autojoin/rejoinbutton"
 local Utils = require "autojoin/utils"
 
-local _AUTO_JOIN_THREAD_ID = "mod_auto_join_thread"
 local _LAST_JOIN_SERVER
+local _AUTO_JOIN_THREAD_ID = "mod_auto_join_thread"
+local _STATUSES = {
+    ID_ALREADY_CONNECTED = MOD_AUTO_JOIN.STATUS.ALREADY_CONNECTED,
+    ID_CONNECTION_ATTEMPT_FAILED = MOD_AUTO_JOIN.STATUS.NOT_RESPONDING,
+    ID_DST_NO_FREE_PLAYER_SLOTS = MOD_AUTO_JOIN.STATUS.FULL,
+    ID_DST_USER_BANNED = MOD_AUTO_JOIN.STATUS.BANNED,
+    ID_DST_USER_KICKED = MOD_AUTO_JOIN.STATUS.KICKED,
+    ID_INVALID_PASSWORD = MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD,
+    ID_NO_FREE_INCOMING_CONNECTIONS = MOD_AUTO_JOIN.STATUS.FULL,
+}
 
 --- Lifecycle
 -- @section lifecycle
@@ -246,14 +255,9 @@ function AutoJoin:Override()
         self:SetState(MOD_AUTO_JOIN.STATE.COUNTDOWN)
         self:SetStatus(MOD_AUTO_JOIN.STATUS.UNKNOWN, message)
 
-        if message == "ID_ALREADY_CONNECTED" then
-            self:SetStatus(MOD_AUTO_JOIN.STATUS.ALREADY_CONNECTED)
-        elseif message == "ID_DST_NO_FREE_PLAYER_SLOTS" then
-            self:SetStatus(MOD_AUTO_JOIN.STATUS.FULL)
-        elseif message == "ID_INVALID_PASSWORD" then
-            self:SetStatus(MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD)
-        elseif message == "ID_CONNECTION_ATTEMPT_FAILED" then
-            self:SetStatus(MOD_AUTO_JOIN.STATUS.NOT_RESPONDING)
+        local status = _STATUSES[message]
+        if status then
+            self:SetStatus(status)
         end
 
         return false

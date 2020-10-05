@@ -171,11 +171,13 @@ local function Add(self)
                             name = "Already Connected",
                             value = MOD_AUTO_JOIN.STATUS.ALREADY_CONNECTED,
                         },
+                        { name = "Banned", value = MOD_AUTO_JOIN.STATUS.BANNED },
                         { name = "Full", value = MOD_AUTO_JOIN.STATUS.FULL },
                         {
                             name = "Invalid Password",
                             value = MOD_AUTO_JOIN.STATUS.INVALID_PASSWORD,
                         },
+                        { name = "Kicked", value = MOD_AUTO_JOIN.STATUS.KICKED },
                         { name = "Not Responding", value = MOD_AUTO_JOIN.STATUS.NOT_RESPONDING },
                         { name = "Unknown", value = MOD_AUTO_JOIN.STATUS.UNKNOWN },
                     },

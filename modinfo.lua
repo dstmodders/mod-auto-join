@@ -8,6 +8,7 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[the second - rejoin the last server.]] .. "\n\n" ..
 
     [[v]] .. version .. [[:]] .. "\n" ..
+    [[- Added support for "banned" and "kicked" statuses]] .. "\n" ..
     [[- Improved some existing status icons]] .. "\n" ..
     [[- Improved the "Dev Tools" mod submenu]] .. "\n" ..
     [[- Refactored modinfo]]
