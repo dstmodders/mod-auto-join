@@ -161,6 +161,19 @@ function AutoJoin:GetLastJoinServer() -- luacheck: only
     return _LAST_JOIN_SERVER
 end
 
+--- Gets seconds.
+-- @treturn number
+function AutoJoin:GetSeconds()
+    return self.seconds
+end
+
+--- Sets seconds.
+-- @tparam number seconds
+-- @treturn number
+function AutoJoin:SetSeconds(seconds)
+    self.seconds = seconds
+end
+
 --- Gets state.
 -- @treturn number
 function AutoJoin:GetState()

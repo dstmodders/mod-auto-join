@@ -34,11 +34,6 @@ local RejoinButton = Class(Button, function(self, autojoin, rejoin_cb, cancel_cb
     self.cancel_cb = cancel_cb
     self.rejoin_cb = rejoin_cb
 
-    -- autojoin
-    if autojoin then
-        autojoin.rejoin_btn = self
-    end
-
     -- status
     self.status:SetPosition(25, 25)
 
@@ -52,6 +47,13 @@ local RejoinButton = Class(Button, function(self, autojoin, rejoin_cb, cancel_cb
     self:SetTextFocusColour(UICOLOURS.GOLD_FOCUS)
     self:SetTextSize(25)
     self:Update()
+
+    -- autojoin
+    if autojoin then
+        autojoin.rejoin_btn = self
+        self:SetSeconds(autojoin:GetSeconds())
+        self:SetState(autojoin:GetState())
+    end
 end)
 
 --- General
