@@ -42,12 +42,6 @@ The [LDoc][] documentation generator has been used for generating documentation,
 and the most recent version can be found here: http://github.victorpopkov.com/dst-mod-auto-join/
 
 - [Installation](readme/01-installation.md)
-- [Development](readme/02-development.md)
-
-## Roadmap
-
-You can always find and track the current states of the upcoming features/fixes
-on the following [Trello][] board: https://trello.com/b/csl4Sgtm
 
 ## License
 
@@ -59,4 +53,3 @@ Released under the [MIT License](https://opensource.org/licenses/MIT).
 [github workflow documentation status]: https://img.shields.io/github/workflow/status/victorpopkov/dst-mod-auto-join/Documentation?label=Documentation
 [ldoc]: https://stevedonovan.github.io/ldoc/
 [steam workshop]: https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575
-[trello]: https://trello.com/
