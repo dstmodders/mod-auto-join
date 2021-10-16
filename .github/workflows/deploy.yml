@@ -1,0 +1,108 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs:
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Set a job-wide environment variables
+        run: |
+          echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE=${{ secrets.PRIVATE_REGISTRY }}/dst-mod-auto-join/docs" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE_TAG=latest" >> $GITHUB_ENV
+          echo "GITHUB_JOB_NAME=docs" >> $GITHUB_ENV
+      - name: Generate documentation
+        uses: docker://dstmodders/dst-mod:alpine
+        with:
+          args: make ldoc
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to the private registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.PRIVATE_REGISTRY }}
+          username: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
+          password: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
+      - name: Generate an image metadata
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+          flavor: latest=true
+          labels: maintainer=victor@popkov.me
+      - name: Build an image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./doc/
+          file: ./doc/Dockerfile
+          platforms: linux/amd64,linux/arm/v7
+          pull: true
+          push: ${{ !env.ACT && github.ref == 'refs/heads/main' }}
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_IMAGE_TAG }}
+          cache-to: type=inline
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      - name: Add Docker certificates to access the remote host
+        if: ${{ !env.ACT }}
+        run: |
+          mkdir -p "${DOCKER_CERT_PATH}"
+          echo "${DOCKER_TLS_CA}" > "${DOCKER_CERT_PATH}/ca.pem"
+          echo "${DOCKER_TLS_CERT}" > "${DOCKER_CERT_PATH}/cert.pem"
+          echo "${DOCKER_TLS_KEY}" > "${DOCKER_CERT_PATH}/key.pem"
+          chmod 400 "${DOCKER_CERT_PATH}/ca.pem"
+          chmod 400 "${DOCKER_CERT_PATH}/cert.pem"
+          chmod 400 "${DOCKER_CERT_PATH}/key.pem"
+        env:
+          DOCKER_CERT_PATH: /home/runner/.docker/deploy/
+          DOCKER_TLS_CA: ${{ secrets.DOCKER_TLS_CA }}
+          DOCKER_TLS_CERT: ${{ secrets.DOCKER_TLS_CERT }}
+          DOCKER_TLS_KEY: ${{ secrets.DOCKER_TLS_KEY }}
+      - name: Deploy Docker Stack
+        if: ${{ !env.ACT }}
+        working-directory: ./doc/
+        run: |
+          docker stack rm "${DOCKER_STACK_NAME}"
+          docker stack deploy \
+            --with-registry-auth \
+            --resolve-image=always \
+            --compose-file=docker-stack.yml \
+            --prune \
+            "${DOCKER_STACK_NAME}"
+        env:
+          # docker
+          DOCKER_CERT_PATH: /home/runner/.docker/deploy/
+          DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
+          DOCKER_TLS_VERIFY: 1
+          # docker stack
+          DOCKER_STACK_NAME: dstmodders_dst_mod_auto_join
+          # traefik
+          DOCKER_STACK_TRAEFIK_HOST: docs.dstmodders.com
+          DOCKER_STACK_TRAEFIK_NAME: dstmodders-dst-mod-auto-join-docs
+          DOCKER_STACK_TRAEFIK_PATH_PREFIX: /auto-join/
+      - name: Prepare success Slack notification
+        if: success()
+        run: echo "SLACK_CUSTOM_PAYLOAD=${SLACK_CUSTOM_PAYLOAD}" >> $GITHUB_ENV
+        env:
+          SLACK_CUSTOM_PAYLOAD: '{"channel":"${{ secrets.SLACK_CHANNEL }}","attachments":[{"color":"#2eb886","fallback":"GitHub Actions {{ GITHUB_WORKFLOW }} workflow {{ GITHUB_JOB_NAME }} job of {{ GITHUB_REPOSITORY }}@{{ BRANCH_NAME }} by {{ GITHUB_ACTOR }} has passed","blocks":[{"type":"section","text":{"type":"mrkdwn","text":"GitHub Actions *<https://github.com/{{ GITHUB_REPOSITORY }}/actions/runs/{{ GITHUB_RUN_ID }}|{{ GITHUB_WORKFLOW }}>* workflow *{{ GITHUB_JOB_NAME }}* job of *<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>@<https://github.com/{{ GITHUB_REPOSITORY }}/tree/{{ BRANCH_NAME }}|{{ BRANCH_NAME }}>* by *{{ GITHUB_ACTOR }}* has passed"}}]}]}'
+      - name: Prepare failure Slack notification
+        if: failure()
+        run: echo "SLACK_CUSTOM_PAYLOAD=${SLACK_CUSTOM_PAYLOAD}" >> $GITHUB_ENV
+        env:
+          SLACK_CUSTOM_PAYLOAD: '{"channel":"${{ secrets.SLACK_CHANNEL }}","attachments":[{"color":"#ed2f00","fallback":"GitHub Actions {{ GITHUB_WORKFLOW }} workflow {{ GITHUB_JOB_NAME }} job of {{ GITHUB_REPOSITORY }}@{{ BRANCH_NAME }} by {{ GITHUB_ACTOR }} has failed","blocks":[{"type":"section","text":{"type":"mrkdwn","text":"GitHub Actions *<https://github.com/{{ GITHUB_REPOSITORY }}/actions/runs/{{ GITHUB_RUN_ID }}|{{ GITHUB_WORKFLOW }}>* workflow *{{ GITHUB_JOB_NAME }}* job of *<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>@<https://github.com/{{ GITHUB_REPOSITORY }}/tree/{{ BRANCH_NAME }}|{{ BRANCH_NAME }}>* by *{{ GITHUB_ACTOR }}* has failed"}}]}]}'
+      - name: Send Slack notification
+        if: ${{ !env.ACT && always() }}
+        uses: Ilshidur/action-slack@2.1.0
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
