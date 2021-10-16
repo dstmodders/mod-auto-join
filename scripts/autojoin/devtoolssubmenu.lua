@@ -3,7 +3,7 @@
 --
 -- Includes submenu for the "Dev Tools" mod.
 --
--- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
 --
 -- @classmod DevToolsSubmenu
 --

@@ -4,7 +4,7 @@
 -- Entry point for all mod-related features which is initialized as soon as the mod loads. Holds
 -- auto-joining state and functionality by overriding some global functions.
 --
--- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
 --
 -- @classmod AutoJoin
 -- @see screens.AutoJoinPasswordScreen

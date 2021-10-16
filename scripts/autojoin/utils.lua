@@ -8,7 +8,7 @@
 -- 1. Be a non-mod specific and isolated which can be reused in my other mods.
 -- 2. Be a mod specific and isolated which can be used between classes/modules.
 --
--- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
 --
 -- @module Utils
 -- @see Utils.Chain

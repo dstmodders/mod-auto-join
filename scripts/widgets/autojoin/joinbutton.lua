@@ -4,7 +4,7 @@
 -- Widget that extends `Button` and creates our own version of the "Join" button very similar to one
 -- on the server listing screen.
 --
--- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
 --
 -- @classmod widgets.JoinButton
 -- @see widgets.Button

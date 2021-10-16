@@ -1,8 +1,8 @@
 # dst-mod-auto-join
 
-[![GitHub Workflow CI Status][]](https://github.com/victorpopkov/dst-mod-auto-join/actions?query=workflow%3ACI)
-[![GitHub Workflow Documentation Status][]](https://github.com/victorpopkov/dst-mod-auto-join/actions?query=workflow%3ADocumentation)
-[![Codecov][]](https://codecov.io/gh/victorpopkov/dst-mod-auto-join)
+[![GitHub Workflow CI Status][]](https://github.com/dstmodders/dst-mod-auto-join/actions?query=workflow%3ACI)
+[![GitHub Workflow Documentation Status][]](https://github.com/dstmodders/dst-mod-auto-join/actions?query=workflow%3ADocumentation)
+[![Codecov][]](https://codecov.io/gh/dstmodders/dst-mod-auto-join)
 
 [![Auto-Join](preview.gif)](https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575)
 
@@ -45,9 +45,9 @@ and the most recent version can be found here: http://github.victorpopkov.com/ds
 
 Released under the [MIT License](https://opensource.org/licenses/MIT).
 
-[codecov]: https://img.shields.io/codecov/c/github/victorpopkov/dst-mod-auto-join.svg
+[codecov]: https://img.shields.io/codecov/c/github/dstmodders/dst-mod-auto-join.svg
 [don't starve together]: https://www.klei.com/games/dont-starve-together
-[github workflow ci status]: https://img.shields.io/github/workflow/status/victorpopkov/dst-mod-auto-join/CI?label=CI
-[github workflow documentation status]: https://img.shields.io/github/workflow/status/victorpopkov/dst-mod-auto-join/Documentation?label=Documentation
+[github workflow ci status]: https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/CI?label=CI
+[github workflow documentation status]: https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/Documentation?label=Documentation
 [ldoc]: https://stevedonovan.github.io/ldoc/
 [steam workshop]: https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575

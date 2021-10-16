@@ -7,7 +7,7 @@
 -- Once the data has changed the `dirty` field becomes `true` and the data can be either saved or
 -- reset to its original state. After saving or resetting the `dirty` becomes `false`.
 --
--- **Source Code:** [https://github.com/victorpopkov/dst-mod-auto-join](https://github.com/victorpopkov/dsto-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
 --
 -- @classmod Data
 --
