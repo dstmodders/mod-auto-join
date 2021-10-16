@@ -87,10 +87,16 @@ jobs:
           DOCKER_TLS_VERIFY: 1
           # docker stack
           DOCKER_STACK_NAME: dstmodders_dst_mod_auto_join
+          DOCKER_STACK_NODE_HOSTNAME: ${{ secrets.DOCKER_STACK_NODE_HOSTNAME }}
+          # loki
+          LOKI_PIPELINE_STAGE_FILE: /etc/loki/pipelines/nginx.yml
+          LOKI_URL: ${{ secrets.LOKI_URL }}
+          # nginx
+          NGINX_CONF: /etc/nginx/nginx.conf
           # traefik
-          DOCKER_STACK_TRAEFIK_HOST: docs.dstmodders.com
-          DOCKER_STACK_TRAEFIK_NAME: dstmodders-dst-mod-auto-join-docs
-          DOCKER_STACK_TRAEFIK_PATH_PREFIX: /auto-join/
+          TRAEFIK_HOST: docs.dstmodders.com
+          TRAEFIK_NAME: dstmodders-dst-mod-auto-join-docs
+          TRAEFIK_PATH_PREFIX: /auto-join/
       - name: Prepare success Slack notification
         if: success()
         run: echo "SLACK_CUSTOM_PAYLOAD=${SLACK_CUSTOM_PAYLOAD}" >> $GITHUB_ENV
