@@ -8,7 +8,6 @@ full_description = [[Mod for the game [Don\'t Starve Together](https://www.klei.
 dir = "doc"
 file = "./scripts/"
 format = "markdown"
-readme = "readme"
 sort_modules = true
 style = "./doc/ldoc/"
 use_markdown_titles = true

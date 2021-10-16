@@ -41,8 +41,6 @@ needs:
 The [LDoc][] documentation generator has been used for generating documentation,
 and the most recent version can be found here: http://github.victorpopkov.com/dst-mod-auto-join/
 
-- [Installation](readme/01-installation.md)
-
 ## License
 
 Released under the [MIT License](https://opensource.org/licenses/MIT).
