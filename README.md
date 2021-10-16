@@ -1,8 +1,8 @@
 # dst-mod-auto-join
 
-[![GitHub Workflow CI Status][]](https://github.com/dstmodders/dst-mod-auto-join/actions?query=workflow%3ACI)
-[![GitHub Workflow Documentation Status][]](https://github.com/dstmodders/dst-mod-auto-join/actions?query=workflow%3ADocumentation)
-[![Codecov][]](https://codecov.io/gh/dstmodders/dst-mod-auto-join)
+[![CI](https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/CI?label=ci)](https://github.com/dstmodders/dst-mod-auto-join/actions/workflows/ci.yml)
+[![Deploy](https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/Deploy?label=deploy)](https://github.com/dstmodders/dst-mod-auto-join/actions/workflows/deploy.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/dstmodders/dst-mod-auto-join.svg)](https://codecov.io/gh/dstmodders/dst-mod-auto-join)
 
 [![Auto-Join](preview.gif)](https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575)
 
@@ -39,15 +39,13 @@ needs:
 ## Documentation
 
 The [LDoc][] documentation generator has been used for generating documentation,
-and the most recent version can be found here: http://github.victorpopkov.com/dst-mod-auto-join/
+and the most recent version can be found here:
+https://docs.dstmodders.com/auto-join/
 
 ## License
 
 Released under the [MIT License](https://opensource.org/licenses/MIT).
 
-[codecov]: https://img.shields.io/codecov/c/github/dstmodders/dst-mod-auto-join.svg
 [don't starve together]: https://www.klei.com/games/dont-starve-together
-[github workflow ci status]: https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/CI?label=CI
-[github workflow documentation status]: https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/Documentation?label=Documentation
 [ldoc]: https://stevedonovan.github.io/ldoc/
 [steam workshop]: https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575
