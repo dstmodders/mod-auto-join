@@ -11,94 +11,94 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Support for "banned" and "kicked" statuses
+- Add support for "banned" and "kicked" statuses
 
 ### Changed
 
-- Improved some existing status icons
-- Improved the "Dev Tools" mod submenu
-- Refactored modinfo
+- Improve some existing status icons
+- Improve the "Dev Tools" mod submenu
+- Refactor modinfo
 
 ### Fixed
 
-- Issue with syncing rejoin button state
+- Fix issue with syncing rejoin button state
 
 ## [0.7.0][] - 2020-09-14
 
 ### Added
 
-- Support for "Rejoin" pause screen button
-- Support for the last connection status
-- Support for the rejoin pause screen button configuration
+- Add support for "Rejoin" pause screen button
+- Add support for the last connection status
+- Add support for the rejoin pause screen button configuration
 
 ### Changed
 
-- Indicator position configuration
+- Change indicator position configuration
 
 ### Fixed
 
-- Issue with rejoining a non-master shard
+- Fix issue with rejoining a non-master shard
 
 ## [0.6.0][] - 2020-09-11
 
 ### Added
 
-- Button states animations
-- Support for "Rejoin" main screen button
-- Support for rejoin configurations
-- Support for the "Dev Tools" mod submenu
+- Add button states animations
+- Add support for "Rejoin" main screen button
+- Add support for rejoin configurations
+- Add support for the "Dev Tools" mod submenu
 
 ### Changed
 
-- Some configurations
+- Change some configurations
 
 ## [0.5.0][] - 2020-08-24
 
 ### Added
 
-- Support for a corner indicator in some other screens
-- Support for the hide changelog configuration
-- Tests and documentation
+- Add support for a corner indicator in some other screens
+- Add support for the hide changelog configuration
+- Add tests and documentation
 
 ### Changed
 
-- Configuration to be divided into sections
-- Refactored and restructured most of the existing code
+- Change configuration to be divided into sections
+- Refactor and restructure most of the existing code
 
 ## [0.4.0][] - 2019-11-10
 
 ### Added
 
-- Indicators on other screens
-- Support for the indicator configuration
-- Support for the indicator padding configuration
-- Support for the indicator position configuration
-- Support for the indicator scale configuration
+- Add indicators on other screens
+- Add support for the indicator configuration
+- Add support for the indicator padding configuration
+- Add support for the indicator position configuration
+- Add support for the indicator scale configuration
 
 ## [0.3.0][] - 2019-11-07
 
 ### Changed
 
-- Improved behaviour to start/stop auto-joining
-- Improved some existing functions and variables
-- Refactored buttons into widgets
-- Refactored password prompt into the separate screen
+- Improve behaviour to start/stop auto-joining
+- Improve some existing functions and variables
+- Refactor buttons into widgets
+- Refactor password prompt into the separate screen
 
 ### Fixed
 
-- Button hover text position and states
+- Fix button hover text position and states
 
 ## [0.2.0][] - 2019-11-02
 
 ### Added
 
-- Different button focus states
-- Different button hover text states
-- Support for highlighting the selected server
+- Add different button focus states
+- Add different button hover text states
+- Add support for highlighting the selected server
 
 ### Changed
 
-- Improved the countdown
+- Improve the countdown
 
 ## 0.1.0 - 2019-10-31
 
