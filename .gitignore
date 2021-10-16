@@ -5,33 +5,32 @@
 .vscode/
 
 ### Lua ###
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
-
-# luacov
+# LuaCov
+coverage/
+lcov.info
 luacov.*
+
+# Busted
+busted.out
+core
 
 ### Project ###
 # general
-.github/slack*.json
-busted.out
-coverage/
 description.txt
 exported/**/*.autosave.scml
 exported/**/*.zip
 images/auto_join_icons/
-lcov.info
-modsettings.lua
-workshop/
 
 # anim
 !anim/**/*.zip
 
-# doc
+# docs
 docs/*
 !docs/.dockerignore
 !docs/docker-stack.yml
 !docs/Dockerfile
 !docs/ldoc/
+
+# steam workshop
+steam-workshop.zip
+workshop*/
