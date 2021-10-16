@@ -9,7 +9,7 @@
 -- @classmod widgets.JoinButton
 -- @see widgets.Button
 --
--- @author Victor Popkov
+-- @author [Depressed DST Modders](https://github.com/dstmodders)
 -- @copyright 2019
 -- @license MIT
 -- @release 0.8.0

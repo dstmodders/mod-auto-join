@@ -13,7 +13,7 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[- Improved some existing status icons]] .. "\n" ..
     [[- Improved the "Dev Tools" mod submenu]] .. "\n" ..
     [[- Refactored modinfo]]
-author = "Demonblink"
+author = "Depressed DST Modders"
 api_version = 10
 forumthread = ""
 

@@ -6,7 +6,7 @@
 -- @module Utils.Modmain
 -- @see Utils
 --
--- @author Victor Popkov
+-- @author [Depressed DST Modders](https://github.com/dstmodders)
 -- @copyright 2019
 -- @license MIT
 -- @release 0.8.0
