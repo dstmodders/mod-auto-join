@@ -8,23 +8,12 @@ indent_style = space
 max_line_length = 80
 trim_trailing_whitespace = true
 
-# Lua
-[*.lua]
+[{*.lua,.busted,.luacheckrc,.luacov,config.ld}]
 indent_size = 4
 max_line_length = 100
 
-# config.ld
-[config.ld]
-indent_size = 4
-
-# XML
 [*.xml]
 indent_size = 4
 
-# .luacheckrc
-[.luacheckrc]
-indent_size = 2
-
-# Makefile
 [Makefile]
 indent_style = tab
