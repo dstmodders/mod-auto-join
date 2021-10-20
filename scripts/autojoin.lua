@@ -464,6 +464,10 @@ function AutoJoin:StartAutoJoining(server, password, initial_wait, wait)
         self:ClearAutoJoinThread()
     end
 
+    if self.config.disable_music then
+        TheFrontEnd:GetSound():KillSound("FEMusic")
+    end
+
     self:StartAutoJoinThread(server, password, initial_wait, wait)
 end
 
@@ -483,6 +487,10 @@ function AutoJoin:StopAutoJoining()
 
     if self.is_ui_disabled then
         self:OverrideRestore()
+    end
+
+    if self.config.disable_music and TheFrontEnd.autojoin_FEMusic then
+        TheFrontEnd:GetSound():PlaySound(TheFrontEnd.autojoin_FEMusic, "FEMusic")
     end
 end
 

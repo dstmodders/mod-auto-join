@@ -72,6 +72,7 @@ local configs = {
     "rejoin_main_screen_button",
     "rejoin_pause_screen_button",
     "waiting_time",
+    "disable_music",
 }
 
 for _, config in ipairs(configs) do
@@ -80,6 +81,43 @@ end
 
 AutoJoin.config["key_rejoin"] = GetKeyFromConfig("key_rejoin")
 AutoJoin.config_default = shallowcopy(AutoJoin.config)
+
+--- Music Disabler
+-- @section music disabler
+
+if GetModConfigData("disable_music") then
+    AddGamePostInit(function()
+        local TheFrontEnd = _G.TheFrontEnd
+        local SoundManager = TheFrontEnd:GetSound()
+        local SoundManager_mt = _G.getmetatable(SoundManager)
+        local __index = SoundManager_mt.__index
+        local old_PlaySound = __index.PlaySound
+        local old_KillSound = __index.KillSound
+        TheFrontEnd.autojoin_FEMusic = _G.FE_MUSIC
+
+        -- overrides TheFrontEnd:GetSound():PlaySound()
+        __index.PlaySound = function(self, theme, name, ...)
+            if name == "FEMusic" then
+                TheFrontEnd.autojoin_FEMusic = theme
+                if AutoJoin:IsAutoJoining() then
+                    return nil
+                else
+                    return old_PlaySound(self, theme, name, ...)
+                end
+            else
+                return old_PlaySound(self, theme, name, ...)
+            end
+        end
+
+        -- overrides TheFrontEnd:GetSound():KillSound()
+        __index.KillSound = function(self, name, ...)
+            if AutoJoin:IsAutoJoining() and name == "FEMusic" then
+                TheFrontEnd.autojoin_FEMusic = nil
+            end
+            return old_KillSound(self, name, ...)
+        end
+    end)
+end
 
 --- Indicator
 -- @section indicator

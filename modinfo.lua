@@ -163,6 +163,12 @@ configuration_options = {
         15
     ),
 
+    AddBooleanConfig(
+        "disable_music",
+        "Disable music",
+        "When enabled, disables music while attempting to join."
+    ),
+
     --
     -- Indicator
     --

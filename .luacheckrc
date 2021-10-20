@@ -69,6 +69,7 @@ files["modmain.lua"] = {
     },
     read_globals = {
         "AddClassPostConstruct",
+        "AddGamePostInit",
         "Asset",
         "GetModConfigData",
         "modname",
