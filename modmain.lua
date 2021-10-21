@@ -73,6 +73,7 @@ local configs = {
     "rejoin_pause_screen_button",
     "waiting_time",
     "disable_music",
+    "notification_sound",
 }
 
 for _, config in ipairs(configs) do
@@ -101,12 +102,9 @@ if GetModConfigData("disable_music") then
                 TheFrontEnd.autojoin_FEMusic = theme
                 if AutoJoin:IsAutoJoining() then
                     return nil
-                else
-                    return old_PlaySound(self, theme, name, ...)
                 end
-            else
-                return old_PlaySound(self, theme, name, ...)
             end
+            return old_PlaySound(self, theme, name, ...)
         end
 
         -- overrides TheFrontEnd:GetSound():KillSound()
@@ -115,6 +113,29 @@ if GetModConfigData("disable_music") then
                 TheFrontEnd.autojoin_FEMusic = nil
             end
             return old_KillSound(self, name, ...)
+        end
+    end)
+end
+
+--- Notification Sound
+-- @section notification sound
+
+if GetModConfigData("notification_sound") then
+    local old_StartNextInstance = _G.StartNextInstance
+
+    -- overrides StartNextInstance()
+    _G.StartNextInstance = function(in_params, ...)
+        local params = in_params or {}
+        if AutoJoin:IsAutoJoining() then
+            params.autojoin_giveNotification = true
+        end
+        return old_StartNextInstance(params, ...)
+    end
+
+    AddClassPostConstruct("widgets/redux/loadingwidget", function()
+        if _G.Settings.autojoin_giveNotification then
+            _G.Settings.autojoin_giveNotification = nil
+            _G.TheFrontEnd:GetSound():PlaySound(GetModConfigData("notification_sound"))
         end
     end)
 end

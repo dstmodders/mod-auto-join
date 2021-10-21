@@ -142,6 +142,25 @@ configuration_options = {
 
     AddSection("General"),
 
+    AddBooleanConfig(
+        "disable_music",
+        "Disable music",
+        "When enabled, disables music while attempting to join"
+    ),
+
+    AddConfig(
+        "notification_sound",
+        "Notification sound",
+        "Plays the following sound if connection succeeds",
+        {
+            { description = "Disabled", data = false },
+            { description = "Beefalo Horn", data = "dontstarve/common/Horn_beefalo" },
+            { description = "Splumonkey Taunt", data = "dontstarve/creatures/monkey/taunt" },
+            { description = "Batilisk Taunt", data = "dontstarve/creatures/bat/taunt" },
+        },
+        false
+    ),
+
     AddConfig(
         "waiting_time",
         "Waiting time",
@@ -161,12 +180,6 @@ configuration_options = {
             { description = "1m", data = 60 },
         },
         15
-    ),
-
-    AddBooleanConfig(
-        "disable_music",
-        "Disable music",
-        "When enabled, disables music while attempting to join."
     ),
 
     --
