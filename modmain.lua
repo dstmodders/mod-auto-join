@@ -13,7 +13,6 @@ local require = _G.require
 local shallowcopy = _G.shallowcopy
 
 local AutoJoin = require "autojoin"
-local Utils = require "autojoin/utils"
 
 --- Assets
 -- @section assets
@@ -209,10 +208,3 @@ end)
 AddClassPostConstruct("screens/redux/serverlistingscreen", function(serverlistingscreen)
     AutoJoin:OverrideServerListingScreen(serverlistingscreen)
 end)
-
---- KnownModIndex
--- @section knownmodindex
-
-if GetModConfigData("hide_changelog") then
-    Utils.Modmain.HideChangelog(modname, true)
-end

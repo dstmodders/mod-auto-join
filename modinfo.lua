@@ -5,14 +5,7 @@ description = [[Version: ]] .. version .. "\n\n" ..
     [[Adds "Auto-Join" and "Rejoin" buttons.]] .. "\n\n" ..
 
     [[The first one allows continuous reconnections to the selected server until joining, and ]] ..
-    [[the second - rejoin the last server.]] .. "\n\n" ..
-
-    [[v]] .. version .. [[:]] .. "\n" ..
-    [[- Added support for "banned" and "kicked" statuses]] .. "\n" ..
-    [[- Fixed issue with syncing rejoin button state]] .. "\n" ..
-    [[- Improved some existing status icons]] .. "\n" ..
-    [[- Improved the "Dev Tools" mod submenu]] .. "\n" ..
-    [[- Refactored modinfo]]
+    [[the second - rejoin the last server.]]
 author = "Depressed DST Modders"
 api_version = 10
 forumthread = ""
@@ -282,13 +275,6 @@ configuration_options = {
     --
 
     AddSection("Other"),
-
-    AddBooleanConfig(
-        "hide_changelog",
-        "Hide changelog",
-        [[When enabled, hides the changelog in the mod description.]] .. "\n" ..
-            [[Mods should be reloaded to take effect]]
-    ),
 
     AddBooleanConfig(
         "debug",
