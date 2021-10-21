@@ -24,6 +24,8 @@ needs:
 
 | Configuration                  | Default     | Description                                                            |
 | ------------------------------ | ----------- | ---------------------------------------------------------------------- |
+| **Disable music**              | _Enabled_   | When enabled, disables music while attempting to join                  |
+| **Notification sound**         | _Disabled_  | Plays the following sound if connection succeeds                       |
 | **Waiting time**               | _15s_       | The time between reconnection attempts                                 |
 | **Indicator**                  | _Enabled_   | When enabled, adds a corner indicator on the supported screens         |
 | **Indicator position**         | _Top Right_ | Indicator position on the screen                                       |
