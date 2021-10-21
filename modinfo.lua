@@ -1,5 +1,5 @@
 name = "Auto-Join"
-version = "0.8.0"
+version = "0.9.0-alpha"
 description = [[Version: ]] .. version .. "\n\n" ..
 
     [[Adds "Auto-Join" and "Rejoin" buttons.]] .. "\n\n" ..

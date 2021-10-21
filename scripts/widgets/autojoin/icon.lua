@@ -13,7 +13,7 @@
 -- @author [Depressed DST Modders](https://github.com/dstmodders)
 -- @copyright 2019
 -- @license MIT
--- @release 0.8.0
+-- @release 0.9.0-alpha
 ----
 require "autojoin/constants"
 
