@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+### Added
+
+- Add disable music feature
+- Add notification sound feature
+
+### Removed
+
+- Remove changelog from modinfo
+- Remove obsolete "Hide changelog" configuration
+
 ## [0.8.0][] - 2020-10-05
 
 ### Added
