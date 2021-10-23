@@ -24,6 +24,7 @@ local SDK
 SDK = require "autojoin/sdk/sdk/sdk"
 SDK.Load(env, "autojoin/sdk", {
     "Debug",
+    "Thread",
 })
 
 --- Assets

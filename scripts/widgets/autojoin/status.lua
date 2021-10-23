@@ -15,7 +15,7 @@
 require "autojoin/constants"
 
 local Image = require "widgets/image"
-local Utils = require "autojoin/utils"
+local SDK = require "autojoin/sdk/sdk/sdk"
 local Widget = require "widgets/widget"
 
 local _IMAGE_ATLAS = "images/auto_join_statuses.xml"
@@ -158,7 +158,14 @@ function Status:Update()
         end
 
         -- hover text
-        local message = Utils.Chain.Get(STRINGS, "UI", "NETWORKDISCONNECT", "TITLE", self.message)
+        local message = SDK.Utils.Chain.Get(
+            STRINGS,
+            "UI",
+            "NETWORKDISCONNECT",
+            "TITLE",
+            self.message
+        )
+
         message = type(message) == "string" and message or "Error"
         self:ClearHoverText()
         self:SetHoverText(message, { offset_x = 0, offset_y = 40 + self.hover_text_offset })

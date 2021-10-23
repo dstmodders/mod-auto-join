@@ -27,7 +27,6 @@ local JoinButton = require "widgets/autojoin/joinbutton"
 local PopupDialogScreen = require "screens/redux/popupdialog"
 local RejoinButton = require "widgets/autojoin/rejoinbutton"
 local SDK = require "autojoin/sdk/sdk/sdk"
-local Utils = require "autojoin/utils"
 
 local _LAST_JOIN_SERVER
 local _AUTO_JOIN_THREAD_ID = "mod_auto_join_thread"
@@ -310,8 +309,8 @@ end
 -- @tparam[opt] MultiplayerMainScreen multiplayermainscreen
 -- @tparam[opt] number wait
 function AutoJoin:Rejoin(multiplayermainscreen, wait)
-    local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
-    local optional_password_override = Utils.Chain.Get(
+    local server_listing = SDK.Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+    local optional_password_override = SDK.Utils.Chain.Get(
         _LAST_JOIN_SERVER,
         "optional_password_override"
     )
@@ -522,7 +521,7 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait, wait)
     local is_server_not_listed = false
     local refresh_seconds = self.default_refresh_seconds
 
-    self.auto_join_thread = Utils.Thread.Start(_AUTO_JOIN_THREAD_ID, function()
+    self.auto_join_thread = SDK.Thread.Start(_AUTO_JOIN_THREAD_ID, function()
         if self.elapsed_seconds >= initial_wait then
             if not is_initial_join_fired then
                 is_initial_join_fired = true
@@ -556,7 +555,7 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait, wait)
                 if dialog_body then
                     local message
                     if self.status_message then
-                        message = Utils.Chain.Get(
+                        message = SDK.Utils.Chain.Get(
                             STRINGS,
                             "UI",
                             "NETWORKDISCONNECT",
@@ -600,7 +599,7 @@ function AutoJoin:StartAutoJoinThread(server, password, initial_wait, wait)
         self:DebugString(string.format("Auto-joining every %d seconds...", self.seconds))
         self:DebugString(string.format("Refreshing every %d seconds...", refresh_seconds))
 
-        dialog_body = Utils.Chain.Get(self.rejoin_dialog, "dialog", "body")
+        dialog_body = SDK.Utils.Chain.Get(self.rejoin_dialog, "dialog", "body")
         if dialog_body then
             dialog_body_text = dialog_body:GetString()
             dialog_body:SetString(dialog_body_text .. "Connecting...")
@@ -618,7 +617,7 @@ end
 --
 -- Stops the thread started earlier by `StartAutoJoinThread`.
 function AutoJoin:ClearAutoJoinThread()
-    return Utils.Thread.Clear(self.auto_join_thread)
+    return SDK.Thread.Clear(self.auto_join_thread)
 end
 
 --- Update
@@ -681,7 +680,7 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
     if self.config.rejoin_main_screen_button then
         -- overrides MultiplayerMainScreen:MakeSubMenu()
         multiplayermainscreen.MakeSubMenu = function()
-            local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+            local server_listing = SDK.Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
             local btn = multiplayermainscreen.mod_auto_join_rejoin
 
             if btn then
@@ -760,7 +759,7 @@ function AutoJoin:OverrideMultiplayerMainScreen(multiplayermainscreen)
         OldOnRawKey(multiplayermainscreen, key, down)
         key = NormalizeKey(key)
         if key == self.config.key_rejoin
-            and Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+            and SDK.Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
         then
             if down then
                 total = multiplayermainscreen.menu:GetNumberOfItems()
@@ -814,7 +813,7 @@ function AutoJoin:OverridePauseScreen(pausescreen)
         pausescreen.OnRawKey = function(_, key, down)
             OldOnRawKey(pausescreen, key, down)
             key = NormalizeKey(key)
-            local server_listing = Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
+            local server_listing = SDK.Utils.Chain.Get(_LAST_JOIN_SERVER, "server_listing")
             if key == self.config.key_rejoin and server_listing then
                 if down then
                     total = pausescreen.menu:GetNumberOfItems()
@@ -973,7 +972,10 @@ function AutoJoin:OverrideServerListingScreen(serverlistingscreen)
             or false
 
         if selected_server
-            and (Utils.Table.Compare(selected_server, serverlistingscreen.selected_server) == false
+            and (SDK.Utils.Table.Compare(
+                selected_server,
+                serverlistingscreen.selected_server
+            ) == false
             or serverlistingscreen.details_hidden_name ~= is_name_and_description_hidden)
         then
             serverlistingscreen.auto_join_join_btn:Enable()
