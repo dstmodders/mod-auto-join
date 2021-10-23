@@ -5,8 +5,14 @@ full_description = [[Mod for the game [Don\'t Starve Together](https://www.klei.
     [[- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)]] .. "\n" ..
     [[- **Steam Workshop:** [https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575](https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575)]]
 
+file = {
+    "./scripts/",
+    exclude = {
+        "./scripts/autojoin/sdk/",
+    },
+}
+
 dir = "docs"
-file = "./scripts/"
 format = "markdown"
 sort_modules = true
 style = "./docs/ldoc/"

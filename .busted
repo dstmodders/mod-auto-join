@@ -3,6 +3,7 @@ return {
         coverage = true,
     },
     default = {
+        ["exclude-tags"] = "sdk",
         helper = "spec/helper",
         verbose = true,
     },
