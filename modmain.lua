@@ -24,6 +24,7 @@ local SDK
 SDK = require "autojoin/sdk/sdk/sdk"
 SDK.Load(env, "autojoin/sdk", {
     "Debug",
+    "PersistentData",
     "Thread",
 })
 
@@ -58,7 +59,7 @@ end
 
 local AutoJoin = require "autojoin"
 
-AutoJoin:DoInit(modname)
+AutoJoin:DoInit()
 
 -- GetModConfigData
 local configs = {

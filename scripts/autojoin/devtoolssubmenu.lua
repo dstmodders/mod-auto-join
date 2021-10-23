@@ -14,6 +14,8 @@
 ----
 require "class"
 
+local SDK = require "autojoin/sdk/sdk/sdk"
+
 local _API
 
 --- Helpers
@@ -304,7 +306,10 @@ local function Add(self)
                 options = {
                     label = "Dump Last Join Server",
                     on_accept_fn = function()
-                        dumptable(self.autojoin:GetLastJoinServer())
+                        dumptable(SDK.PersistentData
+                                     .Load()
+                                     .SetMode(SDK.PersistentData.DEFAULT)
+                                     .Get("last_join_server"))
                     end,
                 },
             },
@@ -313,7 +318,10 @@ local function Add(self)
                 options = {
                     label = "Dump Stored Data",
                     on_accept_fn = function()
-                        dumptable(self.autojoin.data:GetPersistData())
+                        dumptable(SDK.PersistentData
+                                     .Load()
+                                     .SetMode(SDK.PersistentData.DEFAULT)
+                                     .GetData())
                     end,
                 },
             },
@@ -323,11 +331,11 @@ local function Add(self)
                 options = {
                     label = "Clear Stored Data",
                     on_accept_fn = function()
-                        local data = self.autojoin.data
-                        data.original_persist_data = nil
-                        data.persist_data = nil
-                        data.dirty = true
-                        data:Save()
+                        SDK.PersistentData
+                           .Load()
+                           .SetMode(SDK.PersistentData.DEFAULT)
+                           .Set("last_join_server", nil)
+                           .Save()
                     end,
                 },
             },

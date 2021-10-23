@@ -20,7 +20,6 @@ require "class"
 
 local AutoJoinButton = require "widgets/autojoin/autojoinbutton"
 local AutoJoinPasswordScreen = require "screens/autojoinpasswordscreen"
-local Data = require "autojoin/data"
 local DevToolsSubmenu = require "autojoin/devtoolssubmenu"
 local Indicator = require "widgets/autojoin/indicator"
 local JoinButton = require "widgets/autojoin/joinbutton"
@@ -62,8 +61,10 @@ local function JoinServerOverride(self, server_listing, optional_password_overri
                 optional_password_override = optional_password_override,
             }
 
-            self.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
-            self.data:Save()
+            SDK.PersistentData.SetMode(SDK.PersistentData.DEFAULT)
+            SDK.PersistentData
+                .Set("last_join_server", _LAST_JOIN_SERVER)
+                .Save()
         end
 
         self:SetState(MOD_AUTO_JOIN.STATE.CONNECT, true)
@@ -146,8 +147,10 @@ JoinServer = function(server_listing, optional_password_override)
             optional_password_override = optional_password_override,
         }
 
-        AutoJoin.data:GeneralSet("last_join_server", _LAST_JOIN_SERVER)
-        AutoJoin.data:Save()
+        SDK.PersistentData.SetMode(SDK.PersistentData.DEFAULT)
+        SDK.PersistentData
+           .Set("last_join_server", _LAST_JOIN_SERVER)
+           .Save()
     end
     OldJoinServer(server_listing, optional_password_override)
 end
@@ -1004,11 +1007,11 @@ end
 
 --- Initializes.
 -- @tparam string modname
-function AutoJoin:DoInit(modname)
+function AutoJoin:DoInit()
     SDK.Debug.AddMethods(self)
+    SDK.PersistentData.Load().SetMode(SDK.PersistentData.DEFAULT)
 
     -- general
-    self.data = Data(modname)
     self.elapsed_seconds = 0
     self.name = "AutoJoin"
     self.state = MOD_AUTO_JOIN.STATE.DEFAULT
@@ -1061,7 +1064,7 @@ function AutoJoin:DoInit(modname)
     self.devtoolssubmenu = DevToolsSubmenu(self)
 
     -- data
-    _LAST_JOIN_SERVER = self.data:GeneralGet("last_join_server")
+    _LAST_JOIN_SERVER = SDK.PersistentData.Get("last_join_server")
 
     -- self
     self:DebugInit(self.name)
