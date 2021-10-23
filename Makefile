@@ -23,6 +23,7 @@ help:
 	@echo "   testcoverage    to print the tests coverage report"
 	@echo "   testlist        to list all existing tests"
 	@echo "   uninstall       to uninstall the mod"
+	@echo "   updatesdk       to update SDK to the latest version"
 	@echo "   workshop        to prepare the Steam Workshop directory + archive"
 	@echo "   workshopclean   to clean up Steam Workshop directory + archive"
 
@@ -35,7 +36,7 @@ assets:
 	@${DS_TOOLS_SCML} exported/auto_join_states/auto_join_states.scml .
 
 assetsclean:
-	@rm -Rf anim/
+	@rm -rf anim/
 	@rm -f exported/**/*.zip
 	@rm -f images/*.xml images/*.tex
 
@@ -136,26 +137,35 @@ testlist:
 
 uninstall:
 	@:$(call check_defined, DST_MODS)
-	@rm -Rf "${DST_MODS}/dst-mod-auto-join/"
+	@rm -rf "${DST_MODS}/dst-mod-auto-join/"
+
+updatesdk:
+	@rm -rf scripts/autojoin/sdk/*
+	@git submodule foreach git reset --hard origin/main
+	@git submodule foreach git pull --ff-only origin main
+	@git add scripts/autojoin/sdk
+	@git commit -m "Update SDK: ${GIT_SUBMODULE_COMMIT}"
 
 workshop:
-	@rm -Rf ./workshop*
-	@mkdir -p ./workshop/anim/
+	@rm -rf ./workshop*
+
 	@mkdir -p ./workshop/images/
-	@cp -R ./anim/ ./workshop/
-	@cp -R ./images/*.tex ./workshop/images/
-	@cp -R ./images/*.xml ./workshop/images/
-	@cp -R ./LICENSE ./workshop/LICENSE
-	@cp -R ./modicon.tex ./workshop/
-	@cp -R ./modicon.xml ./workshop/
-	@cp -R ./modinfo.lua ./workshop/
-	@cp -R ./modmain.lua ./workshop/
-	@cp -R ./scripts/ ./workshop/
-	@cp -R ./workshop/ ./workshop-1903101575/
+	@cp -r ./anim/ ./workshop/
+	@cp -r ./images/*.tex ./workshop/images/
+	@cp -r ./images/*.xml ./workshop/images/
+
+	@cp -r ./LICENSE ./workshop/
+	@cp -r ./modicon.tex ./workshop/
+	@cp -r ./modicon.xml ./workshop/
+	@cp -r ./modinfo.lua ./workshop/
+	@cp -r ./modmain.lua ./workshop/
+	@cp -r ./scripts/ ./workshop/
+
+	@cp -r ./workshop/ ./workshop-1903101575/
 	@zip -r ./steam-workshop.zip ./workshop-1903101575/
-	@rm -R ./workshop-1903101575/
+	@rm -r ./workshop-1903101575/
 
 workshopclean:
-	@rm -Rf ./workshop* ./steam-workshop.zip
+	@rm -rf ./workshop* ./steam-workshop.zip
 
 .PHONY: assets ldoc modicon workshop
