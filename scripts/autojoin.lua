@@ -26,6 +26,7 @@ local Indicator = require "widgets/autojoin/indicator"
 local JoinButton = require "widgets/autojoin/joinbutton"
 local PopupDialogScreen = require "screens/redux/popupdialog"
 local RejoinButton = require "widgets/autojoin/rejoinbutton"
+local SDK = require "autojoin/sdk/sdk/sdk"
 local Utils = require "autojoin/utils"
 
 local _LAST_JOIN_SERVER
@@ -1002,7 +1003,7 @@ end
 --- Initializes.
 -- @tparam string modname
 function AutoJoin:DoInit(modname)
-    Utils.Debug.AddMethods(self)
+    SDK.Debug.AddMethods(self)
 
     -- general
     self.data = Data(modname)

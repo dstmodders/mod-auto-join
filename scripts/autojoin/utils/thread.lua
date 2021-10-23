@@ -13,7 +13,7 @@
 ----
 local Thread = {}
 
-local Debug = require "autojoin/utils/debug"
+local SDK = require "autojoin/sdk/sdk/sdk"
 
 --- Starts a new thread.
 --
@@ -31,7 +31,7 @@ function Thread.Start(id, fn, whl, init, term)
     end
 
     return StartThread(function()
-        Debug.String("Thread started")
+        SDK.Debug.String("Thread started")
         if init then
             init()
         end
@@ -51,9 +51,9 @@ function Thread.Clear(thread)
     local task = scheduler:GetCurrentTask()
     if thread or task then
         if thread and not task then
-            Debug.String("[" .. thread.id .. "]", "Thread cleared")
+            SDK.Debug.String("[" .. thread.id .. "]", "Thread cleared")
         else
-            Debug.String("Thread cleared")
+            SDK.Debug.String("Thread cleared")
         end
         thread = thread ~= nil and thread or task
         KillThreadsWithID(thread.id)

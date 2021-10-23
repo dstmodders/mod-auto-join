@@ -12,7 +12,6 @@
 --
 -- @module Utils
 -- @see Utils.Chain
--- @see Utils.Debug
 -- @see Utils.Table
 -- @see Utils.Thread
 --
@@ -24,7 +23,6 @@
 local Utils = {}
 
 Utils.Chain = require "autojoin/utils/chain"
-Utils.Debug = require "autojoin/utils/debug"
 Utils.Table = require "autojoin/utils/table"
 Utils.Thread = require "autojoin/utils/thread"
 
