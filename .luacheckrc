@@ -1,4 +1,5 @@
 exclude_files = {
+    "scripts/autojoin/sdk/",
     "workshop/",
 }
 

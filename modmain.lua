@@ -10,9 +10,23 @@
 ----
 local _G = GLOBAL
 local require = _G.require
+
+--- Globals
+-- @section globals
+
 local shallowcopy = _G.shallowcopy
 
-local AutoJoin = require "autojoin"
+--- SDK
+-- @section sdk
+
+local SDK
+
+SDK = require "autojoin/sdk/sdk/sdk"
+SDK.Load(env, "autojoin/sdk", {
+    "Debug",
+    "PersistentData",
+    "Thread",
+})
 
 --- Assets
 -- @section assets
@@ -29,24 +43,8 @@ Assets = {
 --- Debugging
 -- @section debugging
 
-local Debug
-
-if GetModConfigData("debug") then
-    Debug = require "autojoin/debug"
-    Debug:DoInit(modname)
-    Debug:SetIsEnabled(true)
-    Debug:DebugModConfigs()
-end
-
-_G.ModAutoJoinDebug = Debug
-
-local function DebugString(...)
-    return Debug and Debug:DebugString(...)
-end
-
-local function DebugInit(...)
-    return Debug and Debug:DebugInit(...)
-end
+SDK.Debug.SetIsEnabled(GetModConfigData("debug") and true or false)
+SDK.Debug.ModConfigs()
 
 --- Helpers
 -- @section helpers
@@ -59,7 +57,9 @@ end
 --- Initialization
 -- @section initialization
 
-AutoJoin:DoInit(modname)
+local AutoJoin = require "autojoin"
+
+AutoJoin:DoInit()
 
 -- GetModConfigData
 local configs = {
@@ -151,7 +151,7 @@ local function IndicatorScreenPostInit(screen)
     -- overrides Screen:OnDestroy()
     local OldOnDestroy = screen.OnDestroy
     screen.OnDestroy = function(self)
-        DebugString(self.name, "destroyed")
+        SDK.Debug.Term(self.name)
         OldOnDestroy(self)
         if self.mod_auto_join_indicator then
             AutoJoin:RemoveIndicator(self.mod_auto_join_indicator)
@@ -159,8 +159,7 @@ local function IndicatorScreenPostInit(screen)
         end
     end
 
-    -- self
-    DebugInit(screen.name)
+    SDK.Debug.Init(screen.name)
 end
 
 if GetModConfigData("indicator") then

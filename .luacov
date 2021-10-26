@@ -1,11 +1,6 @@
-return {
-    include = {
-        "modmain",
-        "scripts",
-    },
-    exclude = {
-        "spec",
-    },
-    includeuntestedfiles = true,
-    runreport = true,
+exclude = {
+    "modinfo",
+    "scripts/autojoin/sdk",
+    "scripts/autojoin/sdk%/.+$",
+    "spec%/.+$",
 }

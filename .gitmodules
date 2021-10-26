@@ -1,0 +1,3 @@
+[submodule "scripts/autojoin/sdk"]
+	path = scripts/autojoin/sdk
+	url = https://github.com/dstmodders/dst-mod-sdk
