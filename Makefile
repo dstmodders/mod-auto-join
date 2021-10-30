@@ -42,12 +42,12 @@ assetsclean:
 
 citest:
 	@busted .; \
-		cp luacov.report.out luacov.report.out.bak \
+		cp luacov.report.out luacov.report.out.bak > /dev/null 2>&1 \
 			&& luacov -r lcov > /dev/null 2>&1 \
-			&& cp luacov.report.out lcov.info \
-			&& cp luacov.report.out.bak luacov.report.out \
-			&& rm luacov.report.out.bak; \
-		awk '/^Summary$$/{if (a) print a;if (b) print b}{a=b;b=$$0;} /^Summary$$/,f' luacov.report.out
+			&& cp luacov.report.out lcov.info > /dev/null 2>&1 \
+			&& cp luacov.report.out.bak luacov.report.out > /dev/null 2>&1 \
+			&& rm luacov.report.out.bak > /dev/null 2>&1; \
+		awk '/^Summary$$/{if (a) print a;if (b) print b}{a=b;b=$$0;} /^Summary$$/,f' luacov.report.out > /dev/null 2>&1 || true
 
 dev: reinstall ldoc lint test
 
