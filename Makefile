@@ -1,4 +1,5 @@
 GIT_LATEST_TAG = $$(git describe --abbrev=0)
+GIT_SUBMODULE_COMMIT = $$(git submodule foreach git rev-parse --short HEAD | tail -1)
 MODINFO_VERSION = $$(grep '^version.*=' < modinfo.lua | awk -F'= ' '{ print $$2 }' | tr -d '"')
 
 # Source: https://stackoverflow.com/a/10858332
@@ -42,14 +43,15 @@ assetsclean:
 
 citest:
 	@busted .; \
+		luacov-console .; \
 		cp luacov.report.out luacov.report.out.bak > /dev/null 2>&1 \
 			&& luacov -r lcov > /dev/null 2>&1 \
 			&& cp luacov.report.out lcov.info > /dev/null 2>&1 \
 			&& cp luacov.report.out.bak luacov.report.out > /dev/null 2>&1 \
 			&& rm luacov.report.out.bak > /dev/null 2>&1; \
-		awk '/^Summary$$/{if (a) print a;if (b) print b}{a=b;b=$$0;} /^Summary$$/,f' luacov.report.out > /dev/null 2>&1 || true
+		awk '/^Summary$$/{if (a) print a;if (b) print b}{a=b;b=$$0;} /^Summary$$/,f' luacov.report.out 2> /dev/null || true
 
-dev: reinstall ldoc lint test
+dev: reinstall ldoc lint testclean test
 
 gitrelease:
 	@echo "Latest Git tag: ${GIT_LATEST_TAG}"
@@ -127,7 +129,7 @@ test:
 	@busted .; luacov -r lcov > /dev/null 2>&1 && cp luacov.report.out lcov.info; luacov-console . && luacov-console -s
 
 testclean:
-	@rm -f busted.out lcov.info luacov*
+	@rm -f busted.out core lcov.info luacov*
 
 testcoverage:
 	@luacov -r lcov > /dev/null 2>&1 && cp luacov.report.out lcov.info; luacov-console . && luacov-console -s
