@@ -1,8 +1,8 @@
-# dst-mod-auto-join
+# mod-auto-join
 
-[![CI](https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/CI?label=ci)](https://github.com/dstmodders/dst-mod-auto-join/actions/workflows/ci.yml)
-[![Deploy](https://img.shields.io/github/workflow/status/dstmodders/dst-mod-auto-join/Deploy?label=deploy)](https://github.com/dstmodders/dst-mod-auto-join/actions/workflows/deploy.yml)
-[![Codecov](https://img.shields.io/codecov/c/github/dstmodders/dst-mod-auto-join.svg)](https://codecov.io/gh/dstmodders/dst-mod-auto-join)
+[![CI](https://img.shields.io/github/workflow/status/dstmodders/mod-auto-join/CI?label=ci)](https://github.com/dstmodders/mod-auto-join/actions/workflows/ci.yml)
+[![Deploy](https://img.shields.io/github/workflow/status/dstmodders/mod-auto-join/Deploy?label=deploy)](https://github.com/dstmodders/mod-auto-join/actions/workflows/deploy.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/dstmodders/mod-auto-join.svg)](https://codecov.io/gh/dstmodders/mod-auto-join)
 
 [![Auto-Join](preview.gif)](https://steamcommunity.com/sharedfiles/filedetails/?id=1903101575)
 

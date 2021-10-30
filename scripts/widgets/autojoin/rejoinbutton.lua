@@ -3,7 +3,7 @@
 --
 -- Widget that extends `Button` and creates our "Rejoin: button with an icon (`Icon`).
 --
--- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/mod-auto-join](https://github.com/dstmodders/mod-auto-join)
 --
 -- @classmod widgets.RejoinButton
 -- @see widgets.Button

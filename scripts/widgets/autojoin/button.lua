@@ -5,7 +5,7 @@
 --
 -- Designed to be extended by other button widgets like `AutoJoinButton` and `JoinButton`.
 --
--- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/mod-auto-join](https://github.com/dstmodders/mod-auto-join)
 --
 -- @classmod widgets.Button
 -- @see widgets.AutoJoinButton

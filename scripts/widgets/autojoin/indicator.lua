@@ -5,7 +5,7 @@
 -- Acts as a button clicking on which should stop auto-joining and must be visible on most of the
 -- non-in-game screens.
 --
--- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/mod-auto-join](https://github.com/dstmodders/mod-auto-join)
 --
 -- @classmod widgets.Indicator
 -- @see AutoJoin

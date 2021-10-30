@@ -22,7 +22,7 @@ local SDK
 
 SDK = require "autojoin/sdk/sdk/sdk"
 SDK.SetIsSilent(true).Load({
-    modname = "dst-mod-auto-join",
+    modname = "mod-auto-join",
     AddPrefabPostInit = function() end
 }, "autojoin/sdk")
 

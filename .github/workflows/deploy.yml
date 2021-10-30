@@ -17,7 +17,7 @@ jobs:
       - name: Set a job-wide environment variables
         run: |
           echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo "DOCKER_IMAGE=${{ secrets.PRIVATE_REGISTRY }}/dst-mod-auto-join/docs" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE=${{ secrets.PRIVATE_REGISTRY }}/mod-auto-join/docs" >> $GITHUB_ENV
           echo "DOCKER_IMAGE_TAG=latest" >> $GITHUB_ENV
           echo "GITHUB_JOB_NAME=docs" >> $GITHUB_ENV
       - name: Generate documentation
@@ -95,7 +95,7 @@ jobs:
           NGINX_CONF: /etc/nginx/nginx.conf
           # traefik
           TRAEFIK_HOST: docs.dstmodders.com
-          TRAEFIK_NAME: dstmodders-dst-mod-auto-join-docs
+          TRAEFIK_NAME: dstmodders-mod-auto-join-docs
           TRAEFIK_PATH_PREFIX: /auto-join/
       - name: Prepare success Slack notification
         if: success()

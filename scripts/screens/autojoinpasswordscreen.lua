@@ -4,7 +4,7 @@
 -- Screen that extends `InputDialogScreen` and creates a very similar to already existing one in the
 -- engine.
 --
--- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/mod-auto-join](https://github.com/dstmodders/mod-auto-join)
 --
 -- @classmod screens.AutoJoinPasswordScreen
 -- @see AutoJoin

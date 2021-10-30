@@ -1,7 +1,7 @@
 ----
 -- Modmain.
 --
--- **Source Code:** [https://github.com/dstmodders/dst-mod-auto-join](https://github.com/dstmodders/dst-mod-auto-join)
+-- **Source Code:** [https://github.com/dstmodders/mod-auto-join](https://github.com/dstmodders/mod-auto-join)
 --
 -- @author [Depressed DST Modders](https://github.com/dstmodders)
 -- @copyright 2019

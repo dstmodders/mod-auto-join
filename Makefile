@@ -91,7 +91,7 @@ install:
 		--exclude 'steam-workshop.zip' \
 		--exclude 'workshop*' \
 		. \
-		"${DST_MODS}/dst-mod-auto-join/"
+		"${DST_MODS}/mod-auto-join/"
 
 ldoc:
 	@find ./docs/* -type f -not -name Dockerfile -not -name docker-stack.yml -not -wholename ./docs/ldoc/ldoc.css -delete
@@ -137,7 +137,7 @@ testlist:
 
 uninstall:
 	@:$(call check_defined, DST_MODS)
-	@rm -rf "${DST_MODS}/dst-mod-auto-join/"
+	@rm -rf "${DST_MODS}/mod-auto-join/"
 
 updatesdk:
 	@rm -rf scripts/autojoin/sdk/*
