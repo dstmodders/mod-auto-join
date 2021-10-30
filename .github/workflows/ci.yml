@@ -97,7 +97,7 @@ jobs:
 
           # env
           LINE=$(sed -n 2p < busted.out)
-          export COVERAGE=$(tail -1 < busted.out | grep -o '[^ ]*%')
+          export COVERAGE=$(tail -1 < busted.out | grep -o '[^ ]*%' || echo '0.00%')
           export TESTS_ERRORS=$(extract_number "${LINE}" 3)
           export TESTS_FAILURES=$(extract_number "${LINE}" 2)
           export TESTS_SUCCESSES=$(extract_number "${LINE}" 1)
