@@ -8,25 +8,31 @@ check_defined = $(strip $(foreach 1,$1, $(call __check_defined,$1,$(strip $(valu
 
 help:
 	@printf "Please use 'make <target>' where '<target>' is one of:\n\n"
-	@echo "   assets          to pack assets (images and/or animations)"
-	@echo "   assetsclean     to clean up already packed assets"
-	@echo "   citest          to run Busted tests for CI"
-	@echo "   dev             to run reinstall + ldoc + lint + test"
-	@echo "   gitrelease      to commit modinfo.lua and CHANGELOG.md + add a new tag"
-	@echo "   install         to install the mod"
-	@echo "   ldoc            to generate an LDoc documentation"
-	@echo "   lint            to run code linting"
-	@echo "   modicon         to pack modicon"
-	@echo "   reinstall       to uninstall and then install the mod"
-	@echo "   release         to update version"
-	@echo "   test            to run Busted tests"
-	@echo "   testclean       to clean up after tests"
-	@echo "   testcoverage    to print the tests coverage report"
-	@echo "   testlist        to list all existing tests"
-	@echo "   uninstall       to uninstall the mod"
-	@echo "   updatesdk       to update SDK to the latest version"
-	@echo "   workshop        to prepare the Steam Workshop directory + archive"
-	@echo "   workshopclean   to clean up Steam Workshop directory + archive"
+	@echo "   assets                to pack assets (images and/or animations)"
+	@echo "   assetsclean           to clean up already packed assets"
+	@echo "   ciluacheck            to get the number of Luacheck issues for CI"
+	@echo "   ciprettier            to get the number of Prettier issues for CI"
+	@echo "   citest                to run Busted tests for CI"
+	@echo "   dev                   to run reinstall + ldoc + lint + testclean + test"
+	@echo "   gitrelease            to commit modinfo.lua and CHANGELOG.md + add a new tag"
+	@echo "   install               to install the mod"
+	@echo "   ldoc                  to generate an LDoc documentation"
+	@echo "   lint                  to run code linting (Luacheck + Prettier)"
+	@echo "   luacheck              to run Luacheck"
+	@echo "   luacheckglobals       to print Luacheck globals (mutating/setting)"
+	@echo "   luacheckreadglobals   to print Luacheck read_globals (reading)"
+	@echo "   modicon               to pack modicon"
+	@echo "   prettier              to run Prettier"
+	@echo "   reinstall             to uninstall and then install the mod"
+	@echo "   release               to update version"
+	@echo "   test                  to run Busted tests"
+	@echo "   testclean             to clean up after tests"
+	@echo "   testcoverage          to print the tests coverage report"
+	@echo "   testlist              to list all existing tests"
+	@echo "   uninstall             to uninstall the mod"
+	@echo "   updatesdk             to update SDK to the latest version"
+	@echo "   workshop              to prepare the Steam Workshop directory + archive"
+	@echo "   workshopclean         to clean up Steam Workshop directory + archive"
 
 assets:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
@@ -40,6 +46,14 @@ assetsclean:
 	@rm -rf anim/
 	@rm -f exported/**/*.zip
 	@rm -f images/*.xml images/*.tex
+
+ciluacheck:
+	@luacheck . --exclude-files="here/" --formatter plain | wc -l
+
+ciprettier:
+	@total=$$(prettier --list-different './**/*.md' './**/*.xml' './**/*.yml' | wc -l) \
+		&& echo "$$((total < 0 ? 0 : total))" \
+		|| echo '0'
 
 citest:
 	@busted .; \
@@ -99,20 +113,24 @@ ldoc:
 	@find ./docs/* -type f -not -name Dockerfile -not -name docker-stack.yml -not -wholename ./docs/ldoc/ldoc.css -delete
 	@ldoc .
 
-lint:
-	@EXIT=0; \
-		printf "Luacheck:\n\n"; luacheck . --exclude-files="here/" || EXIT=$$?; \
-		printf "\nPrettier:\n\n"; prettier --check \
-			'./**/*.md' \
-			'./**/*.xml' \
-			'./**/*.yml' \
-		|| EXIT=$$?; \
-		exit $${EXIT}
+lint: luacheck prettier
+
+luacheck:
+	@luacheck . --exclude-files="here/"
+
+luacheckglobals:
+	@luacheck . --formatter=plain | grep 'non-standard' | awk '{ print $$6 }' | sed -e "s/^'//" -e "s/'$$//" | sort -u
+
+luacheckreadglobals:
+	@luacheck . --formatter=plain | grep "undefined variable" | awk '{ print $$5 }' | sed -e "s/^'//" -e "s/'$$//" | sort -u
 
 modicon:
 	@:$(call check_defined, DS_KTOOLS_KTECH)
 	@${DS_KTOOLS_KTECH} ./modicon.png . --atlas ./modicon.xml --square
 	@prettier --xml-whitespace-sensitivity='ignore' --write './modicon.xml'
+
+prettier:
+	@prettier --list-different './**/*.md' './**/*.xml' './**/*.yml'
 
 reinstall: uninstall install
 
